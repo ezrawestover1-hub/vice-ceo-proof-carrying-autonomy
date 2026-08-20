@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Vice CEO proof-carrying autonomy architecture</title>
+  <desc id="desc">A bounded synthetic event flows through validation, read-only specialist advice, a signed one-use Action Warrant, a simulated receipt, replay tools, and a safety evaluation layer. Kill switch and role scope block the warrant gateway.</desc>
+  <style>
+    .canvas { fill: #ffffff; }
+    .title { fill: #172426; font-family: Inter, Arial, sans-serif; font-size: 47px; font-weight: 600; letter-spacing: -1.6px; }
+    .subtitle { fill: #697578; font-family: Inter, Arial, sans-serif; font-size: 25px; }
+    .node { fill: #ffffff; stroke: #cfd8d5; stroke-width: 2; }
+    .node-accent { fill: #f0f7f4; stroke: #0e5149; stroke-width: 2.5; }
+    .node-title { fill: #172426; font-family: Inter, Arial, sans-serif; font-size: 23px; font-weight: 600; }
+    .node-copy { fill: #697578; font-family: Inter, Arial, sans-serif; font-size: 18px; }
+    .node-copy-accent { fill: #0e5149; font-family: Inter, Arial, sans-serif; font-size: 18px; font-weight: 600; }
+    .step { fill: #0e5149; font-family: Inter, Arial, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1.5px; }
+    .line { fill: none; stroke: #6f807b; stroke-width: 3; marker-end: url(#arrow); }
+    .block { fill: none; stroke: #0e5149; stroke-width: 3; stroke-dasharray: 10 10; marker-end: url(#arrow); }
+    .block-label { fill: #0e5149; font-family: Inter, Arial, sans-serif; font-size: 17px; font-weight: 600; }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto"><path d="M0,0 L11,5.5 L0,11 z" fill="#6f807b"/></marker>
+    <marker id="arrow-forest" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto"><path d="M0,0 L11,5.5 L0,11 z" fill="#0e5149"/></marker>
+  </defs>
+  <rect class="canvas" width="1600" height="900"/>
+  <text class="title" x="110" y="112">Vice CEO: proof-carrying autonomy</text>
+  <text class="subtitle" x="110" y="154">A synthetic recommendation can progress only with inspectable evidence and a bounded warrant.</text>
+
+  <path class="line" d="M313 413 H384"/>
+  <path class="line" d="M593 413 H664"/>
+  <path class="line" d="M873 413 H944"/>
+  <path class="line" d="M1153 413 H1224"/>
+  <path class="line" d="M1340 527 V611 H1065"/>
+  <path class="block" d="M820 698 V553" style="marker-end:url(#arrow-forest)"/>
+
+  <g transform="translate(110 322)">
+    <rect class="node" width="203" height="182" rx="12"/>
+    <text class="step" x="26" y="38">01</text>
+    <text class="node-title" x="26" y="78">Bounded event</text>
+    <text class="node-copy" x="26" y="112">Named synthetic</text>
+    <text class="node-copy" x="26" y="138">fixture only</text>
+  </g>
+  <g transform="translate(384 322)">
+    <rect class="node" width="209" height="182" rx="12"/>
+    <text class="step" x="26" y="38">02</text>
+    <text class="node-title" x="26" y="78">Validate + policy</text>
+    <text class="node-copy" x="26" y="112">Schema, scope, and</text>
+    <text class="node-copy" x="26" y="138">fail-closed checks</text>
+  </g>
+  <g transform="translate(664 322)">
+    <rect class="node" width="209" height="182" rx="12"/>
+    <text class="step" x="26" y="38">03</text>
+    <text class="node-title" x="26" y="78">ADK specialists</text>
+    <text class="node-copy" x="26" y="112">Read-only advice</text>
+    <text class="node-copy" x="26" y="138">and redacted handoff</text>
+  </g>
+  <g transform="translate(944 322)">
+    <rect class="node-accent" width="209" height="182" rx="12"/>
+    <text class="step" x="26" y="38">04</text>
+    <text class="node-title" x="26" y="78">Action Warrant</text>
+    <text class="node-copy-accent" x="26" y="112">Signed, one-use,</text>
+    <text class="node-copy-accent" x="26" y="138">short-lived gate</text>
+  </g>
+  <g transform="translate(1224 322)">
+    <rect class="node" width="206" height="182" rx="12"/>
+    <text class="step" x="26" y="38">05</text>
+    <text class="node-title" x="26" y="78">Simulated receipt</text>
+    <text class="node-copy" x="26" y="112">No persistent write</text>
+    <text class="node-copy" x="26" y="138">No external effect</text>
+  </g>
+  <g transform="translate(808 611)">
+    <rect class="node" width="257" height="160" rx="12"/>
+    <text class="step" x="26" y="38">06</text>
+    <text class="node-title" x="26" y="78">Replay + alternatives</text>
+    <text class="node-copy" x="26" y="112">Operational Twin and</text>
+    <text class="node-copy" x="26" y="138">Business Time Machine</text>
+  </g>
+  <g transform="translate(426 611)">
+    <rect class="node" width="266" height="160" rx="12"/>
+    <text class="step" x="26" y="38">07</text>
+    <text class="node-title" x="26" y="78">Trust + evaluation</text>
+    <text class="node-copy" x="26" y="112">Adversarial probes and</text>
+    <text class="node-copy" x="26" y="138">versioned scorecard</text>
+  </g>
+  <path class="line" d="M808 691 H692"/>
+  <g transform="translate(736 758)">
+    <rect fill="#f0f7f4" stroke="#0e5149" stroke-width="2" width="168" height="82" rx="41"/>
+    <text class="block-label" x="84" y="35" text-anchor="middle">KILL SWITCH</text>
+    <text class="block-label" x="84" y="59" text-anchor="middle">ROLE SCOPE</text>
+  </g>
+  <text class="subtitle" x="110" y="852">Bounded by design: every reviewer-facing result is synthetic-only and production authority remains false.</text>
+</svg>

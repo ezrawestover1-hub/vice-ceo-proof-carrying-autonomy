@@ -1,0 +1,17 @@
+[project]
+name = "vice-ceo-hackathon-runtime"
+version = "0.1.0"
+description = "Synthetic-only Google ADK runtime for the Vice CEO hackathon submission"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115.0",
+  "google-adk>=1.21.0",
+  "google-cloud-firestore>=2.20.0",
+  "uvicorn[standard]>=0.30.0",
+]
+
+[project.optional-dependencies]
+dev = []
+
+[tool.uv]
+package = false
