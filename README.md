@@ -21,6 +21,9 @@ application. The standalone package includes:
 - [public-release checklist](PUBLIC_REPOSITORY_CHECKLIST.md), which lists the
   allowed source set and explicitly excludes parent-repository material,
   credentials, customer data, and deployment configuration.
+- [judge packet](JUDGE_PACKET.md), which collects the evidence-backed project
+  story, video plan, and explicit pre-submission gaps without claiming a live
+  deployment.
 
 The runtime remains synthetic-only even when published. It must not be
 presented as a deployed Westover EPR service or as proof of real provider,
