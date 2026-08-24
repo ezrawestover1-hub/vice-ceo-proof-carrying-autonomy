@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import unittest
 from unittest.mock import patch
+from urllib.error import HTTPError
 
 from app.registry_watch import (
     DeterministicRegistryBriefGenerator,
@@ -549,6 +550,28 @@ class RegistryWatchTests(unittest.TestCase):
             payload["subject"],
             "Controlled delivery verification — Approved Demo Registry",
         )
+
+    def test_resend_delivery_reports_a_safe_provider_status_without_a_response_body(self) -> None:
+        self._engine("revision-1", "public registry source revision one").process(
+            self._event("registry-watch-resend-rejection-baseline")
+        )
+        changed = self._engine("revision-2", "public registry source revision two").process(
+            self._event("registry-watch-resend-rejection-change")
+        )
+
+        def opener(request: object, *, timeout: int) -> object:
+            del request, timeout
+            raise HTTPError("https://api.resend.com/emails", 403, "Forbidden", {}, None)
+
+        delivery = ResendInternalBriefDelivery(
+            api_key="re_internal_only",
+            sender="vice-ceo@westover.example",
+            recipient="ezra@westover.example",
+            opener=opener,
+        )
+
+        with self.assertRaisesRegex(RegistryWatchError, "internal_brief_delivery_rejected_403"):
+            delivery.deliver(changed.brief)
 
     def test_configured_worker_requires_reviewed_source_configuration(self) -> None:
         source_json = (

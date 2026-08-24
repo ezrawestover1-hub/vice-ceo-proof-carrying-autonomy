@@ -28,6 +28,7 @@ from hashlib import sha256
 from html.parser import HTMLParser
 from json import dumps, loads
 from typing import Any, Callable, Protocol
+from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 from google.adk.agents import Agent
@@ -914,10 +915,12 @@ class ResendInternalBriefDelivery:
             with self._opener(request, timeout=20) as response:
                 status = getattr(response, "status", 200)
                 response_body = response.read().decode("utf-8")
+        except HTTPError as error:
+            raise RegistryWatchError(f"internal_brief_delivery_rejected_{error.code}") from error
         except Exception as error:
-            raise RegistryWatchError("internal_brief_delivery_failed") from error
+            raise RegistryWatchError("internal_brief_delivery_transport_failed") from error
         if status not in {200, 201}:
-            raise RegistryWatchError("internal_brief_delivery_failed")
+            raise RegistryWatchError(f"internal_brief_delivery_rejected_{status}")
         try:
             provider_id = loads(response_body)["id"]
         except (TypeError, ValueError, KeyError) as error:
