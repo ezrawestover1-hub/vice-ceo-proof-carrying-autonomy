@@ -9,7 +9,7 @@ does not grant any new business authority.
 
 | Component | Verified state |
 | --- | --- |
-| Private worker | Cloud Run `vice-ceo-registry-worker-00011-9dk`, `us-central1`, private ingress |
+| Private worker | Cloud Run `vice-ceo-registry-worker-00014-jqp`, `us-central1`, private ingress |
 | Background trigger | Three enabled private OIDC Scheduler jobs: Oregon `08:30 UTC`, California `08:35 UTC`, Maryland `08:40 UTC` |
 | Sources | Reviewed official Oregon DEQ, CalRecycle SB 54, and Maryland Department of the Environment public EPR program pages |
 | Durable state | Firestore source snapshot, event claim, run receipt, and owner-review action-queue collections |
@@ -40,9 +40,11 @@ The private worker also recorded one bounded Vertex/Gemini canary receipt:
 - persistent business write: false; and
 - external business effect: false.
 
-The scheduled registry worker keeps Gemini briefing disabled by default. The
-canary proves connectivity only; it does not prove authority to use customer
-data or send an external message.
+The scheduled registry worker now has bounded Gemini/ADK briefing enabled for
+a material change. It receives only the ephemeral changed public-text excerpt,
+never customer data, and cannot send an external message. No production source
+change has yet invoked that briefing path; the canary remains the completed
+provider-connectivity proof.
 
 ## Deliberate limits
 

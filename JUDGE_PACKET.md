@@ -84,7 +84,7 @@ inspectable before an agent is permitted to progress.
 
 | Requirement | Evidence in this repository | Honest current state |
 | --- | --- | --- |
-| Gemini 3.5+ | `app/model_configuration.py` locks `gemini-3.5-flash`; `app/specialist_agents.py` configures Google ADK Gemini agents. | A fixed-prompt, no-tool Vertex canary completed and logged a hash-only receipt; the scheduled watcher currently keeps Gemini briefing disabled. |
+| Gemini 3.5+ | `app/model_configuration.py` locks `gemini-3.5-flash`; `app/specialist_agents.py` configures Google ADK Gemini agents. | A fixed-prompt, no-tool Vertex canary completed and logged a hash-only receipt. The private watcher now enables bounded Gemini briefs only after a material approved-source change; no live source change has invoked it yet. |
 | Google agent framework | `google-adk` is a runtime dependency; `app/agent.py` and `app/specialist_agents.py` define the ADK app/fleet. | Implemented and locally tested around the bounded demo. |
 | Google Cloud service | Private Cloud Run worker, Cloud Scheduler OIDC job, Firestore watch state, and a separate public Cloud Run reviewer demo. | Live private worker has recorded a normalization rebaseline and a subsequent no-change receipt against an approved Oregon DEQ public source. |
 | Enterprise safety | Separate warrant gateway, role scoping, kill switch, evidence ledger, adversarial suite, and evaluation suite. | Locally verified against synthetic fixtures only. |
