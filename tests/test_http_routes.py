@@ -268,6 +268,8 @@ class HttpRouteSmokeTests(unittest.TestCase):
 
         with patch.object(fast_api_app, "registry_watch_worker", engine):
             queue = self.client.get("/owner/registry-actions")
+            operations = self.client.get("/owner/registry-operations")
+            operations_console = self.client.get("/owner/registry-operations/console")
             inbox = self.client.get("/owner/registry-actions/inbox")
             resolved = self.client.post(
                 f"/owner/registry-actions/{changed.action_candidate.candidate_id}/decision",
@@ -278,6 +280,13 @@ class HttpRouteSmokeTests(unittest.TestCase):
         self.assertEqual(len(queue.json()["owner_action_queue"]), 1)
         self.assertTrue(queue.json()["private_owner_review"])
         self.assertFalse(queue.json()["external_business_actions_enabled"])
+        self.assertEqual(operations.status_code, 200)
+        self.assertEqual(operations.json()["source_portfolio"][0]["source_id"], source.source_id)
+        self.assertEqual(operations.json()["owner_action_queue"]["awaiting_owner_decision"], 1)
+        self.assertFalse(operations.json()["authority"]["external_business_actions_enabled"])
+        self.assertEqual(operations_console.status_code, 200)
+        self.assertIn("Registry watch", operations_console.text)
+        self.assertIn("Untrusted-source gate", operations_console.text)
         self.assertEqual(inbox.status_code, 200)
         self.assertIn("Registry change", inbox.text)
         self.assertIn("Acknowledge and prepare review", inbox.text)

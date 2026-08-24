@@ -34,7 +34,7 @@ from .provider_evidence import ProviderEvidenceError, verify_provider_receipt
 from .submission_evidence import build_submission_evidence_manifest
 from .release_readiness import assess_release_readiness
 from .demo_console import render_demo_console
-from .owner_review_console import render_owner_action_inbox
+from .owner_review_console import render_owner_action_inbox, render_owner_operations_console
 from .artifact_integrity import build_artifact_integrity_manifest
 from .agent_topology import build_agent_topology_manifest
 from .agent_authority_audit import build_agent_authority_audit
@@ -393,6 +393,37 @@ def get_owner_registry_actions() -> dict[str, object]:
         "customer_record_mutation": False,
         "legal_or_regulatory_conclusion": False,
     }
+
+
+def _owner_registry_operations() -> dict[str, object]:
+    """Attach private runtime status without exposing delivery credentials."""
+
+    overview = registry_watch_worker.build_owner_operations_overview()
+    overview["runtime"] = {
+        "registry_watch_mode": registry_watch_mode,
+        "brief_generator": os.environ.get("VICE_CEO_REGISTRY_BRIEF_GENERATOR", "deterministic").strip().lower(),
+        "internal_delivery": os.environ.get("VICE_CEO_INTERNAL_BRIEF_DELIVERY", "disabled").strip().lower(),
+        "private_owner_review": True,
+    }
+    return overview
+
+
+@app.get("/owner/registry-operations")
+def get_owner_registry_operations() -> dict[str, object]:
+    """List private source/evidence posture, queue state, and authority bounds."""
+
+    if _public_demo_only():
+        raise HTTPException(status_code=404, detail="owner_review_not_available_on_public_demo")
+    return _owner_registry_operations()
+
+
+@app.get("/owner/registry-operations/console", response_class=HTMLResponse)
+def get_owner_registry_operations_console() -> str:
+    """Render the private operations overview behind Cloud Run IAM."""
+
+    if _public_demo_only():
+        raise HTTPException(status_code=404, detail="owner_review_not_available_on_public_demo")
+    return render_owner_operations_console(_owner_registry_operations())
 
 
 @app.get("/owner/registry-actions/inbox", response_class=HTMLResponse)

@@ -9,12 +9,12 @@ does not grant any new business authority.
 
 | Component | Verified state |
 | --- | --- |
-| Private worker | Cloud Run `vice-ceo-registry-worker-00019-vwj`, `us-central1`, private ingress; source metadata agrees with the enabled 08:31 / 08:36 / 08:41 UTC Scheduler jobs |
+| Private worker | Cloud Run `vice-ceo-registry-worker-00020-zl7`, `us-central1`, private ingress; source metadata agrees with the enabled 08:31 / 08:36 / 08:41 UTC Scheduler jobs |
 | Background trigger | Three enabled private OIDC Scheduler jobs: Oregon `08:31 UTC`, California `08:36 UTC`, Maryland `08:41 UTC` |
 | Sources | Reviewed official Oregon DEQ, CalRecycle SB 54, and Maryland Department of the Environment public EPR program pages |
 | Durable state | Firestore source snapshot, event claim, run receipt, and owner-review action-queue collections |
-| Owner review | Private Cloud Run inbox and JSON action queue live behind service authentication; no public-demo exposure |
-| Public reviewer | Separate fixture-only Cloud Run `vice-ceo-review-demo-00010-757` at [`/demo`](https://vice-ceo-review-demo-77u4kmu2ba-uc.a.run.app/demo) |
+| Owner review | Private Cloud Run operations overview, inbox, and JSON action queue live behind service authentication; no public-demo exposure |
+| Public reviewer | Separate fixture-only Cloud Run `vice-ceo-review-demo-00012-nzt` at [`/demo`](https://vice-ceo-review-demo-77u4kmu2ba-uc.a.run.app/demo); its synthetic approval returns a readable receipt and warrant with zero external effect |
 
 ## Observed scheduler receipts
 
@@ -44,11 +44,13 @@ The private worker also recorded one bounded Vertex/Gemini canary receipt:
 
 The scheduled registry worker now has bounded Gemini/ADK briefing enabled for
 a material change. It receives only the ephemeral changed public-text excerpt,
-never customer data, and cannot send an external message. No production source
-change has yet invoked that briefing path; the canary remains the completed
-provider-connectivity proof.
+never customer data, and cannot send an external message. Before the model
+boundary, a deterministic prompt-injection gate rejects instruction-like or
+credential-exfiltration content and creates a hash-linked owner-review fallback
+instead. No production source change has yet invoked that briefing path; the
+canary remains the completed provider-connectivity proof.
 
-On 2026-08-24, the explicit controlled replay command completed the exact
+On 2026-08-24, the explicit controlled replay command also completed the exact
 changed-source → Gemini/ADK → owner-action-candidate code path locally. It used
 two fixed non-production fixture revisions and produced
 `registry_brief_fde8d07fd3c759fbbcfb` with model mode `gemini_3_5_flash_adk`,
@@ -63,6 +65,8 @@ code path—not a claim that an EPR registry changed.
 - The operational worker fetches only explicitly reviewed **public** sources.
 - It writes only its own evidence state in Firestore; it cannot alter Westover
   EPR customer, billing, support, or compliance records.
+- The private operations overview shows source metadata, evidence hashes, queue
+  counts, and authority boundaries—not raw fetched page bodies or customer data.
 - No owner briefing email has been sent. That channel needs a dedicated Resend
   Secret Manager credential, verified internal sender, and allowlisted owner
   recipient.
@@ -75,6 +79,6 @@ code path—not a claim that an EPR registry changed.
 1. Inspect [the reviewed source portfolio](../config/registry-sources.epr-portfolio.json).
 2. Inspect the strict event, source fetch, Firestore, Gemini, and delivery
    boundaries in [`app/registry_watch.py`](../app/registry_watch.py).
-3. Run the 78-test suite and open the public reviewer flow.
+3. Run the 85-test suite and open the public reviewer flow.
 4. In the video, show the Cloud Scheduler job, Cloud Run revision/log, and the
    Firestore receipts above. Keep the public and private planes distinct.

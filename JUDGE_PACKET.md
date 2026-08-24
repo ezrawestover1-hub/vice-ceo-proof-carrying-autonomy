@@ -55,9 +55,11 @@ Vice CEO has two deliberately separated layers: a public, synthetic,
 zero-effect reviewer experience and a private Registry Change Watch. The
 private worker uses Cloud Scheduler OIDC, a locked public-source allowlist,
 Firestore idempotency/snapshots, and visible-content fingerprinting that avoids
-volatile page scaffolding. It currently makes no customer, billing, prospect,
-or administrative action. Owner-only briefing is disabled until a dedicated
-credential and allowlisted mailbox are configured.
+volatile page scaffolding. A dedicated untrusted-source safety gate keeps
+instruction-like public text out of the Gemini briefing path and falls back to
+a deterministic, evidence-linked owner review. The worker currently makes no
+customer, billing, prospect, or administrative action. Owner-only briefing is
+disabled until a dedicated credential and allowlisted mailbox are configured.
 
 ## Why it matters
 
@@ -101,7 +103,7 @@ inspectable before an agent is permitted to progress.
    stale warrants, tampering, and changed controls are denied.
 5. **Reviewable proof bundle** — a single bundle links the walkthrough,
    evaluation report, capability ledger, and closed source-manifest hash.
-6. **Safety regression coverage** — 78 automated tests cover ingress,
+6. **Safety regression coverage** — 85 automated tests cover ingress,
    authority, evidence integrity, evaluator behavior, and visual/demo routes.
 7. **Background EPR Registry Change Watch** — a private daily Scheduler job
    fetches only approved public sources, hashes visible content, saves durable
@@ -111,6 +113,10 @@ inspectable before an agent is permitted to progress.
    only evidence hashes, official citations, and bounded recommendations. An
    owner can acknowledge or archive the review item without triggering an
    external business action.
+9. **Private operations overview** — an IAM-protected workspace shows the
+   approved EPR portfolio, durable evidence metadata, review workload, the
+   prompt-injection gate, and explicit authority boundaries without retaining
+   raw source bodies or customer data.
 
 ## Architecture
 
@@ -139,7 +145,7 @@ uv run python -m app.demo_cli --recording-packet --pretty
 uv run python -m app.demo_cli --proof-verification --pretty
 ```
 
-The latest local verification run passed all **78 tests** and reported
+The latest local verification run passed all **85 tests** and reported
 `all_checks_passed: true`. These commands use closed synthetic fixtures only;
 they do not start a server, contact a provider, access customer records, or
 perform an external action.
@@ -148,13 +154,14 @@ perform an external action.
 
 | Surface | What it proves | What it does not prove |
 | --- | --- | --- |
-| `/demo` | A readable, zero-effect walkthrough of the fixed synthetic flow. | A provider call or business action. |
+| `/demo` | A readable, zero-effect walkthrough of the fixed synthetic flow, including a controlled approval receipt. | A provider call or business action. |
 | `/demo/action-warrant-dossier` | Scoped warrant and deterministic second-use denial. | Broad authorization. |
 | `/demo/time-machine-dossier` | Evidence replay and registered alternatives. | Real-world outcome prediction. |
 | `/demo/proof-bundle` | Linked evaluation, capability, and artifact-integrity evidence. | A remote deployment attestation. |
 | `/demo/provider-evidence` | Offline verification of a supplied hash-only canary receipt. | It does not call a provider itself. |
 | `/demo/cloud-run-preflight` | Local container and release-input readiness. | That Cloud Run has been deployed. |
 | Private `/scheduler/registry-watch` | OIDC-triggered registry monitoring, durable evidence, and idempotency. | A public endpoint, customer-data access, a legal conclusion, or prospect messaging. |
+| Private `/owner/registry-operations/console` | Approved source portfolio, evidence metadata, queue counts, safety posture, and authority bounds. | Raw source bodies, customer data, or a route to a business action. |
 
 ## Four-minute video plan
 
@@ -166,8 +173,9 @@ perform an external action.
    worker, and the Firestore portfolio baseline plus no-change receipts.
 4. **1:35–2:00 — Change discipline.** Show the registered Oregon, California,
    and Maryland sources, visible-content hashes, the evidence-linked owner
-   action candidate, private owner-review inbox, deduplication, and the
-   separately configured owner-brief boundary.
+   action candidate, private operations overview and owner-review inbox,
+   deduplication, prompt-injection fallback, and the separately configured
+   owner-brief boundary.
 5. **2:00–2:25 — Gemini proof.** Show the completed hash-only Gemini canary,
    then the explicitly labeled controlled replay: fixed non-production change
    → Gemini brief → `awaiting_owner_review`, with no Firestore write, email,
@@ -175,7 +183,7 @@ perform an external action.
 6. **2:25–3:10 — Reviewer experience.** Open the public `/demo` and show the
    proof-carrying synthetic workflow, Action Warrant, and replay surface.
 7. **3:10–3:40 — Resilience.** Show an unregistered source rejection and the
-   automated 78-test result.
+   automated 85-test result.
 8. **3:40–4:00 — Close.** State the value proposition: quiet, accountable EPR
    intelligence that asks for a real decision only when evidence warrants it.
 

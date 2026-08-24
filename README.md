@@ -231,8 +231,9 @@ is ready for a user-reviewed commit, but never claims that source is pushed,
 deployed, provider-connected, or production-authorized.
 
 For a reviewer-friendly entry point, open `/demo`. It renders the same fixed
-synthetic evidence as the structured demo routes without client analytics,
-external assets, or an action control.
+synthetic evidence as the structured demo routes without client analytics or
+external assets. Its one approval control is explicitly synthetic: it creates
+only a synthetic receipt and warrant, never an external action.
 
 After installing runtime dependencies, run `python -m unittest tests.test_http_routes`
 to exercise each demo route in process. This does not start a listener or call
@@ -292,10 +293,11 @@ VICE_CEO_CLAIM_STORE=in_memory
 
 ### Controlled changed-source replay
 
-For the video, this **explicitly opt-in** command runs the actual Registry
-Change Watch changed-source branch through Gemini/ADK using two fixed
+For the video, the following **explicitly opt-in** command runs the actual
+Registry Change Watch changed-source branch through Gemini/ADK using two fixed
 non-production fixture revisions. It does not fetch an official registry,
-write Firestore, read customer data, or deliver email.
+write Firestore, read customer data, or deliver email. The JSON output records
+only hashes, IDs, model mode, queue state, and zero-effect flags.
 
 ```bash
 VICE_CEO_CONTROLLED_REPLAY_ENABLED=true \
@@ -306,7 +308,7 @@ uv run python -m app.registry_change_replay --confirm-controlled-replay
 ```
 
 Keep the disclosure visible in any recording: this is a controlled fixture
-replay of a real code path, not a claim that an official registry changed.
+replay of a real code path, not an assertion that an official registry changed.
 
 ## Deployment boundary
 
