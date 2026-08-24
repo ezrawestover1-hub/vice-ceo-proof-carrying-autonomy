@@ -149,6 +149,14 @@ DELIVERY_ENABLED="false"
 if [[ -n "$RESEND_SECRET" ]]; then
   DELIVERY_KIND="resend"
   DELIVERY_ENABLED="true"
+  gcloud secrets describe "$RESEND_SECRET" --project "$PROJECT_ID" >/dev/null 2>&1 || {
+    echo "resend_secret_not_found" >&2
+    exit 1
+  }
+  if [[ -z "$(gcloud secrets versions list "$RESEND_SECRET" --project "$PROJECT_ID" --filter='state=ENABLED' --limit=1 --format='value(name)')" ]]; then
+    echo "resend_secret_has_no_enabled_version" >&2
+    exit 1
+  fi
   gcloud secrets add-iam-policy-binding "$RESEND_SECRET" --project "$PROJECT_ID" --member="serviceAccount:$SERVICE_ACCOUNT" --role="roles/secretmanager.secretAccessor" >/dev/null
 fi
 WORKER_ENV="^|^GOOGLE_CLOUD_PROJECT=$PROJECT_ID|GOOGLE_CLOUD_LOCATION=$MODEL_LOCATION|GOOGLE_GENAI_USE_VERTEXAI=TRUE|VICE_CEO_REGISTRY_WATCH_MODE=configured|VICE_CEO_REGISTRY_WATCH_STORE=firestore|VICE_CEO_REGISTRY_SOURCES_JSON=$SOURCES_JSON|VICE_CEO_REGISTRY_BRIEF_GENERATOR=$BRIEF_GENERATOR|VICE_CEO_REGISTRY_GEMINI_ENABLED=$GEMINI_ENABLED|VICE_CEO_INTERNAL_BRIEF_DELIVERY=$DELIVERY_KIND|VICE_CEO_INTERNAL_RESEND_DELIVERY_ENABLED=$DELIVERY_ENABLED|VICE_CEO_INTERNAL_BRIEF_FROM=$BRIEF_FROM|VICE_CEO_INTERNAL_BRIEF_TO=$BRIEF_TO|VICE_CEO_PROVIDER_CANARY_ENABLED=false"

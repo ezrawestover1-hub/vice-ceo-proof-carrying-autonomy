@@ -95,6 +95,11 @@ dedicated verified internal briefing sender, and the recipient must be the
 allowlisted Westover owner mailbox. Do not reuse a transactional-support or
 commercial-outreach credential for this channel.
 
+On an executing deployment, the script also fails before it changes worker
+access if the named secret is missing or has no enabled Secret Manager version.
+That makes the delivery activation dependency explicit instead of leaving a
+partially configured worker after a late provider-credential failure.
+
 `--gemini-briefs` is separately explicit. It enables Gemini only to produce a
 bounded, cited briefing after the watcher detects a materially changed public
 source; it does not enable delivery by itself.
