@@ -22,7 +22,7 @@ from email.message import EmailMessage
 import os
 import re
 import smtplib
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import datetime, timezone
 from hashlib import sha256
 from html.parser import HTMLParser
@@ -261,6 +261,11 @@ class RegistryActionCandidate:
     external_business_effect: bool
     customer_record_mutation: bool
     created_at: str
+    review_summary: str = ""
+    recommended_next_action: str = ""
+    source_citation_url: str = ""
+    owner_decision: str = "unresolved"
+    owner_decision_at: str | None = None
 
 
 @dataclass(frozen=True)
@@ -319,6 +324,12 @@ class RegistryWatchStore(Protocol):
 
     def save_action_candidate(self, candidate: RegistryActionCandidate) -> None: ...
 
+    def list_action_candidates(self) -> tuple[RegistryActionCandidate, ...]: ...
+
+    def resolve_action_candidate(
+        self, candidate_id: str, *, decision: str, decided_at: str
+    ) -> RegistryActionCandidate: ...
+
     def get_run(self, run_id: str) -> RegistryWatchRun | None: ...
 
 
@@ -350,6 +361,25 @@ class InMemoryRegistryWatchStore:
 
     def save_action_candidate(self, candidate: RegistryActionCandidate) -> None:
         self._action_candidates[candidate.candidate_id] = candidate
+
+    def list_action_candidates(self) -> tuple[RegistryActionCandidate, ...]:
+        return tuple(
+            sorted(
+                self._action_candidates.values(),
+                key=lambda candidate: (candidate.created_at, candidate.candidate_id),
+                reverse=True,
+            )
+        )
+
+    def resolve_action_candidate(
+        self, candidate_id: str, *, decision: str, decided_at: str
+    ) -> RegistryActionCandidate:
+        candidate = self._action_candidates.get(candidate_id)
+        if candidate is None:
+            raise RegistryWatchError("owner_action_candidate_not_found")
+        resolved = _resolved_action_candidate(candidate, decision=decision, decided_at=decided_at)
+        self._action_candidates[candidate_id] = resolved
+        return resolved
 
     def get_run(self, run_id: str) -> RegistryWatchRun | None:
         return self._runs.get(run_id)
@@ -425,6 +455,41 @@ class FirestoreRegistryWatchStore:
         self._client.collection(self._action_collection).document(candidate.candidate_id).set(
             asdict(candidate)
         )
+
+    def list_action_candidates(self) -> tuple[RegistryActionCandidate, ...]:
+        try:
+            from google.cloud import firestore
+        except ImportError as error:
+            raise RuntimeError("google_cloud_firestore_dependency_required") from error
+        documents = (
+            self._client.collection(self._action_collection)
+            .order_by("created_at", direction=firestore.Query.DESCENDING)
+            .limit(100)
+            .stream()
+        )
+        return tuple(_action_candidate_from_mapping(document.to_dict()) for document in documents)
+
+    def resolve_action_candidate(
+        self, candidate_id: str, *, decision: str, decided_at: str
+    ) -> RegistryActionCandidate:
+        try:
+            from google.cloud import firestore
+        except ImportError as error:
+            raise RuntimeError("google_cloud_firestore_dependency_required") from error
+        document = self._client.collection(self._action_collection).document(candidate_id)
+        transaction = self._client.transaction()
+
+        @firestore.transactional
+        def transition(transaction: Any) -> RegistryActionCandidate:
+            snapshot = document.get(transaction=transaction)
+            if not snapshot.exists:
+                raise RegistryWatchError("owner_action_candidate_not_found")
+            candidate = _action_candidate_from_mapping(snapshot.to_dict())
+            resolved = _resolved_action_candidate(candidate, decision=decision, decided_at=decided_at)
+            transaction.set(document, asdict(resolved))
+            return resolved
+
+        return transition(transaction)
 
     def get_run(self, run_id: str) -> RegistryWatchRun | None:
         document = self._client.collection(self._run_collection).document(run_id).get()
@@ -918,6 +983,20 @@ class RegistryWatchEngine:
         self._internal_delivery = internal_delivery or DisabledInternalBriefDelivery()
         self._now = now or (lambda: datetime.now(timezone.utc))
 
+    def list_owner_actions(self) -> tuple[RegistryActionCandidate, ...]:
+        """Return the private, evidence-minimized owner-review queue."""
+
+        return self._store.list_action_candidates()
+
+    def resolve_owner_action(
+        self, candidate_id: str, *, decision: str
+    ) -> RegistryActionCandidate:
+        """Record an owner review outcome without invoking an external business effect."""
+
+        return self._store.resolve_action_candidate(
+            candidate_id, decision=decision, decided_at=self._timestamp()
+        )
+
     def process(self, event: RegistryWatchEvent) -> RegistryWatchRun:
         source = self._validate_event(event)
         run_id = f"registry_run_{sha256(event.idempotency_key.encode()).hexdigest()[:20]}"
@@ -1072,6 +1151,9 @@ class RegistryWatchEngine:
             external_business_effect=False,
             customer_record_mutation=False,
             created_at=created_at,
+            review_summary=brief.change_summary,
+            recommended_next_action=brief.recommended_next_action,
+            source_citation_url=brief.source_citation_url,
         )
 
     def _timestamp(self) -> str:
@@ -1330,6 +1412,38 @@ def _changed_segment_count(prior: RegistrySnapshot, capture: RegistrySourceCaptu
     return len(_changed_content_segments(prior, capture))
 
 
+def _action_candidate_from_mapping(data: dict[str, Any]) -> RegistryActionCandidate:
+    """Read a queue item while preserving compatibility with earlier receipts."""
+
+    mapping = dict(data)
+    mapping.setdefault("review_summary", "")
+    mapping.setdefault("recommended_next_action", "")
+    mapping.setdefault("source_citation_url", "")
+    mapping.setdefault("owner_decision", "unresolved")
+    mapping.setdefault("owner_decision_at", None)
+    return RegistryActionCandidate(**mapping)
+
+
+def _resolved_action_candidate(
+    candidate: RegistryActionCandidate, *, decision: str, decided_at: str
+) -> RegistryActionCandidate:
+    """Transition one unresolved internal review item with no downstream action."""
+
+    if decision not in {"acknowledge", "archive"}:
+        raise RegistryWatchError("owner_action_decision_invalid")
+    if candidate.status != "awaiting_owner_review" or candidate.owner_decision != "unresolved":
+        raise RegistryWatchError("owner_action_candidate_not_resolvable")
+    if not _normalize_timestamp(decided_at):
+        raise RegistryWatchError("owner_action_decision_timestamp_invalid")
+    return replace(
+        candidate,
+        status=("owner_acknowledged" if decision == "acknowledge" else "owner_archived"),
+        requires_owner_decision=False,
+        owner_decision=decision,
+        owner_decision_at=decided_at,
+    )
+
+
 def _run_from_mapping(data: dict[str, Any]) -> RegistryWatchRun:
     snapshot_data = data.get("snapshot")
     brief_data = data.get("brief")
@@ -1355,7 +1469,7 @@ def _run_from_mapping(data: dict[str, Any]) -> RegistryWatchRun:
         brief = None
     delivery = InternalDeliveryReceipt(**delivery_data) if isinstance(delivery_data, dict) else None
     action_data = data.get("action_candidate")
-    action_candidate = RegistryActionCandidate(**action_data) if isinstance(action_data, dict) else None
+    action_candidate = _action_candidate_from_mapping(action_data) if isinstance(action_data, dict) else None
     return RegistryWatchRun(
         run_id=str(data["run_id"]),
         event_id=str(data["event_id"]),

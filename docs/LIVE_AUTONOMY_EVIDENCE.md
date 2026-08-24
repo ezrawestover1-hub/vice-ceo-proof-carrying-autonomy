@@ -9,10 +9,11 @@ does not grant any new business authority.
 
 | Component | Verified state |
 | --- | --- |
-| Private worker | Cloud Run `vice-ceo-registry-worker-00016-hrd`, `us-central1`, private ingress |
+| Private worker | Cloud Run `vice-ceo-registry-worker-00017-r2q`, `us-central1`, private ingress |
 | Background trigger | Three enabled private OIDC Scheduler jobs: Oregon `08:31 UTC`, California `08:36 UTC`, Maryland `08:41 UTC` |
 | Sources | Reviewed official Oregon DEQ, CalRecycle SB 54, and Maryland Department of the Environment public EPR program pages |
 | Durable state | Firestore source snapshot, event claim, run receipt, and owner-review action-queue collections |
+| Owner review | Private Cloud Run inbox and JSON action queue live behind service authentication; no public-demo exposure |
 | Public reviewer | Separate fixture-only Cloud Run service at [`/demo`](https://vice-ceo-review-demo-77u4kmu2ba-uc.a.run.app/demo) |
 
 ## Observed scheduler receipts

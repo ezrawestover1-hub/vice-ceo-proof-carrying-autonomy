@@ -217,6 +217,72 @@ class HttpRouteSmokeTests(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.json()["detail"], "registry_watch_worker_not_available_on_public_demo")
 
+    def test_private_owner_inbox_lists_and_resolves_a_fixture_action(self) -> None:
+        from app import fast_api_app
+        from app.registry_watch import (
+            FixtureRegistrySourceFetcher,
+            InMemoryRegistryWatchStore,
+            RegistrySource,
+            RegistryWatchEngine,
+            RegistryWatchEvent,
+        )
+
+        source = RegistrySource(
+            source_id="owner_review_registry",
+            display_name="Owner Review Registry",
+            canonical_url="https://registry.demo.westoverepr.com/owner-review",
+            jurisdiction="demo",
+        )
+        store = InMemoryRegistryWatchStore()
+        engine = RegistryWatchEngine(
+            sources=(source,),
+            store=store,
+            fetcher=FixtureRegistrySourceFetcher(
+                {source.source_id: ("revision-1", "registry source revision one")}
+            ),
+        )
+        engine.process(
+            RegistryWatchEvent(
+                event_id="owner-review-baseline",
+                source_id=source.source_id,
+                scheduled_for="2026-08-23T12:00:00Z",
+            )
+        )
+        engine = RegistryWatchEngine(
+            sources=(source,),
+            store=store,
+            fetcher=FixtureRegistrySourceFetcher(
+                {source.source_id: ("revision-2", "registry source revision two")}
+            ),
+        )
+        changed = engine.process(
+            RegistryWatchEvent(
+                event_id="owner-review-change",
+                source_id=source.source_id,
+                scheduled_for="2026-08-23T12:01:00Z",
+            )
+        )
+        self.assertIsNotNone(changed.action_candidate)
+
+        with patch.object(fast_api_app, "registry_watch_worker", engine):
+            queue = self.client.get("/owner/registry-actions")
+            inbox = self.client.get("/owner/registry-actions/inbox")
+            resolved = self.client.post(
+                f"/owner/registry-actions/{changed.action_candidate.candidate_id}/decision",
+                json={"decision": "acknowledge"},
+            )
+
+        self.assertEqual(queue.status_code, 200)
+        self.assertEqual(len(queue.json()["owner_action_queue"]), 1)
+        self.assertTrue(queue.json()["private_owner_review"])
+        self.assertFalse(queue.json()["external_business_actions_enabled"])
+        self.assertEqual(inbox.status_code, 200)
+        self.assertIn("Registry change", inbox.text)
+        self.assertIn("Acknowledge and prepare review", inbox.text)
+        self.assertEqual(resolved.status_code, 200)
+        self.assertEqual(resolved.json()["owner_action"]["status"], "owner_acknowledged")
+        self.assertFalse(resolved.json()["external_business_actions_enabled"])
+
     def test_direct_fixture_ingress_stops_at_a_simulated_record(self) -> None:
         response = self.client.post(
             "/synthetic-events",

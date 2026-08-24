@@ -33,6 +33,12 @@ The runtime contains:
 - baseline, no-change, changed, and duplicate terminal states;
 - a durable owner-review action candidate for every changed source, linked to
   the brief and its evidence hash;
+- a private, Cloud Run IAM-protected owner inbox at
+  `/owner/registry-actions/inbox`, with a JSON queue at
+  `/owner/registry-actions`;
+- owner-only `acknowledge` or `archive` transitions that persist a review
+  outcome without invoking a business action, customer-record change, or
+  external message;
 - an explicit rebaseline when content normalization is upgraded, avoiding a
   fake change brief during a watcher migration;
 - an in-memory local store plus a Firestore state adapter;
@@ -119,6 +125,20 @@ Scheduler's job and schedule-time headers produce the event identity. Pub/Sub
 ingress remains available for a future fan-out architecture, but is not needed
 for the operating watcher. Neither path is a public webhook or grants
 external-message authority.
+
+### Private owner review
+
+The same private Cloud Run service exposes the owner-review queue at
+`/owner/registry-actions/inbox`. Cloud Run IAM remains the access boundary; the
+public reviewer service sets `VICE_CEO_PUBLIC_DEMO_ONLY=true` and returns 404
+for all owner-review routes. Queue entries include only the evidence hash,
+official public-source citation, bounded change summary, and recommended
+internal next step. They never persist raw source text or customer records.
+
+An owner can record either `acknowledge` or `archive`. That transition only
+changes the durable action-queue record from `awaiting_owner_review`; it cannot
+send email, contact a prospect, alter a customer record, or determine a legal
+obligation. Delivery remains a separately configured internal-only capability.
 
 The first production-like run needs these proof points:
 

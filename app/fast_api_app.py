@@ -8,6 +8,7 @@ process. Durable claims and ADK execution orchestration remain later work.
 from __future__ import annotations
 
 import os
+from dataclasses import asdict
 from hashlib import sha256
 from typing import Any, Literal
 
@@ -33,6 +34,7 @@ from .provider_evidence import ProviderEvidenceError, verify_provider_receipt
 from .submission_evidence import build_submission_evidence_manifest
 from .release_readiness import assess_release_readiness
 from .demo_console import render_demo_console
+from .owner_review_console import render_owner_action_inbox
 from .artifact_integrity import build_artifact_integrity_manifest
 from .agent_topology import build_agent_topology_manifest
 from .agent_authority_audit import build_agent_authority_audit
@@ -93,6 +95,14 @@ class SchedulerRegistryWatchRequest(BaseModel):
     event_type: Literal[REGISTRY_WATCH_EVENT_TYPE]
     source: Literal[REGISTRY_WATCH_SOURCE]
     schema_version: Literal[REGISTRY_WATCH_EVENT_SCHEMA_VERSION]
+
+
+class OwnerActionDecision(BaseModel):
+    """The two internal-only outcomes permitted for a queued owner review."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    decision: Literal["acknowledge", "archive"]
 
 
 @app.get("/healthz")
@@ -360,6 +370,53 @@ def get_registry_watch_demo() -> dict[str, object]:
     """Show an evidence-linked registry-watch run without fetching or sending."""
 
     return {"registry_watch": build_registry_watch_demo_report()}
+
+
+@app.get("/owner/registry-actions")
+def get_owner_registry_actions() -> dict[str, object]:
+    """List private queue items; Cloud Run IAM protects this operational route."""
+
+    if _public_demo_only():
+        raise HTTPException(status_code=404, detail="owner_review_not_available_on_public_demo")
+    return {
+        "owner_action_queue": [asdict(candidate) for candidate in registry_watch_worker.list_owner_actions()],
+        "private_owner_review": True,
+        "external_business_actions_enabled": False,
+        "customer_record_mutation": False,
+        "legal_or_regulatory_conclusion": False,
+    }
+
+
+@app.get("/owner/registry-actions/inbox", response_class=HTMLResponse)
+def get_owner_registry_action_inbox() -> str:
+    """Render the private owner workspace from durable action-queue state."""
+
+    if _public_demo_only():
+        raise HTTPException(status_code=404, detail="owner_review_not_available_on_public_demo")
+    return render_owner_action_inbox(registry_watch_worker.list_owner_actions())
+
+
+@app.post("/owner/registry-actions/{candidate_id}/decision")
+def resolve_owner_registry_action(
+    candidate_id: str, request: OwnerActionDecision
+) -> dict[str, object]:
+    """Record a review acknowledgement or archive; no business action follows."""
+
+    if _public_demo_only():
+        raise HTTPException(status_code=404, detail="owner_review_not_available_on_public_demo")
+    try:
+        candidate = registry_watch_worker.resolve_owner_action(
+            candidate_id, decision=request.decision
+        )
+    except RegistryWatchError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    return {
+        "owner_action": asdict(candidate),
+        "private_owner_review": True,
+        "external_business_actions_enabled": False,
+        "customer_record_mutation": False,
+        "legal_or_regulatory_conclusion": False,
+    }
 
 
 @app.post("/synthetic-events")

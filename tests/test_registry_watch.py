@@ -173,6 +173,38 @@ class RegistryWatchTests(unittest.TestCase):
         self.assertIsNotNone(run.action_candidate)
         self.assertEqual(run.action_candidate.status, "awaiting_owner_review")
 
+    def test_owner_can_resolve_a_queued_action_without_external_business_effect(self) -> None:
+        self._engine("revision-1", "public registry source revision one").process(
+            self._event("registry-watch-owner-baseline")
+        )
+        run = self._engine("revision-2", "public registry source revision two").process(
+            self._event("registry-watch-owner-change")
+        )
+
+        self.assertIsNotNone(run.action_candidate)
+        queued = self.store.list_action_candidates()
+        self.assertEqual([candidate.candidate_id for candidate in queued], [run.action_candidate.candidate_id])
+        self.assertIn("revision", queued[0].review_summary)
+        self.assertEqual(queued[0].source_citation_url, self.source.canonical_url)
+
+        resolved = self.store.resolve_action_candidate(
+            run.action_candidate.candidate_id,
+            decision="acknowledge",
+            decided_at="2026-08-23T12:05:00Z",
+        )
+
+        self.assertEqual(resolved.status, "owner_acknowledged")
+        self.assertEqual(resolved.owner_decision, "acknowledge")
+        self.assertEqual(resolved.owner_decision_at, "2026-08-23T12:05:00Z")
+        self.assertFalse(resolved.requires_owner_decision)
+        self.assertFalse(resolved.external_business_effect)
+        with self.assertRaisesRegex(RegistryWatchError, "owner_action_candidate_not_resolvable"):
+            self.store.resolve_action_candidate(
+                resolved.candidate_id,
+                decision="archive",
+                decided_at="2026-08-23T12:06:00Z",
+            )
+
     def test_duplicate_event_returns_the_original_completed_run(self) -> None:
         engine = self._engine("revision-1", "public registry source revision one")
         event = self._event("registry-watch-duplicate")

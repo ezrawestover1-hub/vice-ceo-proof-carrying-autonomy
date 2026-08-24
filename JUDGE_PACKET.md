@@ -107,6 +107,10 @@ inspectable before an agent is permitted to progress.
    fetches only approved public sources, hashes visible content, saves durable
    Firestore snapshots, deduplicates event retries, and remains quiet when no
    material change is present.
+8. **Private owner review inbox** — a Cloud Run IAM-protected queue presents
+   only evidence hashes, official citations, and bounded recommendations. An
+   owner can acknowledge or archive the review item without triggering an
+   external business action.
 
 ## Architecture
 
@@ -162,7 +166,8 @@ perform an external action.
    worker, and the Firestore portfolio baseline plus no-change receipts.
 4. **1:35–2:00 — Change discipline.** Show the registered Oregon, California,
    and Maryland sources, visible-content hashes, the evidence-linked owner
-   action candidate, deduplication, and the disabled owner-brief boundary.
+   action candidate, private owner-review inbox, deduplication, and the
+   separately configured owner-brief boundary.
 5. **2:00–2:25 — Gemini proof.** Show the completed hash-only Gemini canary:
    no customer data, no tools, and no business effect.
 6. **2:25–3:10 — Reviewer experience.** Open the public `/demo` and show the
