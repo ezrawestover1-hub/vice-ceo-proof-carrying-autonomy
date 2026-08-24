@@ -26,6 +26,8 @@ The runtime contains:
 - registered-source enforcement, so events cannot supply a URL or source body;
 - source version and SHA-256 evidence capture with no raw source text in run
   receipts;
+- hash-only source-content segment comparison that isolates newly observed
+  public text ephemerally for a bounded brief, without persisting the excerpt;
 - visible-content normalization for HTML sources, excluding script and style
   scaffolding so a volatile request token cannot create a false change alert;
 - baseline, no-change, changed, and duplicate terminal states;

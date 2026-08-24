@@ -20,6 +20,7 @@ from base64 import b64decode, b64encode
 from binascii import Error as Base64DecodeError
 from email.message import EmailMessage
 import os
+import re
 import smtplib
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
@@ -196,6 +197,7 @@ class RegistrySnapshot:
     evidence_sha256: str
     byte_count: int
     normalization_version: str
+    content_segment_hashes: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -206,6 +208,8 @@ class RegistryChange:
     prior_snapshot: RegistrySnapshot
     current_snapshot: RegistrySnapshot
     current_capture: RegistrySourceCapture
+    changed_content_excerpt: str
+    changed_segment_count: int
 
 
 @dataclass(frozen=True)
@@ -226,6 +230,8 @@ class RegistryImpactBrief:
     jurisdiction: str = ""
     source_owner: str = ""
     operational_focus: str = ""
+    changed_content_excerpt_sha256: str = ""
+    changed_segment_count: int = 0
 
 
 @dataclass(frozen=True)
@@ -450,7 +456,7 @@ class DeterministicRegistryBriefGenerator:
             source_evidence_sha256=change.current_snapshot.evidence_sha256,
             change_summary=(
                 f"The monitored source advanced from {change.prior_snapshot.source_version} "
-                f"to {change.current_snapshot.source_version}."
+                f"to {change.current_snapshot.source_version}; {change.changed_segment_count} newly observed public-content segment(s) were isolated for review."
             ),
             recommended_next_action=(
                 f"Review the cited {change.source.jurisdiction} change for "
@@ -462,6 +468,8 @@ class DeterministicRegistryBriefGenerator:
             jurisdiction=change.source.jurisdiction,
             source_owner=change.source.source_owner,
             operational_focus=change.source.operational_focus,
+            changed_content_excerpt_sha256=sha256(change.changed_content_excerpt.encode("utf-8")).hexdigest(),
+            changed_segment_count=change.changed_segment_count,
         )
 
 
@@ -597,7 +605,8 @@ class GeminiRegistryBriefGenerator:
                     "prior_version": change.prior_snapshot.source_version,
                     "current_version": change.current_snapshot.source_version,
                 },
-                "public_source_content": change.current_capture.normalized_content[:12_000],
+                "changed_public_source_excerpt": change.changed_content_excerpt,
+                "changed_segment_count": change.changed_segment_count,
                 "output_schema": {
                     "change_summary": "plain factual summary, maximum 500 characters",
                     "recommended_next_action": "operational review action, maximum 300 characters",
@@ -609,7 +618,7 @@ class GeminiRegistryBriefGenerator:
             name="registry_change_brief",
             model=MODEL,
             instruction=(
-                "You summarize only the supplied public registry content. Return a JSON object with "
+                "You summarize only the supplied newly observed public registry text. Return a JSON object with "
                 "exactly change_summary and recommended_next_action. Do not give legal advice, "
                 "infer obligations, mention recipients, use tools, or take action."
             ),
@@ -660,6 +669,8 @@ class GeminiRegistryBriefGenerator:
             jurisdiction=change.source.jurisdiction,
             source_owner=change.source.source_owner,
             operational_focus=change.source.operational_focus,
+            changed_content_excerpt_sha256=sha256(change.changed_content_excerpt.encode("utf-8")).hexdigest(),
+            changed_segment_count=change.changed_segment_count,
         )
 
 
@@ -949,6 +960,8 @@ class RegistryWatchEngine:
                 prior_snapshot=prior,
                 current_snapshot=snapshot,
                 current_capture=capture,
+                changed_content_excerpt=_changed_content_excerpt(prior, capture),
+                changed_segment_count=_changed_segment_count(prior, capture),
             )
             brief = self._brief_generator.generate(change)
             action_candidate = self._action_candidate(brief, source, started_at)
@@ -1007,6 +1020,7 @@ class RegistryWatchEngine:
             evidence_sha256=capture.evidence_sha256,
             byte_count=capture.byte_count,
             normalization_version=capture.normalization_version,
+            content_segment_hashes=_content_segment_hashes(capture.normalized_content),
         )
 
     def _run(
@@ -1274,6 +1288,38 @@ def _optional_config_string(value: dict[str, Any], field: str, default: str) -> 
     return candidate.strip()
 
 
+def _content_segments(content: str) -> tuple[str, ...]:
+    """Create bounded, public-text segments for private change comparison only."""
+
+    segments = tuple(
+        segment[:800]
+        for segment in re.split(r"(?<=[.!?])\s+|\s+[•▪]\s+", content)
+        if len(segment.strip()) >= 24
+        for segment in (" ".join(segment.split()).strip(),)
+    )
+    return segments[:120]
+
+
+def _content_segment_hashes(content: str) -> tuple[str, ...]:
+    return tuple(sha256(segment.encode("utf-8")).hexdigest() for segment in _content_segments(content))
+
+
+def _changed_content_segments(prior: RegistrySnapshot, capture: RegistrySourceCapture) -> tuple[str, ...]:
+    prior_hashes = set(prior.content_segment_hashes)
+    return tuple(segment for segment in _content_segments(capture.normalized_content) if sha256(segment.encode("utf-8")).hexdigest() not in prior_hashes)[:12]
+
+
+def _changed_content_excerpt(prior: RegistrySnapshot, capture: RegistrySourceCapture) -> str:
+    segments = _changed_content_segments(prior, capture)
+    if not segments:
+        return "No newly separable public-text segment was available; review the cited source revision."
+    return "\n".join(segments)[:6_000]
+
+
+def _changed_segment_count(prior: RegistrySnapshot, capture: RegistrySourceCapture) -> int:
+    return len(_changed_content_segments(prior, capture))
+
+
 def _run_from_mapping(data: dict[str, Any]) -> RegistryWatchRun:
     snapshot_data = data.get("snapshot")
     brief_data = data.get("brief")
@@ -1281,6 +1327,9 @@ def _run_from_mapping(data: dict[str, Any]) -> RegistryWatchRun:
     if isinstance(snapshot_data, dict):
         snapshot_mapping = dict(snapshot_data)
         snapshot_mapping.setdefault("normalization_version", LEGACY_NORMALIZATION_VERSION)
+        snapshot_mapping.setdefault("content_segment_hashes", ())
+        if isinstance(snapshot_mapping["content_segment_hashes"], list):
+            snapshot_mapping["content_segment_hashes"] = tuple(snapshot_mapping["content_segment_hashes"])
         snapshot = RegistrySnapshot(**snapshot_mapping)
     else:
         snapshot = None
@@ -1289,6 +1338,8 @@ def _run_from_mapping(data: dict[str, Any]) -> RegistryWatchRun:
         brief_mapping.setdefault("jurisdiction", "")
         brief_mapping.setdefault("source_owner", "")
         brief_mapping.setdefault("operational_focus", "")
+        brief_mapping.setdefault("changed_content_excerpt_sha256", "")
+        brief_mapping.setdefault("changed_segment_count", 0)
         brief = RegistryImpactBrief(**brief_mapping)
     else:
         brief = None
