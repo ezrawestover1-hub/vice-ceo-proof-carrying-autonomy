@@ -168,8 +168,10 @@ perform an external action.
    and Maryland sources, visible-content hashes, the evidence-linked owner
    action candidate, private owner-review inbox, deduplication, and the
    separately configured owner-brief boundary.
-5. **2:00–2:25 — Gemini proof.** Show the completed hash-only Gemini canary:
-   no customer data, no tools, and no business effect.
+5. **2:00–2:25 — Gemini proof.** Show the completed hash-only Gemini canary,
+   then the explicitly labeled controlled replay: fixed non-production change
+   → Gemini brief → `awaiting_owner_review`, with no Firestore write, email,
+   customer data, or business effect.
 6. **2:25–3:10 — Reviewer experience.** Open the public `/demo` and show the
    proof-carrying synthetic workflow, Action Warrant, and replay surface.
 7. **3:10–3:40 — Resilience.** Show an unregistered source rejection and the

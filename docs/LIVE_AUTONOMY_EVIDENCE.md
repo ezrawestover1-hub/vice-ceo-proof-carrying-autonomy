@@ -48,6 +48,16 @@ never customer data, and cannot send an external message. No production source
 change has yet invoked that briefing path; the canary remains the completed
 provider-connectivity proof.
 
+On 2026-08-24, the explicit controlled replay command completed the exact
+changed-source → Gemini/ADK → owner-action-candidate code path locally. It used
+two fixed non-production fixture revisions and produced
+`registry_brief_fde8d07fd3c759fbbcfb` with model mode `gemini_3_5_flash_adk`,
+two changed segments, and candidate `registry_action_16a8af7156576501ade6` in
+`awaiting_owner_review`. The resulting receipt reports zero customer mutation,
+zero external business effect, and `not_configured` internal delivery. It made
+no Firestore write or official-source fetch, so it is evidence of the bounded
+code path—not a claim that an EPR registry changed.
+
 ## Deliberate limits
 
 - The operational worker fetches only explicitly reviewed **public** sources.

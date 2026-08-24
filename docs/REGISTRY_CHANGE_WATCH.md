@@ -99,6 +99,16 @@ commercial-outreach credential for this channel.
 bounded, cited briefing after the watcher detects a materially changed public
 source; it does not enable delivery by itself.
 
+### Controlled changed-source replay
+
+`python -m app.registry_change_replay --confirm-controlled-replay` is a video
+and regression-proof tool, not an operating source. It additionally requires
+`VICE_CEO_CONTROLLED_REPLAY_ENABLED=true` and Vertex configuration. It drives
+the same changed-source, Gemini/ADK, and owner-queue code path with two fixed
+non-production fixture revisions. It never fetches an official registry,
+writes Firestore, reads customer data, or attempts owner delivery. Any video
+must label it a controlled replay rather than a live public-source change.
+
 ## Deployment contract
 
 Before a live registry-watch deployment, configure an isolated Google Cloud

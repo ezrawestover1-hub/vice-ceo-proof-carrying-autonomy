@@ -290,6 +290,24 @@ VICE_CEO_GEMINI_MODEL=gemini-3.5-flash
 VICE_CEO_CLAIM_STORE=in_memory
 ```
 
+### Controlled changed-source replay
+
+For the video, this **explicitly opt-in** command runs the actual Registry
+Change Watch changed-source branch through Gemini/ADK using two fixed
+non-production fixture revisions. It does not fetch an official registry,
+write Firestore, read customer data, or deliver email.
+
+```bash
+VICE_CEO_CONTROLLED_REPLAY_ENABLED=true \
+GOOGLE_CLOUD_PROJECT=your-project-id \
+GOOGLE_CLOUD_LOCATION=us \
+GOOGLE_GENAI_USE_VERTEXAI=TRUE \
+uv run python -m app.registry_change_replay --confirm-controlled-replay
+```
+
+Keep the disclosure visible in any recording: this is a controlled fixture
+replay of a real code path, not a claim that an official registry changed.
+
 ## Deployment boundary
 
 The guarded Registry Change Watch deployment uses a private Cloud Run worker,

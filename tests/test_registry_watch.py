@@ -11,6 +11,7 @@ import unittest
 from unittest.mock import patch
 
 from app.registry_watch import (
+    DeterministicRegistryBriefGenerator,
     FixtureRegistrySourceFetcher,
     HttpsRegistrySourceFetcher,
     InMemoryRegistryWatchStore,
@@ -28,6 +29,7 @@ from app.registry_watch import (
     encode_registry_watch_pubsub_event,
     _model_json_object,
 )
+from app.registry_change_replay import run_controlled_registry_change_replay
 
 
 class RegistryWatchTests(unittest.TestCase):
@@ -204,6 +206,18 @@ class RegistryWatchTests(unittest.TestCase):
                 decision="archive",
                 decided_at="2026-08-23T12:06:00Z",
             )
+
+    def test_controlled_change_replay_is_explicitly_nonproduction_and_zero_effect(self) -> None:
+        replay = run_controlled_registry_change_replay(DeterministicRegistryBriefGenerator())
+
+        self.assertEqual(replay["replay_kind"], "controlled_registry_change_replay")
+        self.assertEqual(replay["brief_model_mode"], "deterministic_evidence_summary")
+        self.assertEqual(replay["action_status"], "awaiting_owner_review")
+        self.assertTrue(replay["action_requires_owner_decision"])
+        self.assertFalse(replay["external_business_effect"])
+        self.assertFalse(replay["customer_record_mutation"])
+        self.assertEqual(replay["internal_delivery_state"], "not_configured")
+        self.assertNotIn("after the replayed change", dumps(replay))
 
     def test_duplicate_event_returns_the_original_completed_run(self) -> None:
         engine = self._engine("revision-1", "public registry source revision one")
