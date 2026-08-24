@@ -91,6 +91,9 @@ The guarded two-service deployment handoff is
 an explicit `--execute` to create Cloud resources. Start source configuration
 from [registry-sources.example.json](config/registry-sources.example.json),
 replacing its placeholder with an approved public source before deployment.
+The reviewed three-source operating set is in
+[registry-sources.epr-portfolio.json](config/registry-sources.epr-portfolio.json);
+each source has its own owner, focus, and private scheduler cadence.
 The private operating worker is intentionally not exposed through the public
 reviewer URL; prove it separately with Cloud Run, Scheduler, and Firestore
 receipts rather than turning a judge-facing page into an operational webhook.

@@ -3,6 +3,9 @@
     "source_id": "oregon_deq_producer_obligations",
     "display_name": "Oregon DEQ Producers of Covered Products",
     "canonical_url": "https://www.oregon.gov/deq/recycling/Pages/Producers-of-Covered-Products.aspx",
-    "jurisdiction": "US-OR"
+    "jurisdiction": "US-OR",
+    "source_owner": "Oregon Department of Environmental Quality",
+    "refresh_schedule": "30 8 * * *",
+    "operational_focus": "producer obligations and Recycling Modernization Act program updates"
   }
 ]

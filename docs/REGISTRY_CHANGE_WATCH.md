@@ -45,7 +45,7 @@ closed local demo. To select the configured worker, set
 `VICE_CEO_REGISTRY_WATCH_MODE=configured` and provide:
 
 ```text
-VICE_CEO_REGISTRY_SOURCES_JSON=[{"source_id":"...","display_name":"...","canonical_url":"https://...","jurisdiction":"..."}]
+VICE_CEO_REGISTRY_SOURCES_JSON=[{"source_id":"...","display_name":"...","canonical_url":"https://...","jurisdiction":"...","source_owner":"...","refresh_schedule":"0 9 * * *","operational_focus":"..."}]
 VICE_CEO_REGISTRY_WATCH_STORE=firestore
 VICE_CEO_REGISTRY_BRIEF_GENERATOR=gemini
 VICE_CEO_REGISTRY_GEMINI_ENABLED=true
@@ -124,9 +124,13 @@ The first production-like run needs these proof points:
 ## Source onboarding
 
 Each real source must be added through reviewed configuration, not incoming
-events. Record its canonical HTTPS URL, jurisdiction, display name, refresh
-interval, permitted content type, and source owner. Preserve the previous and
-current evidence hashes so a reviewer can inspect why a change was reported.
+events. Record its canonical HTTPS URL, jurisdiction, display name,
+`source_owner`, `refresh_schedule`, and `operational_focus`. Preserve the
+previous and current evidence hashes so a reviewer can inspect why a change
+was reported. `refresh_schedule` is used to create one private Scheduler job
+per approved source. `operational_focus` appears in the bounded owner brief so
+the change is framed as a specific Westover review task—not as a legal
+conclusion.
 
 Do not send the source body, customer data, contact records, or unreviewed
 prompt text to an external tool. The registry watcher produces an internal
@@ -145,3 +149,19 @@ This source is a compliance-update surface, not a claim that Westover has a
 complete producer-member registry or that the worker can determine a company's
 legal status. Any use of a change for an external message still requires a
 separate approved outreach policy and recipient authority.
+
+### Reviewed public EPR portfolio
+
+`config/registry-sources.epr-portfolio.json` contains three official public
+program surfaces that are tested with the worker's bounded HTTPS fetcher:
+
+| Jurisdiction | Source | What Vice CEO watches |
+| --- | --- | --- |
+| US-OR | Oregon DEQ Producers of Covered Products | Producer obligations and Recycling Modernization Act updates |
+| US-CA | CalRecycle SB 54 Packaging EPR | Program news and producer guidance |
+| US-MD | Maryland Producer Responsibility | Packaging and paper program updates plus published producer materials |
+
+This is a deliberately curated watchlist, not a claim that these pages are a
+complete registry of regulated businesses. Each source uses a staggered daily
+private schedule, retains separate evidence history, and produces an internal
+review recommendation only when its visible public content changes.

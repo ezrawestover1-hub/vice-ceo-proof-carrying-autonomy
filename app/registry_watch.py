@@ -61,9 +61,22 @@ class RegistrySource:
     display_name: str
     canonical_url: str
     jurisdiction: str
+    source_owner: str = "Unspecified public owner"
+    refresh_schedule: str = "0 9 * * *"
+    operational_focus: str = "public EPR program update"
 
     def __post_init__(self) -> None:
-        if not self.source_id.strip() or not self.display_name.strip() or not self.jurisdiction.strip():
+        if not all(
+            value.strip()
+            for value in (
+                self.source_id,
+                self.display_name,
+                self.jurisdiction,
+                self.source_owner,
+                self.refresh_schedule,
+                self.operational_focus,
+            )
+        ):
             raise ValueError("registry_source_identity_required")
         if not self.canonical_url.startswith("https://"):
             raise ValueError("registry_source_requires_https")
@@ -209,6 +222,9 @@ class RegistryImpactBrief:
     recommended_next_action: str
     legal_or_regulatory_conclusion: bool
     model_mode: str
+    jurisdiction: str = ""
+    source_owner: str = ""
+    operational_focus: str = ""
 
 
 @dataclass(frozen=True)
@@ -405,11 +421,15 @@ class DeterministicRegistryBriefGenerator:
                 f"to {change.current_snapshot.source_version}."
             ),
             recommended_next_action=(
-                "Review the cited source change and decide whether to prepare a "
-                "registry-backed outreach candidate."
+                f"Review the cited {change.source.jurisdiction} change for "
+                f"{change.source.operational_focus}, compare it to the retained "
+                "evidence, and decide whether an internal Westover impact memo is needed."
             ),
             legal_or_regulatory_conclusion=False,
             model_mode="deterministic_evidence_summary",
+            jurisdiction=change.source.jurisdiction,
+            source_owner=change.source.source_owner,
+            operational_focus=change.source.operational_focus,
         )
 
 
@@ -539,6 +559,9 @@ class GeminiRegistryBriefGenerator:
                 "source": {
                     "display_name": change.source.display_name,
                     "canonical_url": change.source.canonical_url,
+                    "jurisdiction": change.source.jurisdiction,
+                    "source_owner": change.source.source_owner,
+                    "operational_focus": change.source.operational_focus,
                     "prior_version": change.prior_snapshot.source_version,
                     "current_version": change.current_snapshot.source_version,
                 },
@@ -602,6 +625,9 @@ class GeminiRegistryBriefGenerator:
             recommended_next_action=next_action,
             legal_or_regulatory_conclusion=False,
             model_mode="gemini_3_5_flash_adk",
+            jurisdiction=change.source.jurisdiction,
+            source_owner=change.source.source_owner,
+            operational_focus=change.source.operational_focus,
         )
 
 
@@ -1137,15 +1163,21 @@ def _registry_sources_from_environment() -> tuple[RegistrySource, ...]:
         raise ValueError("registry_sources_json_must_be_nonempty_list")
     sources: list[RegistrySource] = []
     seen: set[str] = set()
-    expected_fields = {"source_id", "display_name", "canonical_url", "jurisdiction"}
+    required_fields = {"source_id", "display_name", "canonical_url", "jurisdiction"}
+    optional_fields = {"source_owner", "refresh_schedule", "operational_focus"}
     for item in parsed:
-        if not isinstance(item, dict) or set(item) != expected_fields:
+        if not isinstance(item, dict) or not required_fields.issubset(item) or set(item) - (required_fields | optional_fields):
             raise ValueError("registry_source_configuration_fields_invalid")
         source = RegistrySource(
             source_id=_required_config_string(item, "source_id"),
             display_name=_required_config_string(item, "display_name"),
             canonical_url=_required_config_string(item, "canonical_url"),
             jurisdiction=_required_config_string(item, "jurisdiction"),
+            source_owner=_optional_config_string(item, "source_owner", "Unspecified public owner"),
+            refresh_schedule=_optional_config_string(item, "refresh_schedule", "0 9 * * *"),
+            operational_focus=_optional_config_string(
+                item, "operational_focus", "public EPR program update"
+            ),
         )
         if source.source_id in seen:
             raise ValueError("registry_source_configuration_duplicate_id")
@@ -1168,6 +1200,13 @@ def _required_config_string(value: dict[str, Any], field: str) -> str:
     return candidate.strip()
 
 
+def _optional_config_string(value: dict[str, Any], field: str, default: str) -> str:
+    candidate = value.get(field, default)
+    if not isinstance(candidate, str) or not candidate.strip():
+        raise ValueError("registry_source_configuration_value_invalid")
+    return candidate.strip()
+
+
 def _run_from_mapping(data: dict[str, Any]) -> RegistryWatchRun:
     snapshot_data = data.get("snapshot")
     brief_data = data.get("brief")
@@ -1178,7 +1217,14 @@ def _run_from_mapping(data: dict[str, Any]) -> RegistryWatchRun:
         snapshot = RegistrySnapshot(**snapshot_mapping)
     else:
         snapshot = None
-    brief = RegistryImpactBrief(**brief_data) if isinstance(brief_data, dict) else None
+    if isinstance(brief_data, dict):
+        brief_mapping = dict(brief_data)
+        brief_mapping.setdefault("jurisdiction", "")
+        brief_mapping.setdefault("source_owner", "")
+        brief_mapping.setdefault("operational_focus", "")
+        brief = RegistryImpactBrief(**brief_mapping)
+    else:
+        brief = None
     delivery = InternalDeliveryReceipt(**delivery_data) if isinstance(delivery_data, dict) else None
     return RegistryWatchRun(
         run_id=str(data["run_id"]),

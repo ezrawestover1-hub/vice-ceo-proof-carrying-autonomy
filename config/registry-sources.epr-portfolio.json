@@ -1,0 +1,29 @@
+[
+  {
+    "source_id": "oregon_deq_producer_obligations",
+    "display_name": "Oregon DEQ Producers of Covered Products",
+    "canonical_url": "https://www.oregon.gov/deq/recycling/Pages/Producers-of-Covered-Products.aspx",
+    "jurisdiction": "US-OR",
+    "source_owner": "Oregon Department of Environmental Quality",
+    "refresh_schedule": "30 8 * * *",
+    "operational_focus": "producer obligations and Recycling Modernization Act program updates"
+  },
+  {
+    "source_id": "california_calrecycle_sb54",
+    "display_name": "California CalRecycle SB 54 Packaging EPR",
+    "canonical_url": "https://calrecycle.ca.gov/packaging/packaging-epr/",
+    "jurisdiction": "US-CA",
+    "source_owner": "California Department of Resources Recycling and Recovery",
+    "refresh_schedule": "35 8 * * *",
+    "operational_focus": "SB 54 packaging producer responsibility program news and producer guidance"
+  },
+  {
+    "source_id": "maryland_producer_responsibility",
+    "display_name": "Maryland Producer Responsibility",
+    "canonical_url": "https://mde.maryland.gov/programs/land/WasteManagement/Pages/ProducerResponsibility.aspx",
+    "jurisdiction": "US-MD",
+    "source_owner": "Maryland Department of the Environment",
+    "refresh_schedule": "40 8 * * *",
+    "operational_focus": "packaging and paper producer responsibility program updates and published producer materials"
+  }
+]

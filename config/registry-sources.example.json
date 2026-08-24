@@ -3,6 +3,9 @@
     "source_id": "replace_with_reviewed_registry_id",
     "display_name": "Replace with reviewed public registry name",
     "canonical_url": "https://registry.example.gov/epr",
-    "jurisdiction": "replace_with_jurisdiction"
+    "jurisdiction": "replace_with_jurisdiction",
+    "source_owner": "Government agency or registry owner",
+    "refresh_schedule": "0 9 * * *",
+    "operational_focus": "specific EPR program surface being watched"
   }
 ]

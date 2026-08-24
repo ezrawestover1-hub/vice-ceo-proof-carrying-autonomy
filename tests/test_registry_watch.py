@@ -66,6 +66,26 @@ class RegistryWatchTests(unittest.TestCase):
         self.assertEqual(source.jurisdiction, "US-OR")
         self.assertTrue(source.canonical_url.startswith("https://www.oregon.gov/"))
 
+    def test_epr_portfolio_has_three_described_official_public_sources(self) -> None:
+        source_file = (
+            Path(__file__).resolve().parents[1] / "config" / "registry-sources.epr-portfolio.json"
+        )
+        configured = loads(source_file.read_text(encoding="utf-8"))
+        sources = tuple(RegistrySource(**item) for item in configured)
+
+        self.assertEqual(
+            [source.source_id for source in sources],
+            [
+                "oregon_deq_producer_obligations",
+                "california_calrecycle_sb54",
+                "maryland_producer_responsibility",
+            ],
+        )
+        self.assertEqual({source.jurisdiction for source in sources}, {"US-OR", "US-CA", "US-MD"})
+        self.assertTrue(all(source.canonical_url.startswith("https://") for source in sources))
+        self.assertTrue(all(source.source_owner != "Unspecified public owner" for source in sources))
+        self.assertTrue(all(source.operational_focus != "public EPR program update" for source in sources))
+
     def test_first_event_captures_a_baseline_without_delivery(self) -> None:
         run = self._engine("revision-1", "public registry source revision one").process(
             self._event("registry-watch-1")
@@ -106,6 +126,10 @@ class RegistryWatchTests(unittest.TestCase):
         self.assertEqual(run.brief.prior_version, "revision-1")
         self.assertEqual(run.brief.current_version, "revision-2")
         self.assertEqual(run.brief.source_citation_url, self.source.canonical_url)
+        self.assertEqual(run.brief.jurisdiction, self.source.jurisdiction)
+        self.assertEqual(run.brief.source_owner, self.source.source_owner)
+        self.assertEqual(run.brief.operational_focus, self.source.operational_focus)
+        self.assertIn(self.source.jurisdiction, run.brief.recommended_next_action)
         self.assertFalse(run.brief.legal_or_regulatory_conclusion)
         self.assertEqual(run.brief.model_mode, "deterministic_evidence_summary")
         self.assertIsNotNone(run.internal_delivery)

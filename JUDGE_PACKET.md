@@ -3,7 +3,8 @@
 **Status:** Working draft; nothing has been sent to Devpost. The public
 reviewer demo is fixture-only, while a separately verified private Registry
 Change Watch runs on Cloud Run with Cloud Scheduler OIDC, Firestore evidence
-state, an approved public Oregon DEQ source, and a hash-only Gemini canary.
+state, a curated official EPR portfolio (Oregon, California, and Maryland),
+and a hash-only Gemini canary.
 It has no customer-data connector, no prospect messaging authority, and its
 owner-brief delivery channel remains disabled until separately configured.
 
@@ -134,7 +135,7 @@ uv run python -m app.demo_cli --recording-packet --pretty
 uv run python -m app.demo_cli --proof-verification --pretty
 ```
 
-The latest local verification run passed all **75 tests** and reported
+The latest local verification run passed all **76 tests** and reported
 `all_checks_passed: true`. These commands use closed synthetic fixtures only;
 they do not start a server, contact a provider, access customer records, or
 perform an external action.
@@ -158,15 +159,16 @@ perform an external action.
 2. **0:25–0:50 — Promise.** Vice CEO watches approved sources in the
    background and carries evidence forward instead of silently guessing.
 3. **0:50–1:35 — Live autonomy.** Show Cloud Scheduler, the private Cloud Run
-   worker, and the Firestore rebaseline then no-change receipts.
-4. **1:35–2:00 — Change discipline.** Show the registered Oregon DEQ source,
-   visible-content hash, deduplication, and the disabled owner-brief boundary.
+   worker, and the Firestore portfolio baseline plus no-change receipts.
+4. **1:35–2:00 — Change discipline.** Show the registered Oregon, California,
+   and Maryland sources, visible-content hashes, deduplication, and the
+   disabled owner-brief boundary.
 5. **2:00–2:25 — Gemini proof.** Show the completed hash-only Gemini canary:
    no customer data, no tools, and no business effect.
 6. **2:25–3:10 — Reviewer experience.** Open the public `/demo` and show the
    proof-carrying synthetic workflow, Action Warrant, and replay surface.
 7. **3:10–3:40 — Resilience.** Show an unregistered source rejection and the
-   automated 75-test result.
+   automated 76-test result.
 8. **3:40–4:00 — Close.** State the value proposition: quiet, accountable EPR
    intelligence that asks for a real decision only when evidence warrants it.
 
