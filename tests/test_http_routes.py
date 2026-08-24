@@ -54,6 +54,8 @@ class HttpRouteSmokeTests(unittest.TestCase):
         self.assertIn("Approve simulation", response.text)
         self.assertIn("Keep in review", response.text)
         self.assertIn("does not verify identity", response.text)
+        self.assertIn("Simulation approved", response.text)
+        self.assertIn("A warrant-backed synthetic receipt was created", response.text)
 
     def test_structured_demo_routes_return_only_synthetic_evidence(self) -> None:
         judge = self.client.get("/demo/judge-flow")
