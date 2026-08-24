@@ -8,6 +8,7 @@ REGION="us-central1"
 SERVICE="vice-ceo-registry-worker"
 PORT="8765"
 OPEN_BROWSER=true
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 usage() {
   cat <<'EOF'
@@ -39,9 +40,16 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if ! command -v gcloud >/dev/null 2>&1; then
-  echo "gcloud is required. Install or add Google Cloud CLI to PATH first." >&2
+GCLOUD_BIN="${GCLOUD_BIN:-$(command -v gcloud 2>/dev/null || true)}"
+if [[ -z "$GCLOUD_BIN" && -x "/Users/${USER}/.local/google-cloud-sdk/bin/gcloud" ]]; then
+  GCLOUD_BIN="/Users/${USER}/.local/google-cloud-sdk/bin/gcloud"
+fi
+if [[ -z "$GCLOUD_BIN" ]]; then
+  echo "gcloud is required. Install Google Cloud CLI or set GCLOUD_BIN to its executable path." >&2
   exit 1
+fi
+if [[ -z "${CLOUDSDK_PYTHON:-}" && -x "$SCRIPT_DIR/../.venv/bin/python" ]]; then
+  export CLOUDSDK_PYTHON="$SCRIPT_DIR/../.venv/bin/python"
 fi
 if ! [[ "$PORT" =~ ^[0-9]+$ ]] || (( PORT < 1024 || PORT > 65535 )); then
   echo "--port must be an available local port between 1024 and 65535." >&2
@@ -59,7 +67,7 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 echo "Starting an authenticated local proxy to ${SERVICE}…"
-gcloud run services proxy "$SERVICE" --project "$PROJECT_ID" --region "$REGION" --port "$PORT" >"$PROXY_LOG" 2>&1 &
+"$GCLOUD_BIN" run services proxy "$SERVICE" --project "$PROJECT_ID" --region "$REGION" --port "$PORT" >"$PROXY_LOG" 2>&1 &
 PROXY_PID=$!
 
 for attempt in {1..30}; do
