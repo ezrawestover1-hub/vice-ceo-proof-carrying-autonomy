@@ -101,7 +101,7 @@ inspectable before an agent is permitted to progress.
    stale warrants, tampering, and changed controls are denied.
 5. **Reviewable proof bundle** — a single bundle links the walkthrough,
    evaluation report, capability ledger, and closed source-manifest hash.
-6. **Safety regression coverage** — 77 automated tests cover ingress,
+6. **Safety regression coverage** — 78 automated tests cover ingress,
    authority, evidence integrity, evaluator behavior, and visual/demo routes.
 7. **Background EPR Registry Change Watch** — a private daily Scheduler job
    fetches only approved public sources, hashes visible content, saves durable
@@ -135,7 +135,7 @@ uv run python -m app.demo_cli --recording-packet --pretty
 uv run python -m app.demo_cli --proof-verification --pretty
 ```
 
-The latest local verification run passed all **77 tests** and reported
+The latest local verification run passed all **78 tests** and reported
 `all_checks_passed: true`. These commands use closed synthetic fixtures only;
 they do not start a server, contact a provider, access customer records, or
 perform an external action.
@@ -168,7 +168,7 @@ perform an external action.
 6. **2:25–3:10 — Reviewer experience.** Open the public `/demo` and show the
    proof-carrying synthetic workflow, Action Warrant, and replay surface.
 7. **3:10–3:40 — Resilience.** Show an unregistered source rejection and the
-   automated 77-test result.
+   automated 78-test result.
 8. **3:40–4:00 — Close.** State the value proposition: quiet, accountable EPR
    intelligence that asks for a real decision only when evidence warrants it.
 
