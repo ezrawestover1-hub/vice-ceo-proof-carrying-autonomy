@@ -23,7 +23,7 @@ does not grant any new business authority.
 | 2026-08-24 05:18:53 | `registry_run_7135d8efce632e98ce66` | `no_change` / `source_evidence_hash_unchanged` | A distinct scheduled event read the same evidence hash and stayed quiet. |
 | 2026-08-24 05:43:16 | `registry_run_e98249943f48424c66af` | `baseline_captured` / `first_source_snapshot_recorded` | An explicit invocation of the enabled California Scheduler job reached the private worker and persisted CalRecycle's first source baseline. No brief or delivery was created. |
 | 2026-08-24 05:43:17 | `registry_run_50eec5ce39c50619832f` | `baseline_captured` / `first_source_snapshot_recorded` | An explicit invocation of the enabled Maryland Scheduler job reached the private worker and persisted Maryland's first source baseline. No brief or delivery was created. |
-| 2026-08-24 06:01–06:02 | Three distinct Scheduler runs | `no_change` / `source_evidence_hash_unchanged` | Each portfolio source fetched unchanged visible content and refreshed its private segment-hash comparison baseline (Oregon 40 segments, California 32, Maryland 24). No Gemini brief, owner action, or delivery was created. |
+| 2026-08-24 06:01–06:02 | `registry_run_a7da3312d831b5e256fe` (OR), `registry_run_f330efb468ca0e896f2c` (CA), `registry_run_9f6548dd4d87569d5eff` (MD) | `no_change` / `source_evidence_hash_unchanged` | Each portfolio source fetched unchanged visible content and refreshed its private segment-hash comparison baseline (Oregon 40 segments, California 32, Maryland 24). No Gemini brief, owner action, or delivery was created. |
 
 The two Oregon receipts use the normalized visible-content SHA-256
 `e5da9c7d8eab3bdb7e430d74fecc6a7e440e1559c9686fbace796918ff221f72`.
