@@ -55,6 +55,18 @@ def build_submission_evidence_manifest() -> SubmissionEvidenceManifest:
 
     tracks = (
         EvidenceTrack(
+            track_id="registry_change_watch",
+            reviewer_claim="A scheduled source-change event can be deduplicated, linked to a source snapshot, and turned into a bounded owner-facing operational brief.",
+            implementation_references=(
+                "app/registry_watch.py",
+                "app/fast_api_app.py#/pubsub/registry-watch",
+                "tests/test_registry_watch.py",
+            ),
+            verification_method="Run the Registry Change Watch tests or inspect /demo/registry-watch.",
+            evidence_status="locally_verified_synthetic_only",
+            production_claim="This local manifest does not query production deployment state. Verify any private Scheduler, Cloud Run, Firestore, Gemini, or delivery evidence separately; the reviewer surface itself remains synthetic-only.",
+        ),
+        EvidenceTrack(
             track_id="agent_orchestration",
             reviewer_claim="Specialist roles are separated and tool authority is deliberately asymmetric.",
             implementation_references=(

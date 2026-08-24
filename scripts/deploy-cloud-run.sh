@@ -6,7 +6,8 @@ usage() {
   cat <<'EOF'
 Usage:
   ./scripts/deploy-cloud-run.sh --project PROJECT --region REGION --service SERVICE \
-    --service-account SERVICE_ACCOUNT --revision GIT_REVISION [--execute]
+    --service-account SERVICE_ACCOUNT --revision GIT_REVISION \
+    [--model-location global|us|eu] [--execute]
 
 Without --execute this script prints a pinned, no-effect plan only.
 EOF
@@ -17,6 +18,7 @@ REGION=""
 SERVICE_NAME=""
 SERVICE_ACCOUNT=""
 REVISION=""
+MODEL_LOCATION="us"
 EXECUTE=false
 
 while [[ $# -gt 0 ]]; do
@@ -26,6 +28,7 @@ while [[ $# -gt 0 ]]; do
     --service) SERVICE_NAME="${2:?service value required}"; shift 2 ;;
     --service-account) SERVICE_ACCOUNT="${2:?service account value required}"; shift 2 ;;
     --revision) REVISION="${2:?revision value required}"; shift 2 ;;
+    --model-location) MODEL_LOCATION="${2:?model location required}"; shift 2 ;;
     --execute) EXECUTE=true; shift ;;
     --help|-h) usage; exit 0 ;;
     *) printf 'unknown argument: %s\n' "$1" >&2; usage >&2; exit 2 ;;
@@ -41,6 +44,7 @@ done
 [[ "$SERVICE_NAME" =~ ^[a-z]([-a-z0-9]*[a-z0-9])?$ ]] || { echo "invalid_service_name" >&2; exit 2; }
 [[ "$SERVICE_ACCOUNT" =~ ^[^@[:space:]]+@[^@[:space:]]+\.iam\.gserviceaccount\.com$ ]] || { echo "invalid_service_account" >&2; exit 2; }
 [[ "$REVISION" =~ ^[0-9a-fA-F]{7,40}$ ]] || { echo "invalid_revision" >&2; exit 2; }
+[[ "$MODEL_LOCATION" =~ ^(global|us|eu)$ ]] || { echo "invalid_model_location" >&2; exit 2; }
 
 command -v git >/dev/null || { echo "git_cli_required_for_revision_pinning" >&2; exit 1; }
 RUNTIME_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -53,8 +57,8 @@ REQUESTED_REVISION="$(tr '[:upper:]' '[:lower:]' <<<"$REVISION")"
 
 if [[ "$EXECUTE" != true ]]; then
   echo "Plan only. No Cloud Run deployment will occur without --execute."
-  printf 'Project: %s\nRegion: %s\nService: %s\nService account: %s\nPinned revision: %s\n' \
-    "$PROJECT_ID" "$REGION" "$SERVICE_NAME" "$SERVICE_ACCOUNT" "$CHECKED_OUT_REVISION"
+  printf 'Project: %s\nCloud Run region: %s\nGemini model location: %s\nService: %s\nService account: %s\nPinned revision: %s\n' \
+    "$PROJECT_ID" "$REGION" "$MODEL_LOCATION" "$SERVICE_NAME" "$SERVICE_ACCOUNT" "$CHECKED_OUT_REVISION"
   echo "Runtime: synthetic-only, in-memory claims, no connector flags."
   exit 0
 fi
@@ -67,7 +71,7 @@ gcloud run deploy "$SERVICE_NAME" \
   --region "$REGION" \
   --service-account "$SERVICE_ACCOUNT" \
   --no-allow-unauthenticated \
-  --set-env-vars "GOOGLE_CLOUD_PROJECT=$PROJECT_ID,GOOGLE_CLOUD_LOCATION=$REGION,GOOGLE_GENAI_USE_VERTEXAI=TRUE,VICE_CEO_CLAIM_STORE=in_memory,VICE_CEO_PROVIDER_CANARY_ENABLED=false" \
+  --set-env-vars "GOOGLE_CLOUD_PROJECT=$PROJECT_ID,GOOGLE_CLOUD_LOCATION=$MODEL_LOCATION,GOOGLE_GENAI_USE_VERTEXAI=TRUE,VICE_CEO_CLAIM_STORE=in_memory,VICE_CEO_PROVIDER_CANARY_ENABLED=false" \
   --labels "app=vice-ceo-hackathon-runtime,runtime=synthetic-only,revision=${CHECKED_OUT_REVISION:0:63}"
 
 READY_REVISION="$(gcloud run services describe "$SERVICE_NAME" --project "$PROJECT_ID" --region "$REGION" --format='value(status.latestReadyRevisionName)')"

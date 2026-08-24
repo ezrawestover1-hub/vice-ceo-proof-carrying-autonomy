@@ -5,9 +5,11 @@ the **Vice CEO: Proof-Carrying Business Autonomy** hackathon submission.
 
 It is new hackathon source. Westover EPR remains the authoritative system for
 customer, billing, outreach, support, and compliance records. This runtime
-only uses synthetic fixtures in Sprint 1 and has no credentials or connector
-for Resend, Stripe, Supabase service role, email delivery, refunds, billing
-changes, or customer-record mutation.
+contains no credentials or connector for Stripe, Supabase service-role access,
+refunds, billing changes, or customer-record mutation. Its public reviewer
+surface uses only synthetic fixtures. A separately configured private worker
+can watch approved public EPR sources, while its owner-only briefing adapter is
+disabled unless a dedicated Secret Manager credential is explicitly bound.
 
 ## Public submission package
 
@@ -21,13 +23,13 @@ application. The standalone package includes:
 - [public-release checklist](PUBLIC_REPOSITORY_CHECKLIST.md), which lists the
   allowed source set and explicitly excludes parent-repository material,
   credentials, customer data, and deployment configuration.
-- [judge packet](JUDGE_PACKET.md), which collects the evidence-backed project
-  story, video plan, and explicit pre-submission gaps without claiming a live
-  deployment.
 
-The runtime remains synthetic-only even when published. It must not be
-presented as a deployed Westover EPR service or as proof of real provider,
-customer, financial, messaging, or administrative actions.
+The public reviewer deployment remains synthetic-only even when published. It
+must not be presented as a deployed Westover EPR customer system or as proof of
+real customer, financial, outreach, or administrative actions. A separately
+verified private registry worker may fetch only approved public sources and
+write its own Firestore evidence state; it has no authority over Westover EPR
+records or external prospects.
 
 ## Sprint 1 through 19 capability
 
@@ -42,6 +44,9 @@ customer, financial, messaging, or administrative actions.
 - A server-owned Action Warrant gateway for the one registered simulated tool.
 - One-use, signed, short-lived warrant checks and global/capability stops.
 - A tenant-scoped idempotency-store contract with an explicit Firestore adapter.
+- A Registry Change Watch worker contract: strict scheduled events, source
+  snapshot hashes, durable run records, duplicate prevention, bounded change
+  briefs, and owner-facing delivery receipts.
 - A four-role Google ADK specialist fleet with redacted, route-validated handoffs.
 - A callable synthetic-support loop that emits redacted, zero-effect outcome receipts.
 - A deterministic Operational Twin that compares only registered synthetic options.
@@ -67,6 +72,28 @@ customer, financial, messaging, or administrative actions.
 - An opt-in, fixed-prompt Vertex canary at `/demo/provider-canary`, disabled by
   default and isolated from all customer context and tools.
 - No production data or external business effects.
+
+## Registry Change Watch
+
+`/demo/registry-watch` shows the intended background-autonomy loop using a
+closed fixture: capture a baseline, detect a later public-source revision,
+prepare a cited operational brief, and record an owner-facing test-delivery
+receipt. `POST /pubsub/registry-watch` accepts only a strict Pub/Sub-shaped
+watch event for an explicitly registered source; callers cannot provide a URL,
+body, recipient, or message text.
+
+The local demo is deliberately fixture-only. It does **not** fetch an external
+registry, call Gemini, persist to Cloud Firestore, or send email. The deploy
+work needed to turn this into a real background workflow is documented in
+[Registry Change Watch deployment plan](docs/REGISTRY_CHANGE_WATCH.md).
+The guarded two-service deployment handoff is
+`scripts/deploy-registry-watch.sh`; it defaults to a no-effect plan and needs
+an explicit `--execute` to create Cloud resources. Start source configuration
+from [registry-sources.example.json](config/registry-sources.example.json),
+replacing its placeholder with an approved public source before deployment.
+The private operating worker is intentionally not exposed through the public
+reviewer URL; prove it separately with Cloud Run, Scheduler, and Firestore
+receipts rather than turning a judge-facing page into an operational webhook.
 
 ## Provider canary boundary
 
@@ -187,8 +214,8 @@ The judge-demo route composes the synthetic evidence into a reviewer-friendly
 story. It is read-only and always reports that external actions are disabled.
 
 The submission-evidence route exposes exact component versions and reviewer
-claims. It deliberately distinguishes source-backed implementation from any
-unverified live deployment or production outcome.
+claims. It deliberately distinguishes source-backed local implementation from
+deployment evidence and from any production business outcome.
 
 For a recording-ready local summary, run `python -m app.demo_cli --pretty`
 from this runtime directory. It composes fixtures and proof records only; it
@@ -248,7 +275,10 @@ not commit credentials.
 
 ```text
 GOOGLE_CLOUD_PROJECT=your-project-id
-GOOGLE_CLOUD_LOCATION=us-east1
+# Gemini 3.5 Flash uses its Gemini endpoint location, which is distinct from
+# the Cloud Run service region. For a US deployment, use the supported `us`
+# multi-region endpoint.
+GOOGLE_CLOUD_LOCATION=us
 GOOGLE_GENAI_USE_VERTEXAI=TRUE
 VICE_CEO_GEMINI_MODEL=gemini-3.5-flash
 # Keep this unset or set it to in_memory for local tests.
@@ -257,10 +287,14 @@ VICE_CEO_CLAIM_STORE=in_memory
 
 ## Deployment boundary
 
-The provided Dockerfile is a Cloud Run container boundary, not a deployment.
-Do not deploy, attach Pub/Sub, grant service-account access, or enable any
-production connector until later sprints have wired the Firestore adapter,
-outcome receipts, and a separately approved deployment plan.
+The guarded Registry Change Watch deployment uses a private Cloud Run worker,
+Cloud Scheduler OIDC invocation, and Firestore evidence state. It operates
+only on explicitly reviewed public sources and begins with deterministic
+briefs and disabled owner delivery. The public `/demo` service remains a
+separate fixture-only reviewer surface. Do not enable owner briefing without a
+dedicated verified sender, allowlisted owner recipient, and Secret Manager
+credential; do not attach any customer, billing, support, or commercial
+outreach connector to this runtime.
 
 ## Guarded Cloud Run handoff
 

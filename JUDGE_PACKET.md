@@ -1,8 +1,11 @@
 # Vice CEO — Judge Packet (Working Draft)
 
-**Status:** Local preparation only. This file is not a Devpost project, and it
-does not claim that a Cloud Run deployment or a Gemini provider invocation has
-occurred.
+**Status:** Working draft; nothing has been sent to Devpost. The public
+reviewer demo is fixture-only, while a separately verified private Registry
+Change Watch runs on Cloud Run with Cloud Scheduler OIDC, Firestore evidence
+state, an approved public Oregon DEQ source, and a hash-only Gemini canary.
+It has no customer-data connector, no prospect messaging authority, and its
+owner-brief delivery channel remains disabled until separately configured.
 
 ## Submission positioning
 
@@ -20,15 +23,18 @@ specialist fleet with a separate policy/warrant gateway, scoped knowledge
 access, audit surfaces, and zero direct business-tool authority.
 
 **Important fit caveat**
-This is the strongest architectural match, not a claim that the current
-synthetic-only demo connects to production data. Before final entry, show the
-Cloud Run deployment proof required by the event and keep this limitation
-plainly visible.
+This is the strongest architectural match. The private EPR watcher is deployed
+and independently evidenced, while the public demo stays synthetic and
+reproducible. The final recording must show both layers and keep their distinct
+authority boundaries plainly visible.
 
 ## Judge-facing description
 
 Most business agents make a recommendation and leave people to trust a black
 box. Vice CEO treats the proof of a decision as part of the decision itself.
+Its first real background workflow watches an approved official EPR source,
+preserves a normalized evidence hash, and creates an internal operational
+brief only when the source materially changes.
 
 The project routes a named synthetic support case through a small Google ADK
 specialist fleet. Support Intake can read the bounded fixture; Policy Guard,
@@ -44,10 +50,13 @@ run the adversarial/evaluation suites. The Trust Engine never rises above
 `simulation_only`; external effects, customer data, persistent writes, and
 production authority remain disabled.
 
-Vice CEO is deliberately honest about its current boundary: it is a local,
-synthetic, zero-effect reference runtime. Its value is a production-minded
-control plane for future enterprise agents—not a false claim of autonomous
-customer, billing, messaging, or administrative actions.
+Vice CEO has two deliberately separated layers: a public, synthetic,
+zero-effect reviewer experience and a private Registry Change Watch. The
+private worker uses Cloud Scheduler OIDC, a locked public-source allowlist,
+Firestore idempotency/snapshots, and visible-content fingerprinting that avoids
+volatile page scaffolding. It currently makes no customer, billing, prospect,
+or administrative action. Owner-only briefing is disabled until a dedicated
+credential and allowlisted mailbox are configured.
 
 ## Why it matters
 
@@ -64,9 +73,9 @@ inspectable before an agent is permitted to progress.
 - Specialists have asymmetric capability: only Support Intake can inspect the
   named synthetic case; none can issue or consume a warrant or perform a
   business action.
-- The provider canary is opt-in, accepts no caller-provided prompt, makes zero
-  tool calls, logs a hash-only receipt, and does not expand authority even if
-  connectivity succeeds.
+- A completed Gemini 3.5 Flash canary ran on the private worker with no
+  customer data, tool calls, persistent business writes, or external business
+  effect; it recorded only a hash-only Cloud Logging receipt.
 - The local judge flow remains deterministic and provider-free so every
   reviewed result can be reproduced without customer data or hidden calls.
 
@@ -74,9 +83,9 @@ inspectable before an agent is permitted to progress.
 
 | Requirement | Evidence in this repository | Honest current state |
 | --- | --- | --- |
-| Gemini 3.5+ | `app/model_configuration.py` locks `gemini-3.5-flash`; `app/specialist_agents.py` configures Google ADK Gemini agents. | Configured in source; no provider call verified yet. |
+| Gemini 3.5+ | `app/model_configuration.py` locks `gemini-3.5-flash`; `app/specialist_agents.py` configures Google ADK Gemini agents. | A fixed-prompt, no-tool Vertex canary completed and logged a hash-only receipt; the scheduled watcher currently keeps Gemini briefing disabled. |
 | Google agent framework | `google-adk` is a runtime dependency; `app/agent.py` and `app/specialist_agents.py` define the ADK app/fleet. | Implemented and locally tested around the bounded demo. |
-| Google Cloud service | FastAPI container boundary, Dockerfile, and guarded Cloud Run scripts. | Cloud Run-ready, **not yet deployed or proven**. |
+| Google Cloud service | Private Cloud Run worker, Cloud Scheduler OIDC job, Firestore watch state, and a separate public Cloud Run reviewer demo. | Live private worker has recorded a normalization rebaseline and a subsequent no-change receipt against an approved Oregon DEQ public source. |
 | Enterprise safety | Separate warrant gateway, role scoping, kill switch, evidence ledger, adversarial suite, and evaluation suite. | Locally verified against synthetic fixtures only. |
 
 ## Key features that work locally
@@ -91,19 +100,23 @@ inspectable before an agent is permitted to progress.
    stale warrants, tampering, and changed controls are denied.
 5. **Reviewable proof bundle** — a single bundle links the walkthrough,
    evaluation report, capability ledger, and closed source-manifest hash.
-6. **Safety regression coverage** — 56 automated tests cover ingress,
+6. **Safety regression coverage** — 75 automated tests cover ingress,
    authority, evidence integrity, evaluator behavior, and visual/demo routes.
+7. **Background EPR Registry Change Watch** — a private daily Scheduler job
+   fetches only approved public sources, hashes visible content, saves durable
+   Firestore snapshots, deduplicates event retries, and remains quiet when no
+   material change is present.
 
 ## Architecture
 
 ![Architecture diagram](ARCHITECTURE.png)
 
-The system receives a bounded synthetic event, validates it, and routes the
-case through role-limited ADK specialists. The decision can reach only the
-deterministic Action Warrant gateway, which produces a simulated receipt. The
-receipt, counterfactuals, proof bundle, and safety/evaluation results remain
-read-only review surfaces. A global kill switch or role-scope mismatch blocks
-the warrant before the simulation.
+The public reviewer layer receives a bounded synthetic event, validates it,
+and routes the case through role-limited ADK specialists. Separately, the
+private operational layer accepts only Cloud Scheduler OIDC calls, watches an
+approved public EPR source, persists hash-linked evidence in Firestore, and
+prepares a bounded internal brief only on material change. Neither layer can
+alter Westover customer records or send prospect outreach.
 
 Editable source: [ARCHITECTURE.svg](ARCHITECTURE.svg).
 
@@ -118,7 +131,7 @@ uv run python -m app.demo_cli --recording-packet --pretty
 uv run python -m app.demo_cli --proof-verification --pretty
 ```
 
-The latest local verification run passed all **56 tests** and reported
+The latest local verification run passed all **75 tests** and reported
 `all_checks_passed: true`. These commands use closed synthetic fixtures only;
 they do not start a server, contact a provider, access customer records, or
 perform an external action.
@@ -133,27 +146,26 @@ perform an external action.
 | `/demo/proof-bundle` | Linked evaluation, capability, and artifact-integrity evidence. | A remote deployment attestation. |
 | `/demo/provider-evidence` | Offline verification of a supplied hash-only canary receipt. | It does not call a provider itself. |
 | `/demo/cloud-run-preflight` | Local container and release-input readiness. | That Cloud Run has been deployed. |
+| Private `/scheduler/registry-watch` | OIDC-triggered registry monitoring, durable evidence, and idempotency. | A public endpoint, customer-data access, a legal conclusion, or prospect messaging. |
 
 ## Four-minute video plan
 
-1. **0:00–0:25 — Problem.** Business agents can move quickly, but operators
-   often cannot inspect why an action was allowed or replay the decision.
-2. **0:25–0:55 — Promise.** Introduce proof-carrying autonomy and the
-   synthetic-only boundary: no customer data, no external effects, no
-   production authority.
-3. **0:55–1:45 — Workflow demo.** Open `/demo`; follow the named fixture from
-   validation through specialist routing to the simulated receipt.
-4. **1:45–2:25 — Authority demo.** Open the Action Warrant dossier; show that
-   it is scoped, short-lived, one-use, and fails closed on its second use.
-5. **2:25–2:55 — Replay demo.** Open the Business Time Machine dossier and
-   show the selected and rejected alternatives without a re-run.
-6. **2:55–3:25 — Proof demo.** Show the proof bundle, local verification
-   report, and source-manifest link; state the 56 passing tests.
-7. **3:25–3:45 — Cloud proof.** **Pending before recording:** show the real
-   Cloud Run service/revision and a health response or equivalent Google Cloud
-   Console evidence. Do not narrate this section until it is actually deployed.
-8. **3:45–4:00 — Close.** State the value proposition: capable workflows earn
-   trust through bounded authority and inspectable proof.
+1. **0:00–0:25 — Problem.** EPR program and producer information changes in
+   public registries while operators are busy with customer work.
+2. **0:25–0:50 — Promise.** Vice CEO watches approved sources in the
+   background and carries evidence forward instead of silently guessing.
+3. **0:50–1:35 — Live autonomy.** Show Cloud Scheduler, the private Cloud Run
+   worker, and the Firestore rebaseline then no-change receipts.
+4. **1:35–2:00 — Change discipline.** Show the registered Oregon DEQ source,
+   visible-content hash, deduplication, and the disabled owner-brief boundary.
+5. **2:00–2:25 — Gemini proof.** Show the completed hash-only Gemini canary:
+   no customer data, no tools, and no business effect.
+6. **2:25–3:10 — Reviewer experience.** Open the public `/demo` and show the
+   proof-carrying synthetic workflow, Action Warrant, and replay surface.
+7. **3:10–3:40 — Resilience.** Show an unregistered source rejection and the
+   automated 75-test result.
+8. **3:40–4:00 — Close.** State the value proposition: quiet, accountable EPR
+   intelligence that asks for a real decision only when evidence warrants it.
 
 ## Required Devpost fields — preparation checklist
 
@@ -166,8 +178,8 @@ perform an external action.
 - [ ] Supply the submitter's country of residence
 - [ ] Supply the truthful project-start date (MM-DD-YY)
 - [ ] Confirm the category selection in the live form
-- [ ] Deploy the bounded container to Cloud Run and capture real deployment
-  evidence for the video; no deployment should be claimed before then
+- [x] Deploy the bounded private Registry Change Watch to Cloud Run and capture
+  Scheduler → Cloud Run → Firestore evidence for the video
 - [ ] Record and host the approximately four-minute demo video
 - [ ] Capture 3–5 clean screenshots of the running local reviewer flow
 - [ ] Decide whether to publish optional build-story/social bonus content
@@ -175,8 +187,7 @@ perform an external action.
 ## Links for the future form
 
 - **Public repository:** https://github.com/ezrawestover1-hub/vice-ceo-proof-carrying-autonomy
-- **Hosted project:** _Not available — intentionally leave blank until a real
-  deployment exists._
+- **Hosted project:** https://vice-ceo-review-demo-77u4kmu2ba-uc.a.run.app/demo
 - **Demo video:** _Not recorded yet._
 - **Architecture upload:** `ARCHITECTURE.png`
 
@@ -184,19 +195,21 @@ perform an external action.
 
 Codex helped recover and separate the hackathon runtime from the private
 Westover EPR application, refine the reviewer interface, implement and verify
-the proof-carrying workflow, run the automated test suite, create the public
-repository package and architecture asset, and assemble this honest
-judge-facing packet. The project itself remains the evidence: no claim of an
-external action or deployment is substituted for local proof.
+the proof-carrying workflow, build the private Scheduler/Cloud Run/Firestore
+Registry Change Watch, run the automated test suite, synchronize the public
+repository package, and assemble this honest judge-facing packet. The project
+distinguishes live operating evidence from local synthetic proof rather than
+using either to overstate customer or messaging authority.
 
 ## Known limitations
 
-- The current runtime processes named synthetic fixtures only.
-- It has no customer-data connector, billing/messaging executor, background
-  scheduler, or real business authority.
-- The Cloud Run configuration is deployment-ready but has not been deployed or
-  independently verified in Google Cloud.
-- The optional Gemini provider canary is disabled by default and has not been
-  used as evidence in the local demo.
+- The public reviewer layer processes named synthetic fixtures only.
+- The private Registry Change Watch reads an approved public source and writes
+  only its own Firestore evidence state; it has no customer-data connector,
+  billing executor, prospect messaging tool, or legal-decision authority.
+- Owner-only briefing is intentionally disabled until a dedicated Secret
+  Manager credential, verified sender, and allowlisted recipient are supplied.
+- Gemini completed a narrow connectivity canary, but live change briefs remain
+  disabled until the controlled owner-brief activation step is completed.
 - The Devpost project page, final personal form fields, screenshots, and video
   remain intentionally uncreated or unfilled.

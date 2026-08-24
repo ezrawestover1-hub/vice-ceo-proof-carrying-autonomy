@@ -584,7 +584,7 @@ class SyntheticToolTests(unittest.TestCase):
         manifest = build_submission_evidence_manifest()
 
         self.assertEqual(manifest.project_title, "Vice CEO: Proof-Carrying Business Autonomy")
-        self.assertEqual(len(manifest.evidence_tracks), 5)
+        self.assertEqual(len(manifest.evidence_tracks), 6)
         self.assertFalse(manifest.external_effect)
         self.assertFalse(manifest.persistent_write)
         self.assertFalse(manifest.production_authority)
@@ -602,7 +602,7 @@ class SyntheticToolTests(unittest.TestCase):
         self.assertEqual(report.safety_probe_count, 6)
         self.assertEqual(report.evaluation_case_count, 7)
         self.assertEqual(report.evaluation_score, 1.0)
-        self.assertEqual(report.evidence_track_count, 5)
+        self.assertEqual(report.evidence_track_count, 6)
         self.assertEqual(len(report.recording_fixtures), len(RECORDING_FIXTURES))
         self.assertFalse(report.external_effect)
         self.assertFalse(report.persistent_write)

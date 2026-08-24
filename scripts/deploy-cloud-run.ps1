@@ -20,6 +20,9 @@ param(
   [ValidatePattern("^[0-9a-fA-F]{7,40}$")]
   [string]$Revision,
 
+  [ValidateSet("global", "us", "eu")]
+  [string]$ModelLocation = "us",
+
   [switch]$Execute
 )
 
@@ -44,7 +47,8 @@ if (-not ($checkedOutRevision.StartsWith($expectedRevision) -or $expectedRevisio
 if (-not $Execute) {
   Write-Host "Plan only. No Cloud Run deployment will occur without -Execute."
   Write-Host "Project: $ProjectId"
-  Write-Host "Region: $Region"
+  Write-Host "Cloud Run region: $Region"
+  Write-Host "Gemini model location: $ModelLocation"
   Write-Host "Service: $ServiceName"
   Write-Host "Service account: $ServiceAccount"
   Write-Host "Pinned revision: $checkedOutRevision"
@@ -64,7 +68,7 @@ try {
     --region $Region `
     --service-account $ServiceAccount `
     --no-allow-unauthenticated `
-    --set-env-vars "GOOGLE_CLOUD_PROJECT=$ProjectId,GOOGLE_CLOUD_LOCATION=$Region,GOOGLE_GENAI_USE_VERTEXAI=TRUE,VICE_CEO_CLAIM_STORE=in_memory,VICE_CEO_PROVIDER_CANARY_ENABLED=false" `
+    --set-env-vars "GOOGLE_CLOUD_PROJECT=$ProjectId,GOOGLE_CLOUD_LOCATION=$ModelLocation,GOOGLE_GENAI_USE_VERTEXAI=TRUE,VICE_CEO_CLAIM_STORE=in_memory,VICE_CEO_PROVIDER_CANARY_ENABLED=false" `
     --labels "app=vice-ceo-hackathon-runtime,runtime=synthetic-only,revision=$checkedOutRevision"
   if ($LASTEXITCODE -ne 0) {
     throw "cloud_run_deploy_failed"

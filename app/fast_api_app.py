@@ -7,9 +7,11 @@ process. Durable claims and ADK execution orchestration remain later work.
 
 from __future__ import annotations
 
+import os
+from hashlib import sha256
 from typing import Any, Literal
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, ConfigDict
 
@@ -44,9 +46,26 @@ from .model_configuration import MODEL_CONFIGURATION
 from .cloud_run_preflight import build_cloud_run_preflight_report
 from .human_approval import HumanApprovalError, build_human_approval_preview, resolve_human_approval
 from .tools import build_synthetic_fixture_manifest
+from .registry_watch import (
+    REGISTRY_WATCH_EVENT_SCHEMA_VERSION,
+    REGISTRY_WATCH_EVENT_TYPE,
+    REGISTRY_WATCH_SOURCE,
+    RegistryWatchError,
+    RegistryWatchEvent,
+    build_registry_watch_demo_report,
+    create_registry_watch_worker_from_environment,
+    decode_registry_watch_pubsub_event,
+)
 
 app = FastAPI(title="Vice CEO Hackathon Runtime", version="0.1.0")
 event_claims = InMemoryEventClaims()
+registry_watch_worker, registry_watch_mode = create_registry_watch_worker_from_environment()
+
+
+def _public_demo_only() -> bool:
+    """Keep the public reviewer service incapable of processing worker events."""
+
+    return os.environ.get("VICE_CEO_PUBLIC_DEMO_ONLY", "false").strip().lower() == "true"
 
 
 class SyntheticEvent(BaseModel):
@@ -63,6 +82,17 @@ class DemoApprovalDecision(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     decision: Literal["approve_simulation", "decline_simulation"]
+
+
+class SchedulerRegistryWatchRequest(BaseModel):
+    """Cloud Scheduler's bounded body; identity and event timing come from headers."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    source_id: str
+    event_type: Literal[REGISTRY_WATCH_EVENT_TYPE]
+    source: Literal[REGISTRY_WATCH_SOURCE]
+    schema_version: Literal[REGISTRY_WATCH_EVENT_SCHEMA_VERSION]
 
 
 @app.get("/healthz")
@@ -325,6 +355,13 @@ def get_release_readiness() -> dict[str, object]:
     }
 
 
+@app.get("/demo/registry-watch")
+def get_registry_watch_demo() -> dict[str, object]:
+    """Show an evidence-linked registry-watch run without fetching or sending."""
+
+    return {"registry_watch": build_registry_watch_demo_report()}
+
+
 @app.post("/synthetic-events")
 def accept_synthetic_event(event: SyntheticEvent) -> dict[str, object]:
     """Accept a direct local fixture by translating it into the Pub/Sub contract."""
@@ -367,4 +404,78 @@ def accept_pubsub_synthetic_event(envelope: dict[str, Any]) -> dict[str, object]
         "synthetic_only": True,
         "agent_run_started": False,
         "reason_code": "sprint_2_policy_simulation_only",
+    }
+
+
+@app.post("/pubsub/registry-watch")
+def accept_registry_watch_event(envelope: dict[str, Any]) -> dict[str, object]:
+    """Accept a strict scheduled watch event using the fixture-only local worker.
+
+    Cloud Run must protect this endpoint with Scheduler/Pub/Sub service identity
+    before a configured public-registry fetcher replaces the local fixture.
+    """
+
+    if _public_demo_only():
+        raise HTTPException(status_code=404, detail="registry_watch_worker_not_available_on_public_demo")
+    try:
+        event = decode_registry_watch_pubsub_event(envelope)
+        run = registry_watch_worker.process(event)
+    except RegistryWatchError as error:
+        raise HTTPException(status_code=403, detail=str(error)) from error
+
+    return {
+        "status": run.status,
+        "run": run.as_dict(),
+        "synthetic_only": registry_watch_mode == "fixture",
+        "scheduled_background_execution": registry_watch_mode == "configured",
+        "external_actions_enabled": False,
+        "reason_code": (
+            "registry_watch_fixture_worker_only"
+            if registry_watch_mode == "fixture"
+            else "registry_watch_configured_worker"
+        ),
+    }
+
+
+@app.post("/scheduler/registry-watch")
+def accept_scheduler_registry_watch_event(
+    request: Request, payload: SchedulerRegistryWatchRequest
+) -> dict[str, object]:
+    """Run the same watch contract from a private Cloud Scheduler OIDC target.
+
+    Scheduler supplies the execution timestamp and job name as platform headers.
+    Those values produce a stable, unique event ID without accepting one from a
+    caller, so retries retain idempotency and public demo deployments cannot use
+    this operational endpoint.
+    """
+
+    if _public_demo_only():
+        raise HTTPException(status_code=404, detail="registry_watch_worker_not_available_on_public_demo")
+    job_name = request.headers.get("x-cloudscheduler-jobname", "").strip()
+    scheduled_for = request.headers.get("x-cloudscheduler-scheduletime", "").strip()
+    if not job_name or not scheduled_for:
+        raise HTTPException(status_code=403, detail="scheduler_identity_headers_required")
+    event_id = "scheduler_" + sha256(
+        f"{job_name}|{scheduled_for}|{payload.source_id}".encode("utf-8")
+    ).hexdigest()[:40]
+    try:
+        run = registry_watch_worker.process(
+            RegistryWatchEvent(
+                event_id=event_id,
+                source_id=payload.source_id,
+                scheduled_for=scheduled_for,
+                event_type=payload.event_type,
+                source=payload.source,
+                schema_version=payload.schema_version,
+            )
+        )
+    except RegistryWatchError as error:
+        raise HTTPException(status_code=403, detail=str(error)) from error
+    return {
+        "status": run.status,
+        "run": run.as_dict(),
+        "synthetic_only": registry_watch_mode == "fixture",
+        "scheduled_background_execution": registry_watch_mode == "configured",
+        "external_actions_enabled": False,
+        "reason_code": "registry_watch_scheduler_direct_worker",
     }

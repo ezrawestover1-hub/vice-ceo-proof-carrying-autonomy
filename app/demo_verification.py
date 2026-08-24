@@ -59,7 +59,7 @@ RECORDING_FIXTURES: tuple[RecordingFixture, ...] = (
     RecordingFixture(
         fixture_id="submission_evidence",
         demo_surface="GET /demo/submission-evidence",
-        expected_signal="five source-backed evidence tracks with production_authority=false",
+        expected_signal="six source-backed evidence tracks with production_authority=false",
         zero_effect_boundary="read-only source manifest",
     ),
     RecordingFixture(

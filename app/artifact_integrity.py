@@ -38,6 +38,7 @@ VERIFIED_ARTIFACTS: tuple[str, ...] = (
     "app/proof_bundle.py",
     "app/proof_verification.py",
     "app/recording_packet.py",
+    "app/registry_watch.py",
     "app/release_readiness.py",
     "app/specialist_agents.py",
     "app/specialist_protocol.py",

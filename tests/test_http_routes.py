@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 try:
@@ -26,6 +27,17 @@ class HttpRouteSmokeTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["synthetic_only"], True)
         self.assertEqual(response.json()["external_actions_enabled"], False)
+
+    def test_container_keeps_preflight_report_inputs_available(self) -> None:
+        """The public reviewer must not lose report inputs when deployed."""
+
+        dockerfile = (Path(__file__).resolve().parents[1] / "Dockerfile").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("COPY Dockerfile ./Dockerfile", dockerfile)
+        self.assertIn("COPY agents-cli-manifest.yaml ./agents-cli-manifest.yaml", dockerfile)
+        self.assertIn("COPY scripts ./scripts", dockerfile)
 
     def test_visual_demo_is_read_only_and_browser_ready(self) -> None:
         response = self.client.get("/demo")
@@ -60,6 +72,7 @@ class HttpRouteSmokeTests(unittest.TestCase):
         model_configuration = self.client.get("/demo/model-configuration")
         cloud_run_preflight = self.client.get("/demo/cloud-run-preflight")
         human_approval = self.client.get("/demo/human-approval")
+        registry_watch = self.client.get("/demo/registry-watch")
 
         self.assertEqual(judge.status_code, 200)
         self.assertEqual(judge.json()["synthetic_only"], True)
@@ -125,6 +138,84 @@ class HttpRouteSmokeTests(unittest.TestCase):
         self.assertTrue(human_approval.json()["human_approval"]["decision_required"])
         self.assertFalse(human_approval.json()["human_approval"]["identity_verification_performed"])
         self.assertFalse(human_approval.json()["production_authority"])
+        self.assertEqual(registry_watch.status_code, 200)
+        watch = registry_watch.json()["registry_watch"]
+        self.assertEqual(watch["workflow"], "registry_change_watch")
+        self.assertEqual(watch["latest_run"]["status"], "brief_delivered")
+        self.assertFalse(watch["external_prospect_effect"])
+        self.assertFalse(watch["customer_record_mutation"])
+
+    def test_registry_watch_ingress_uses_the_strict_fixture_contract(self) -> None:
+        from app.registry_watch import RegistryWatchEvent, encode_registry_watch_pubsub_event
+
+        accepted = self.client.post(
+            "/pubsub/registry-watch",
+            json=encode_registry_watch_pubsub_event(
+                RegistryWatchEvent(
+                    event_id="http_smoke_registry_watch",
+                    source_id="demo_packaging_registry",
+                    scheduled_for="2026-08-23T12:00:00Z",
+                )
+            ),
+        )
+        unknown = self.client.post(
+            "/pubsub/registry-watch",
+            json=encode_registry_watch_pubsub_event(
+                RegistryWatchEvent(
+                    event_id="http_smoke_registry_watch_unknown",
+                    source_id="untrusted_registry",
+                    scheduled_for="2026-08-23T12:00:00Z",
+                )
+            ),
+        )
+
+        self.assertEqual(accepted.status_code, 200)
+        self.assertEqual(accepted.json()["status"], "baseline_captured")
+        self.assertTrue(accepted.json()["synthetic_only"])
+        self.assertFalse(accepted.json()["external_actions_enabled"])
+        self.assertEqual(unknown.status_code, 403)
+        self.assertEqual(unknown.json()["detail"], "unregistered_registry_source")
+
+    def test_scheduler_registry_watch_uses_platform_time_for_idempotency(self) -> None:
+        payload = {
+            "source_id": "demo_packaging_registry",
+            "event_type": "registry.watch.requested",
+            "source": "vice_ceo_registry_watch",
+            "schema_version": "vice-ceo-registry-watch-event-v1",
+        }
+        headers = {
+            "x-cloudscheduler-jobname": "projects/demo/jobs/registry-watch",
+            "x-cloudscheduler-scheduletime": "2026-08-24T06:00:00Z",
+        }
+
+        accepted = self.client.post("/scheduler/registry-watch", json=payload, headers=headers)
+        duplicate = self.client.post("/scheduler/registry-watch", json=payload, headers=headers)
+        missing_headers = self.client.post("/scheduler/registry-watch", json=payload)
+
+        self.assertEqual(accepted.status_code, 200)
+        self.assertEqual(duplicate.status_code, 200)
+        self.assertEqual(accepted.json()["run"]["run_id"], duplicate.json()["run"]["run_id"])
+        self.assertEqual(accepted.json()["reason_code"], "registry_watch_scheduler_direct_worker")
+        self.assertEqual(missing_headers.status_code, 403)
+        self.assertEqual(missing_headers.json()["detail"], "scheduler_identity_headers_required")
+
+    def test_public_demo_mode_has_no_registry_worker_endpoint(self) -> None:
+        from app.registry_watch import RegistryWatchEvent, encode_registry_watch_pubsub_event
+
+        with patch.dict(os.environ, {"VICE_CEO_PUBLIC_DEMO_ONLY": "true"}):
+            response = self.client.post(
+                "/pubsub/registry-watch",
+                json=encode_registry_watch_pubsub_event(
+                    RegistryWatchEvent(
+                        event_id="public-demo-must-not-run-worker",
+                        source_id="demo_packaging_registry",
+                        scheduled_for="2026-08-23T12:00:00Z",
+                    )
+                ),
+            )
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["detail"], "registry_watch_worker_not_available_on_public_demo")
 
     def test_direct_fixture_ingress_stops_at_a_simulated_record(self) -> None:
         response = self.client.post(

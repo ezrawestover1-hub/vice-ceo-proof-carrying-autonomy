@@ -11,6 +11,8 @@ Copy these items to the standalone repository root:
 - `app/`
 - `tests/`
 - `scripts/`
+- `config/` (approved public-source configurations only)
+- `docs/` (runtime and deployment documentation only)
 - `Dockerfile`
 - `agents-cli-manifest.yaml`
 - `pyproject.toml`
@@ -40,5 +42,8 @@ Copy these items to the standalone repository root:
   workflows, or private operational documents; and
 - Git history from the private parent repository.
 
-The submission may claim only what the runtime demonstrates locally: a
-synthetic, zero-effect proof-carrying workflow with no production authority.
+The public reviewer may claim only its synthetic, zero-effect proof-carrying
+workflow. Any claim about the separately deployed private Registry Change Watch
+must be backed by current Cloud Run, Scheduler, Firestore, and provider-log
+evidence, and must never be upgraded into a claim of customer, financial,
+prospect-messaging, or administrative authority.
