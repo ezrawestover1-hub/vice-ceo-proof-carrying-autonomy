@@ -94,6 +94,8 @@ replacing its placeholder with an approved public source before deployment.
 The private operating worker is intentionally not exposed through the public
 reviewer URL; prove it separately with Cloud Run, Scheduler, and Firestore
 receipts rather than turning a judge-facing page into an operational webhook.
+The current sanitized deployment receipt ledger is in
+[Live Registry Change Watch Evidence](docs/LIVE_AUTONOMY_EVIDENCE.md).
 
 ## Provider canary boundary
 
