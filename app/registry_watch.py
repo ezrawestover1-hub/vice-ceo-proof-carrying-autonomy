@@ -644,7 +644,7 @@ class GeminiRegistryBriefGenerator:
         if response_text is None:
             raise RegistryWatchError("registry_brief_provider_missing_response")
         try:
-            output = loads(response_text)
+            output = _model_json_object(response_text)
             if set(output) != {"change_summary", "recommended_next_action"}:
                 raise ValueError("schema")
             summary = _bounded_model_string(output["change_summary"], 500)
@@ -1232,6 +1232,16 @@ def _bounded_model_string(value: object, maximum_length: int) -> str:
     if not normalized or len(normalized) > maximum_length:
         raise ValueError("registry_brief_model_value_invalid")
     return normalized
+
+
+def _model_json_object(response_text: str) -> object:
+    """Extract one model-produced JSON object while rejecting non-object output."""
+
+    start = response_text.find("{")
+    end = response_text.rfind("}")
+    if start < 0 or end <= start:
+        raise ValueError("registry_brief_model_json_missing")
+    return loads(response_text[start : end + 1])
 
 
 def _registry_sources_from_environment() -> tuple[RegistrySource, ...]:

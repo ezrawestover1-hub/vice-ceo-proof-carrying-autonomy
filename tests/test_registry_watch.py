@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from base64 import b64encode
-from json import loads
+from json import dumps, loads
 import os
 from pathlib import Path
 import unittest
@@ -26,6 +26,7 @@ from app.registry_watch import (
     create_registry_watch_worker_from_environment,
     decode_registry_watch_pubsub_event,
     encode_registry_watch_pubsub_event,
+    _model_json_object,
 )
 
 
@@ -94,6 +95,7 @@ class RegistryWatchTests(unittest.TestCase):
         self.assertEqual(run.status, "baseline_captured")
         self.assertEqual(run.reason_code, "first_source_snapshot_recorded")
         self.assertIsNotNone(run.snapshot)
+        self.assertTrue(run.snapshot.content_segment_hashes)
         self.assertIsNone(run.brief)
         self.assertIsNone(run.internal_delivery)
         self.assertFalse(run.external_prospect_effect)
@@ -132,6 +134,9 @@ class RegistryWatchTests(unittest.TestCase):
         self.assertIn(self.source.jurisdiction, run.brief.recommended_next_action)
         self.assertFalse(run.brief.legal_or_regulatory_conclusion)
         self.assertEqual(run.brief.model_mode, "deterministic_evidence_summary")
+        self.assertGreater(run.brief.changed_segment_count, 0)
+        self.assertEqual(len(run.brief.changed_content_excerpt_sha256), 64)
+        self.assertNotIn("public registry source revision two", dumps(run.as_dict()))
         self.assertIsNotNone(run.action_candidate)
         self.assertEqual(run.action_candidate.source_id, self.source.source_id)
         self.assertEqual(run.action_candidate.status, "awaiting_owner_review")
@@ -206,6 +211,14 @@ class RegistryWatchTests(unittest.TestCase):
         envelope["message"]["data"] = "eyJldmVudF9pZCI6ICJ4In0="
         with self.assertRaisesRegex(RegistryWatchError, "unrecognized_registry_watch_event_fields"):
             decode_registry_watch_pubsub_event(envelope)
+
+    def test_model_json_parser_accepts_a_fenced_object_and_rejects_plain_text(self) -> None:
+        self.assertEqual(
+            _model_json_object("```json\n{\"change_summary\": \"changed\"}\n```"),
+            {"change_summary": "changed"},
+        )
+        with self.assertRaisesRegex(ValueError, "registry_brief_model_json_missing"):
+            _model_json_object("model returned no object")
 
     def test_scheduler_compact_event_uses_the_unique_pubsub_message_identity(self) -> None:
         payload = b64encode(
