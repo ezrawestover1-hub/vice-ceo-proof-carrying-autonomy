@@ -908,6 +908,7 @@ class ResendInternalBriefDelivery:
             headers={
                 "Authorization": f"Bearer {self._api_key}",
                 "Content-Type": "application/json",
+                "User-Agent": "WestoverEPR-ViceCEO-RegistryWatch/1.0",
             },
             method="POST",
         )

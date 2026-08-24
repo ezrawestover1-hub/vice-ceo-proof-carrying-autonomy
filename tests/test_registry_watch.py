@@ -547,6 +547,10 @@ class RegistryWatchTests(unittest.TestCase):
         self.assertEqual(len(received), 1)
         payload = loads(getattr(received[0], "data"))
         self.assertEqual(
+            getattr(received[0], "headers")["User-agent"],
+            "WestoverEPR-ViceCEO-RegistryWatch/1.0",
+        )
+        self.assertEqual(
             payload["subject"],
             "Controlled delivery verification — Approved Demo Registry",
         )
