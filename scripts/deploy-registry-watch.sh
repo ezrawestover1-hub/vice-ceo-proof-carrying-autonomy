@@ -11,7 +11,8 @@ Usage:
     --scheduler-service-account SCHEDULER_ACCOUNT --revision GIT_REVISION \
     --sources-file SOURCES.json \
     [--model-location global|us|eu] [--gemini-briefs] \
-    [--resend-secret SECRET --brief-from ADDRESS --brief-to ADDRESS] [--execute]
+    [--resend-secret SECRET --brief-from ADDRESS --brief-to ADDRESS] \\
+    [--enable-internal-delivery-probe] [--execute]
 
 SOURCES.json must be a nonempty JSON array of reviewed source objects. Each
 object records source_id, display_name, canonical_url, jurisdiction,
@@ -34,6 +35,7 @@ GEMINI_BRIEFS=false
 RESEND_SECRET=""
 BRIEF_FROM=""
 BRIEF_TO=""
+INTERNAL_DELIVERY_PROBE_ENABLED=false
 EXECUTE=false
 
 while [[ $# -gt 0 ]]; do
@@ -51,6 +53,7 @@ while [[ $# -gt 0 ]]; do
     --resend-secret) RESEND_SECRET="${2:?resend secret name required}"; shift 2 ;;
     --brief-from) BRIEF_FROM="${2:?brief sender required}"; shift 2 ;;
     --brief-to) BRIEF_TO="${2:?brief recipient required}"; shift 2 ;;
+    --enable-internal-delivery-probe) INTERNAL_DELIVERY_PROBE_ENABLED=true; shift ;;
     --execute) EXECUTE=true; shift ;;
     --help|-h) usage; exit 0 ;;
     *) printf 'unknown argument: %s\n' "$1" >&2; usage >&2; exit 2 ;;
@@ -73,6 +76,10 @@ if [[ -n "$RESEND_SECRET" ]]; then
   [[ "$RESEND_SECRET" =~ ^[A-Za-z][A-Za-z0-9_-]{0,254}$ ]] || { echo "invalid_resend_secret_name" >&2; exit 2; }
   [[ "$BRIEF_FROM" =~ ^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$ ]] || { echo "invalid_brief_from" >&2; exit 2; }
   [[ "$BRIEF_TO" =~ ^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$ ]] || { echo "invalid_brief_to" >&2; exit 2; }
+fi
+if [[ "$INTERNAL_DELIVERY_PROBE_ENABLED" == true && -z "$RESEND_SECRET" ]]; then
+  echo "internal_delivery_probe_requires_resend_owner_brief_configuration" >&2
+  exit 2
 fi
 command -v python3 >/dev/null || { echo "python3_required" >&2; exit 1; }
 
@@ -121,6 +128,11 @@ PY
   fi
   if [[ -n "$RESEND_SECRET" ]]; then
     printf 'Owner brief: Resend secret %s will be bound to allowlisted recipient %s.\n' "$RESEND_SECRET" "$BRIEF_TO"
+    if [[ "$INTERNAL_DELIVERY_PROBE_ENABLED" == true ]]; then
+      echo "Owner delivery probe: enabled on the private worker for one controlled mailbox verification."
+    else
+      echo "Owner delivery probe: disabled."
+    fi
   else
     echo "Owner brief: disabled."
   fi
@@ -159,7 +171,7 @@ if [[ -n "$RESEND_SECRET" ]]; then
   fi
   gcloud secrets add-iam-policy-binding "$RESEND_SECRET" --project "$PROJECT_ID" --member="serviceAccount:$SERVICE_ACCOUNT" --role="roles/secretmanager.secretAccessor" >/dev/null
 fi
-WORKER_ENV="^|^GOOGLE_CLOUD_PROJECT=$PROJECT_ID|GOOGLE_CLOUD_LOCATION=$MODEL_LOCATION|GOOGLE_GENAI_USE_VERTEXAI=TRUE|VICE_CEO_REGISTRY_WATCH_MODE=configured|VICE_CEO_REGISTRY_WATCH_STORE=firestore|VICE_CEO_REGISTRY_SOURCES_JSON=$SOURCES_JSON|VICE_CEO_REGISTRY_BRIEF_GENERATOR=$BRIEF_GENERATOR|VICE_CEO_REGISTRY_GEMINI_ENABLED=$GEMINI_ENABLED|VICE_CEO_INTERNAL_BRIEF_DELIVERY=$DELIVERY_KIND|VICE_CEO_INTERNAL_RESEND_DELIVERY_ENABLED=$DELIVERY_ENABLED|VICE_CEO_INTERNAL_BRIEF_FROM=$BRIEF_FROM|VICE_CEO_INTERNAL_BRIEF_TO=$BRIEF_TO|VICE_CEO_PROVIDER_CANARY_ENABLED=false"
+WORKER_ENV="^|^GOOGLE_CLOUD_PROJECT=$PROJECT_ID|GOOGLE_CLOUD_LOCATION=$MODEL_LOCATION|GOOGLE_GENAI_USE_VERTEXAI=TRUE|VICE_CEO_REGISTRY_WATCH_MODE=configured|VICE_CEO_REGISTRY_WATCH_STORE=firestore|VICE_CEO_REGISTRY_SOURCES_JSON=$SOURCES_JSON|VICE_CEO_REGISTRY_BRIEF_GENERATOR=$BRIEF_GENERATOR|VICE_CEO_REGISTRY_GEMINI_ENABLED=$GEMINI_ENABLED|VICE_CEO_INTERNAL_BRIEF_DELIVERY=$DELIVERY_KIND|VICE_CEO_INTERNAL_RESEND_DELIVERY_ENABLED=$DELIVERY_ENABLED|VICE_CEO_INTERNAL_BRIEF_FROM=$BRIEF_FROM|VICE_CEO_INTERNAL_BRIEF_TO=$BRIEF_TO|VICE_CEO_INTERNAL_DELIVERY_PROBE_ENABLED=$INTERNAL_DELIVERY_PROBE_ENABLED|VICE_CEO_PROVIDER_CANARY_ENABLED=false"
 if [[ -n "$RESEND_SECRET" ]]; then
   gcloud run deploy "$WORKER_SERVICE" --source "$RUNTIME_ROOT" --project "$PROJECT_ID" --region "$REGION" --service-account "$SERVICE_ACCOUNT" --no-allow-unauthenticated --set-env-vars "$WORKER_ENV" --set-secrets "VICE_CEO_INTERNAL_RESEND_API_KEY=${RESEND_SECRET}:latest" --labels "app=vice-ceo-registry-watch,revision=${CHECKED_OUT_REVISION:0:63}"
 else

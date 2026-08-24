@@ -283,6 +283,49 @@ class HttpRouteSmokeTests(unittest.TestCase):
         self.assertEqual(resolved.json()["owner_action"]["status"], "owner_acknowledged")
         self.assertFalse(resolved.json()["external_business_actions_enabled"])
 
+    def test_private_owner_delivery_probe_requires_an_explicit_enabled_configuration(self) -> None:
+        from app import fast_api_app
+        from app.registry_watch import (
+            FixtureRegistrySourceFetcher,
+            InMemoryRegistryWatchStore,
+            RecordingInternalBriefDelivery,
+            RegistrySource,
+            RegistryWatchEngine,
+        )
+
+        engine = RegistryWatchEngine(
+            sources=(
+                RegistrySource(
+                    source_id="delivery_probe_registry",
+                    display_name="Delivery Probe Registry",
+                    canonical_url="https://registry.demo.westoverepr.com/delivery-probe",
+                    jurisdiction="demo",
+                ),
+            ),
+            store=InMemoryRegistryWatchStore(),
+            fetcher=FixtureRegistrySourceFetcher(
+                {"delivery_probe_registry": ("revision-1", "registry source revision one")}
+            ),
+            internal_delivery=RecordingInternalBriefDelivery("owner@westover.example"),
+        )
+        body = {"confirmation": "send_controlled_internal_delivery_probe"}
+
+        with patch.object(fast_api_app, "registry_watch_worker", engine), patch.object(
+            fast_api_app, "registry_watch_mode", "configured"
+        ):
+            disabled = self.client.post("/owner/registry-delivery-probe", json=body)
+            with patch.dict(os.environ, {"VICE_CEO_INTERNAL_DELIVERY_PROBE_ENABLED": "true"}):
+                delivered = self.client.post("/owner/registry-delivery-probe", json=body)
+
+        self.assertEqual(disabled.status_code, 409)
+        self.assertEqual(disabled.json()["detail"], "internal_delivery_probe_not_enabled")
+        self.assertEqual(delivered.status_code, 200)
+        probe = delivered.json()["internal_delivery_probe"]
+        self.assertEqual(probe["model_mode"], "controlled_internal_delivery_probe")
+        self.assertEqual(probe["receipt"]["state"], "delivered_for_test")
+        self.assertFalse(probe["receipt"]["external_prospect_effect"])
+        self.assertFalse(delivered.json()["external_business_actions_enabled"])
+
     def test_direct_fixture_ingress_stops_at_a_simulated_record(self) -> None:
         response = self.client.post(
             "/synthetic-events",

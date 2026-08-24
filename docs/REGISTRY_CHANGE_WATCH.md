@@ -104,6 +104,24 @@ partially configured worker after a late provider-credential failure.
 bounded, cited briefing after the watcher detects a materially changed public
 source; it does not enable delivery by itself.
 
+### Controlled internal delivery proof
+
+After a Resend sender and owner recipient are configured, pass
+`--enable-internal-delivery-probe` for one private-worker deployment to expose
+`POST /owner/registry-delivery-probe`. Cloud Run IAM protects this route, and
+its required request body is exactly:
+
+```json
+{"confirmation":"send_controlled_internal_delivery_probe"}
+```
+
+It sends one clearly labeled **non-production** message through the same
+configured owner-only Resend channel and returns a provider receipt plus a
+recipient hash. It does not fetch a registry, write Firestore, inspect a
+customer record, create an action candidate, make a legal conclusion, or
+contact a prospect. Re-deploy without the probe flag after verifying delivery
+to remove the route's operating authority.
+
 ### Controlled changed-source replay
 
 `python -m app.registry_change_replay --confirm-controlled-replay` is a video

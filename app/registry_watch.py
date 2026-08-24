@@ -810,13 +810,22 @@ class ResendInternalBriefDelivery:
         api_key: str,
         sender: str,
         recipient: str,
+        subject_prefix: str = "Registry change detected",
         opener: Callable[..., Any] = urlopen,
     ) -> None:
-        if not api_key.startswith("re_") or not sender.strip() or not recipient.strip():
+        if (
+            not api_key.startswith("re_")
+            or not sender.strip()
+            or not recipient.strip()
+            or not subject_prefix.strip()
+            or "\n" in subject_prefix
+            or "\r" in subject_prefix
+        ):
             raise ValueError("internal_brief_resend_configuration_invalid")
         self._api_key = api_key
         self._sender = sender
         self._recipient = recipient
+        self._subject_prefix = subject_prefix.strip()
         self._opener = opener
 
     def deliver(self, brief: RegistryImpactBrief) -> InternalDeliveryReceipt:
@@ -837,7 +846,7 @@ class ResendInternalBriefDelivery:
             {
                 "from": self._sender,
                 "to": [self._recipient],
-                "subject": f"Registry change detected — {brief.source_display_name}",
+                "subject": f"{self._subject_prefix} — {brief.source_display_name}",
                 "text": body,
             }
         ).encode("utf-8")
@@ -987,6 +996,15 @@ class RegistryWatchEngine:
         """Return the private, evidence-minimized owner-review queue."""
 
         return self._store.list_action_candidates()
+
+    def deliver_internal_delivery_probe(self) -> tuple[RegistryImpactBrief, InternalDeliveryReceipt]:
+        """Send one explicit non-production proof through the configured internal channel."""
+
+        brief = build_internal_delivery_probe()
+        receipt = self._internal_delivery.deliver(brief)
+        if not receipt.state.startswith("delivered"):
+            raise RegistryWatchError("internal_delivery_probe_not_delivered")
+        return brief, receipt
 
     def resolve_owner_action(
         self, candidate_id: str, *, decision: str
@@ -1161,6 +1179,36 @@ class RegistryWatchEngine:
         if value.tzinfo is None:
             raise ValueError("registry_watch_clock_must_be_timezone_aware")
         return value.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def build_internal_delivery_probe() -> RegistryImpactBrief:
+    """Return a clearly labeled fixture used only to verify an internal mail channel."""
+
+    evidence = sha256(b"vice-ceo controlled internal delivery probe v1").hexdigest()
+    return RegistryImpactBrief(
+        brief_id="internal_delivery_probe_" + evidence[:20],
+        source_id="controlled_internal_delivery_probe",
+        source_display_name="Controlled internal delivery probe (non-production)",
+        source_citation_url="https://vice-ceo.invalid/internal-delivery-probe",
+        prior_version="not_applicable",
+        current_version="controlled_probe_v1",
+        source_evidence_sha256=evidence,
+        change_summary=(
+            "This is a controlled internal delivery verification. It does not report an EPR "
+            "registry change, evaluate an obligation, alter a customer record, or contact a prospect."
+        ),
+        recommended_next_action=(
+            "Confirm this message arrived in the allowlisted Westover owner inbox and retain "
+            "the provider receipt as delivery evidence."
+        ),
+        legal_or_regulatory_conclusion=False,
+        model_mode="controlled_internal_delivery_probe",
+        jurisdiction="non_production",
+        source_owner="Vice CEO controlled delivery fixture",
+        operational_focus="verify configured owner-only briefing delivery",
+        changed_content_excerpt_sha256=evidence,
+        changed_segment_count=0,
+    )
 
 
 def build_registry_watch_demo_report() -> dict[str, object]:

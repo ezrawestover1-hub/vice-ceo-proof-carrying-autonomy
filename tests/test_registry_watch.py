@@ -175,6 +175,19 @@ class RegistryWatchTests(unittest.TestCase):
         self.assertIsNotNone(run.action_candidate)
         self.assertEqual(run.action_candidate.status, "awaiting_owner_review")
 
+    def test_controlled_internal_delivery_probe_uses_only_the_configured_internal_adapter(self) -> None:
+        brief, receipt = self._engine(
+            "revision-1", "public registry source revision one"
+        ).deliver_internal_delivery_probe()
+
+        self.assertEqual(brief.source_id, "controlled_internal_delivery_probe")
+        self.assertEqual(brief.model_mode, "controlled_internal_delivery_probe")
+        self.assertIn("does not report an EPR registry change", brief.change_summary)
+        self.assertFalse(brief.legal_or_regulatory_conclusion)
+        self.assertEqual(receipt.state, "delivered_for_test")
+        self.assertFalse(receipt.external_prospect_effect)
+        self.assertEqual(len(self.delivery.delivered_briefs), 1)
+
     def test_owner_can_resolve_a_queued_action_without_external_business_effect(self) -> None:
         self._engine("revision-1", "public registry source revision one").process(
             self._event("registry-watch-owner-baseline")
@@ -462,6 +475,7 @@ class RegistryWatchTests(unittest.TestCase):
             api_key="re_internal_only",
             sender="Vice CEO <vice-ceo@westover.example>",
             recipient="ezra@westover.example",
+            subject_prefix="Controlled delivery verification",
             opener=opener,
         )
 
@@ -472,6 +486,11 @@ class RegistryWatchTests(unittest.TestCase):
         self.assertEqual(receipt.receipt_id, "re_msg_123")
         self.assertFalse(receipt.external_prospect_effect)
         self.assertEqual(len(received), 1)
+        payload = loads(getattr(received[0], "data"))
+        self.assertEqual(
+            payload["subject"],
+            "Controlled delivery verification — Approved Demo Registry",
+        )
 
     def test_configured_worker_requires_reviewed_source_configuration(self) -> None:
         source_json = (

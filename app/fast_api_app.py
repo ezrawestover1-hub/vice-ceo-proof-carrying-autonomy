@@ -105,6 +105,14 @@ class OwnerActionDecision(BaseModel):
     decision: Literal["acknowledge", "archive"]
 
 
+class OwnerDeliveryProbeRequest(BaseModel):
+    """Explicit acknowledgement for the one-purpose internal delivery probe."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    confirmation: Literal["send_controlled_internal_delivery_probe"]
+
+
 @app.get("/healthz")
 def healthz() -> dict[str, object]:
     """Return the non-production status used by the Cloud Run readiness probe."""
@@ -412,6 +420,37 @@ def resolve_owner_registry_action(
         raise HTTPException(status_code=409, detail=str(error)) from error
     return {
         "owner_action": asdict(candidate),
+        "private_owner_review": True,
+        "external_business_actions_enabled": False,
+        "customer_record_mutation": False,
+        "legal_or_regulatory_conclusion": False,
+    }
+
+
+@app.post("/owner/registry-delivery-probe")
+def send_owner_registry_delivery_probe(
+    request: OwnerDeliveryProbeRequest,
+) -> dict[str, object]:
+    """Send one labeled non-production proof to the configured owner-only channel."""
+
+    del request
+    if _public_demo_only():
+        raise HTTPException(status_code=404, detail="owner_review_not_available_on_public_demo")
+    if registry_watch_mode != "configured":
+        raise HTTPException(status_code=409, detail="configured_registry_watch_worker_required")
+    if os.environ.get("VICE_CEO_INTERNAL_DELIVERY_PROBE_ENABLED", "false").strip().lower() != "true":
+        raise HTTPException(status_code=409, detail="internal_delivery_probe_not_enabled")
+    try:
+        brief, receipt = registry_watch_worker.deliver_internal_delivery_probe()
+    except RegistryWatchError as error:
+        raise HTTPException(status_code=502, detail=str(error)) from error
+    return {
+        "internal_delivery_probe": {
+            "disclosure": "Controlled non-production owner-mailbox verification; no registry source, customer record, prospect, or business action was involved.",
+            "brief_id": brief.brief_id,
+            "model_mode": brief.model_mode,
+            "receipt": asdict(receipt),
+        },
         "private_owner_review": True,
         "external_business_actions_enabled": False,
         "customer_record_mutation": False,
