@@ -9,12 +9,12 @@ does not grant any new business authority.
 
 | Component | Verified state |
 | --- | --- |
-| Private worker | Cloud Run `vice-ceo-registry-worker-00020-zl7`, `us-central1`, private ingress; source metadata agrees with the enabled 08:31 / 08:36 / 08:41 UTC Scheduler jobs |
+| Private worker | Cloud Run `vice-ceo-registry-worker-00022-c8w`, `us-central1`, private ingress; source metadata agrees with the enabled 08:31 / 08:36 / 08:41 UTC Scheduler jobs |
 | Background trigger | Three enabled private OIDC Scheduler jobs: Oregon `08:31 UTC`, California `08:36 UTC`, Maryland `08:41 UTC` |
 | Sources | Reviewed official Oregon DEQ, CalRecycle SB 54, and Maryland Department of the Environment public EPR program pages |
 | Durable state | Firestore source snapshot, event claim, run receipt, and owner-review action-queue collections |
 | Owner review | Private Cloud Run operations overview, inbox, and JSON action queue live behind service authentication; no public-demo exposure |
-| Public reviewer | Separate fixture-only Cloud Run `vice-ceo-review-demo-00012-nzt` at [`/demo`](https://vice-ceo-review-demo-77u4kmu2ba-uc.a.run.app/demo); its synthetic approval returns a readable receipt and warrant with zero external effect |
+| Public reviewer | Separate fixture-only Cloud Run `vice-ceo-review-demo-00015-tv9` at [`/demo`](https://vice-ceo-review-demo-77u4kmu2ba-uc.a.run.app/demo); its synthetic approval returns a readable receipt and warrant with zero external effect |
 
 ## Observed scheduler receipts
 
@@ -30,6 +30,13 @@ The two Oregon receipts use the normalized visible-content SHA-256
 `e5da9c7d8eab3bdb7e430d74fecc6a7e440e1559c9686fbace796918ff221f72`.
 The watcher intentionally ignores volatile HTML script/style scaffolding. This
 prevents a request token or generated timestamp from becoming a false EPR alert.
+
+The private operations overview was also accessed through the authenticated
+Cloud Run proxy after revision `00022-c8w` became ready. It reported the three
+approved sources, zero pending owner decisions, the
+`registry_source_prompt_injection_gate_v1` safety boundary, and `false` for
+external business actions. This verifies the live private read surface; it
+does not create an owner decision or a downstream business effect.
 
 ## Gemini connectivity evidence
 
