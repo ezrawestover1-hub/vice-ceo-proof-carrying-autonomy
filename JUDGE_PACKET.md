@@ -120,6 +120,9 @@ alter Westover customer records or send prospect outreach.
 
 Editable source: [ARCHITECTURE.svg](ARCHITECTURE.svg).
 
+The corresponding private deployment receipts are summarized in
+[Live Registry Change Watch Evidence](docs/LIVE_AUTONOMY_EVIDENCE.md).
+
 ## Reproducible testing
 
 Prerequisites: Python 3.11+ and `uv`.
