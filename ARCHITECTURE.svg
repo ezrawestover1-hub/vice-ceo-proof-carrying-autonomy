@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
   <title id="title">Vice CEO evidence-backed EPR autonomy architecture</title>
-  <desc id="desc">A private Cloud Scheduler job invokes a source-locked registry worker, which persists evidence in Firestore and can prepare a bounded owner briefing. A separate public synthetic reviewer layer demonstrates proof-carrying governance without operational authority.</desc>
+  <desc id="desc">A private Cloud Scheduler job invokes a source-locked registry worker, which persists evidence in Firestore, prepares a bounded Gemini briefing, and creates a Cloud Run IAM-protected owner-review action. A separate public synthetic reviewer layer demonstrates proof-carrying governance without operational authority.</desc>
   <style>
     .canvas { fill: #ffffff; }
     .title { fill: #172426; font-family: Inter, Arial, sans-serif; font-size: 47px; font-weight: 600; letter-spacing: -1.6px; }
@@ -14,6 +14,7 @@
     .line { fill: none; stroke: #6f807b; stroke-width: 3; marker-end: url(#arrow); }
     .block { fill: none; stroke: #0e5149; stroke-width: 3; stroke-dasharray: 10 10; marker-end: url(#arrow); }
     .block-label { fill: #0e5149; font-family: Inter, Arial, sans-serif; font-size: 17px; font-weight: 600; }
+    .footer { fill: #697578; font-family: Inter, Arial, sans-serif; font-size: 20px; }
   </style>
   <defs>
     <marker id="arrow" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto"><path d="M0,0 L11,5.5 L0,11 z" fill="#6f807b"/></marker>
@@ -21,7 +22,7 @@
   </defs>
   <rect class="canvas" width="1600" height="900"/>
   <text class="title" x="110" y="112">Vice CEO: evidence-backed EPR autonomy</text>
-  <text class="subtitle" x="110" y="154">A private registry watcher and a public proof layer stay isolated by design.</text>
+  <text class="subtitle" x="110" y="154">A private registry watcher, owner decision queue, and public proof layer stay isolated by design.</text>
 
   <path class="line" d="M313 413 H384"/>
   <path class="line" d="M593 413 H664"/>
@@ -61,16 +62,16 @@
   <g transform="translate(1224 322)">
     <rect class="node" width="206" height="182" rx="12"/>
     <text class="step" x="26" y="38">05</text>
-    <text class="node-title" x="26" y="78">Bounded briefing</text>
-    <text class="node-copy" x="26" y="112">Gemini opt-in;</text>
-    <text class="node-copy" x="26" y="138">owner delivery gated</text>
+    <text class="node-title" x="26" y="78">Bounded Gemini brief</text>
+    <text class="node-copy" x="26" y="112">Changed public text only;</text>
+    <text class="node-copy" x="26" y="138">delivery separately gated</text>
   </g>
   <g transform="translate(808 611)">
     <rect class="node" width="257" height="160" rx="12"/>
     <text class="step" x="26" y="38">06</text>
-    <text class="node-title" x="26" y="78">Audit + replay</text>
-    <text class="node-copy" x="26" y="112">Evidence receipts and</text>
-    <text class="node-copy" x="26" y="138">reviewable state</text>
+    <text class="node-title" x="26" y="78">Private owner review</text>
+    <text class="node-copy" x="26" y="112">IAM-protected queue;</text>
+    <text class="node-copy" x="26" y="138">acknowledge or archive</text>
   </g>
   <g transform="translate(426 611)">
     <rect class="node" width="266" height="160" rx="12"/>
@@ -80,10 +81,11 @@
     <text class="node-copy" x="26" y="138">governance tests</text>
   </g>
   <path class="line" d="M808 691 H692"/>
-  <g transform="translate(736 758)">
+  <g transform="translate(736 744)">
     <rect fill="#f0f7f4" stroke="#0e5149" stroke-width="2" width="168" height="82" rx="41"/>
     <text class="block-label" x="84" y="35" text-anchor="middle">NO CUSTOMER DATA</text>
     <text class="block-label" x="84" y="59" text-anchor="middle">NO PROSPECT OUTREACH</text>
   </g>
-  <text class="subtitle" x="110" y="852">Bounded by design: the public demo is synthetic; the private watcher has evidence only, never customer or prospect authority.</text>
+  <text class="footer" x="110" y="864">Bounded by design: the public demo is synthetic; the private watcher records evidence and owner review.</text>
+  <text class="footer" x="110" y="890">It never receives customer data or prospect-outreach authority.</text>
 </svg>
