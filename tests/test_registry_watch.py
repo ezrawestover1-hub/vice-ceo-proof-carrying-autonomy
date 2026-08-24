@@ -132,11 +132,41 @@ class RegistryWatchTests(unittest.TestCase):
         self.assertIn(self.source.jurisdiction, run.brief.recommended_next_action)
         self.assertFalse(run.brief.legal_or_regulatory_conclusion)
         self.assertEqual(run.brief.model_mode, "deterministic_evidence_summary")
+        self.assertIsNotNone(run.action_candidate)
+        self.assertEqual(run.action_candidate.source_id, self.source.source_id)
+        self.assertEqual(run.action_candidate.status, "awaiting_owner_review")
+        self.assertTrue(run.action_candidate.requires_owner_decision)
+        self.assertFalse(run.action_candidate.external_business_effect)
         self.assertIsNotNone(run.internal_delivery)
         self.assertEqual(run.internal_delivery.state, "delivered_for_test")
         self.assertFalse(run.internal_delivery.external_prospect_effect)
         self.assertEqual(len(self.delivery.delivered_briefs), 1)
         self.assertFalse(run.external_prospect_effect)
+
+    def test_delivery_failure_preserves_owner_review_candidate(self) -> None:
+        self._engine("revision-1", "public registry source revision one").process(
+            self._event("registry-watch-baseline")
+        )
+
+        class FailingDelivery:
+            def deliver(self, brief: object) -> object:
+                del brief
+                raise RegistryWatchError("internal_brief_delivery_failed")
+
+        run = RegistryWatchEngine(
+            sources=(self.source,),
+            store=self.store,
+            fetcher=FixtureRegistrySourceFetcher(
+                {self.source.source_id: ("revision-2", "public registry source revision two")}
+            ),
+            internal_delivery=FailingDelivery(),
+            now=lambda: datetime(2026, 8, 23, 12, 1, tzinfo=timezone.utc),
+        ).process(self._event("registry-watch-delivery-failure"))
+
+        self.assertEqual(run.status, "brief_prepared")
+        self.assertEqual(run.reason_code, "internal_brief_delivery_failed")
+        self.assertIsNotNone(run.action_candidate)
+        self.assertEqual(run.action_candidate.status, "awaiting_owner_review")
 
     def test_duplicate_event_returns_the_original_completed_run(self) -> None:
         engine = self._engine("revision-1", "public registry source revision one")

@@ -12,7 +12,7 @@ does not grant any new business authority.
 | Private worker | Cloud Run `vice-ceo-registry-worker-00011-9dk`, `us-central1`, private ingress |
 | Background trigger | Three enabled private OIDC Scheduler jobs: Oregon `08:30 UTC`, California `08:35 UTC`, Maryland `08:40 UTC` |
 | Sources | Reviewed official Oregon DEQ, CalRecycle SB 54, and Maryland Department of the Environment public EPR program pages |
-| Durable state | Firestore source snapshot, event claim, and run receipt collections |
+| Durable state | Firestore source snapshot, event claim, run receipt, and owner-review action-queue collections |
 | Public reviewer | Separate fixture-only Cloud Run service at [`/demo`](https://vice-ceo-review-demo-77u4kmu2ba-uc.a.run.app/demo) |
 
 ## Observed scheduler receipts
@@ -61,6 +61,6 @@ data or send an external message.
 1. Inspect [the reviewed source portfolio](../config/registry-sources.epr-portfolio.json).
 2. Inspect the strict event, source fetch, Firestore, Gemini, and delivery
    boundaries in [`app/registry_watch.py`](../app/registry_watch.py).
-3. Run the 76-test suite and open the public reviewer flow.
+3. Run the 77-test suite and open the public reviewer flow.
 4. In the video, show the Cloud Scheduler job, Cloud Run revision/log, and the
    Firestore receipts above. Keep the public and private planes distinct.

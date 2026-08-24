@@ -8,6 +8,12 @@ the worker preserves a hash-linked source snapshot, prepares a bounded
 operational brief, and sends an owner-facing briefing through a separately
 configured internal channel.
 
+On a material change, it also writes an evidence-linked `prepare_internal_impact_memo`
+candidate into a private owner-review queue. This candidate is not external
+outreach and cannot mutate a Westover customer record; it gives the owner a
+durable decision item even if the separate briefing channel is disabled or
+temporarily unavailable.
+
 It does not decide legal obligations, write Westover EPR customer records, or
 send an external prospect message. Any later outreach workflow consumes a
 reviewable candidate; it does not receive delivery authority from this worker.
@@ -23,6 +29,8 @@ The runtime contains:
 - visible-content normalization for HTML sources, excluding script and style
   scaffolding so a volatile request token cannot create a false change alert;
 - baseline, no-change, changed, and duplicate terminal states;
+- a durable owner-review action candidate for every changed source, linked to
+  the brief and its evidence hash;
 - an explicit rebaseline when content normalization is upgraded, avoiding a
   fake change brief during a watcher migration;
 - an in-memory local store plus a Firestore state adapter;

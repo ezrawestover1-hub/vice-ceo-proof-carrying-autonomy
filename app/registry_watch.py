@@ -43,6 +43,7 @@ REGISTRY_WATCH_EVENT_TYPE = "registry.watch.requested"
 REGISTRY_WATCH_SOURCE = "vice_ceo_registry_watch"
 FIRESTORE_REGISTRY_SOURCES_COLLECTION = "vice_ceo_registry_watch_sources"
 FIRESTORE_REGISTRY_RUNS_COLLECTION = "vice_ceo_registry_watch_runs"
+FIRESTORE_REGISTRY_ACTIONS_COLLECTION = "vice_ceo_registry_action_queue"
 LEGACY_NORMALIZATION_VERSION = "legacy_raw_whitespace_v1"
 FIXTURE_NORMALIZATION_VERSION = "fixture_normalized_content_v1"
 HTML_NORMALIZATION_VERSION = "visible_html_text_v2"
@@ -240,6 +241,23 @@ class InternalDeliveryReceipt:
 
 
 @dataclass(frozen=True)
+class RegistryActionCandidate:
+    """An evidence-linked internal task created by a material public-source change."""
+
+    candidate_id: str
+    brief_id: str
+    source_id: str
+    jurisdiction: str
+    evidence_sha256: str
+    action_type: str
+    status: str
+    requires_owner_decision: bool
+    external_business_effect: bool
+    customer_record_mutation: bool
+    created_at: str
+
+
+@dataclass(frozen=True)
 class RegistryWatchRun:
     """Inspectable state for one scheduled registry-watch event."""
 
@@ -258,6 +276,7 @@ class RegistryWatchRun:
     external_prospect_effect: bool
     customer_record_mutation: bool
     legal_or_regulatory_conclusion: bool
+    action_candidate: RegistryActionCandidate | None = None
 
     def as_dict(self) -> dict[str, object]:
         return asdict(self)
@@ -292,6 +311,8 @@ class RegistryWatchStore(Protocol):
 
     def save_run(self, run: RegistryWatchRun) -> None: ...
 
+    def save_action_candidate(self, candidate: RegistryActionCandidate) -> None: ...
+
     def get_run(self, run_id: str) -> RegistryWatchRun | None: ...
 
 
@@ -302,6 +323,7 @@ class InMemoryRegistryWatchStore:
         self._claims = claims or InMemoryClaimStore()
         self._snapshots: dict[str, RegistrySnapshot] = {}
         self._runs: dict[str, RegistryWatchRun] = {}
+        self._action_candidates: dict[str, RegistryActionCandidate] = {}
 
     def claim_event(self, event: RegistryWatchEvent, run_id: str) -> ClaimResult:
         return self._claims.claim_once(
@@ -320,6 +342,9 @@ class InMemoryRegistryWatchStore:
     def save_run(self, run: RegistryWatchRun) -> None:
         self._runs[run.run_id] = run
 
+    def save_action_candidate(self, candidate: RegistryActionCandidate) -> None:
+        self._action_candidates[candidate.candidate_id] = candidate
+
     def get_run(self, run_id: str) -> RegistryWatchRun | None:
         return self._runs.get(run_id)
 
@@ -334,11 +359,13 @@ class FirestoreRegistryWatchStore:
         claims: ClaimStore,
         source_collection: str = FIRESTORE_REGISTRY_SOURCES_COLLECTION,
         run_collection: str = FIRESTORE_REGISTRY_RUNS_COLLECTION,
+        action_collection: str = FIRESTORE_REGISTRY_ACTIONS_COLLECTION,
     ) -> None:
         self._client = client
         self._claims = claims
         self._source_collection = source_collection
         self._run_collection = run_collection
+        self._action_collection = action_collection
 
     @classmethod
     def from_environment(cls) -> "FirestoreRegistryWatchStore":
@@ -387,6 +414,11 @@ class FirestoreRegistryWatchStore:
 
     def save_run(self, run: RegistryWatchRun) -> None:
         self._client.collection(self._run_collection).document(run.run_id).set(run.as_dict())
+
+    def save_action_candidate(self, candidate: RegistryActionCandidate) -> None:
+        self._client.collection(self._action_collection).document(candidate.candidate_id).set(
+            asdict(candidate)
+        )
 
     def get_run(self, run_id: str) -> RegistryWatchRun | None:
         document = self._client.collection(self._run_collection).document(run_id).get()
@@ -919,7 +951,19 @@ class RegistryWatchEngine:
                 current_capture=capture,
             )
             brief = self._brief_generator.generate(change)
-            delivery = self._internal_delivery.deliver(brief)
+            action_candidate = self._action_candidate(brief, source, started_at)
+            self._store.save_action_candidate(action_candidate)
+            try:
+                delivery = self._internal_delivery.deliver(brief)
+            except RegistryWatchError:
+                delivery = InternalDeliveryReceipt(
+                    state="failed",
+                    provider="configured_internal_channel",
+                    recipient_sha256=None,
+                    receipt_id=None,
+                    reason_code="internal_brief_delivery_failed",
+                    external_prospect_effect=False,
+                )
             run = self._run(
                 event=event,
                 run_id=run_id,
@@ -929,6 +973,7 @@ class RegistryWatchEngine:
                 snapshot=snapshot,
                 brief=brief,
                 internal_delivery=delivery,
+                action_candidate=action_candidate,
             )
 
         self._store.save_run(run)
@@ -975,6 +1020,7 @@ class RegistryWatchEngine:
         snapshot: RegistrySnapshot,
         brief: RegistryImpactBrief | None = None,
         internal_delivery: InternalDeliveryReceipt | None = None,
+        action_candidate: RegistryActionCandidate | None = None,
     ) -> RegistryWatchRun:
         return RegistryWatchRun(
             run_id=run_id,
@@ -992,6 +1038,26 @@ class RegistryWatchEngine:
             external_prospect_effect=False,
             customer_record_mutation=False,
             legal_or_regulatory_conclusion=False,
+            action_candidate=action_candidate,
+        )
+
+    @staticmethod
+    def _action_candidate(
+        brief: RegistryImpactBrief, source: RegistrySource, created_at: str
+    ) -> RegistryActionCandidate:
+        seed = f"{brief.brief_id}|{brief.source_evidence_sha256}|prepare_internal_impact_memo"
+        return RegistryActionCandidate(
+            candidate_id=f"registry_action_{sha256(seed.encode()).hexdigest()[:20]}",
+            brief_id=brief.brief_id,
+            source_id=source.source_id,
+            jurisdiction=source.jurisdiction,
+            evidence_sha256=brief.source_evidence_sha256,
+            action_type="prepare_internal_impact_memo",
+            status="awaiting_owner_review",
+            requires_owner_decision=True,
+            external_business_effect=False,
+            customer_record_mutation=False,
+            created_at=created_at,
         )
 
     def _timestamp(self) -> str:
@@ -1078,6 +1144,7 @@ def _duplicate_run(event: RegistryWatchEvent, run_id: str, timestamp: str) -> Re
         external_prospect_effect=False,
         customer_record_mutation=False,
         legal_or_regulatory_conclusion=False,
+        action_candidate=None,
     )
 
 
@@ -1226,6 +1293,8 @@ def _run_from_mapping(data: dict[str, Any]) -> RegistryWatchRun:
     else:
         brief = None
     delivery = InternalDeliveryReceipt(**delivery_data) if isinstance(delivery_data, dict) else None
+    action_data = data.get("action_candidate")
+    action_candidate = RegistryActionCandidate(**action_data) if isinstance(action_data, dict) else None
     return RegistryWatchRun(
         run_id=str(data["run_id"]),
         event_id=str(data["event_id"]),
@@ -1242,4 +1311,5 @@ def _run_from_mapping(data: dict[str, Any]) -> RegistryWatchRun:
         external_prospect_effect=bool(data["external_prospect_effect"]),
         customer_record_mutation=bool(data["customer_record_mutation"]),
         legal_or_regulatory_conclusion=bool(data["legal_or_regulatory_conclusion"]),
+        action_candidate=action_candidate,
     )
