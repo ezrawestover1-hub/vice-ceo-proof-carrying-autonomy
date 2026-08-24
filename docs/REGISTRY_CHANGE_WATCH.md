@@ -150,6 +150,13 @@ changes the durable action-queue record from `awaiting_owner_review`; it cannot
 send email, contact a prospect, alter a customer record, or determine a legal
 obligation. Delivery remains a separately configured internal-only capability.
 
+On a macOS operator machine with `gcloud` authenticated, open the private
+inbox with `scripts/open-owner-review.sh`. It starts a local authenticated
+Cloud Run proxy, opens `http://127.0.0.1:8765/owner/registry-actions/inbox`,
+and shuts the proxy down on exit. Use `--no-open` if you want to copy the local
+URL into another browser profile. The script does not create an action,
+acknowledge an action, or send a message.
+
 The first production-like run needs these proof points:
 
 - Cloud Run revision and authenticated endpoint response;
