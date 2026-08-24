@@ -8,8 +8,9 @@ customer, billing, outreach, support, and compliance records. This runtime
 contains no credentials or connector for Stripe, Supabase service-role access,
 refunds, billing changes, or customer-record mutation. Its public reviewer
 surface uses only synthetic fixtures. A separately configured private worker
-can watch approved public EPR sources, while its owner-only briefing adapter is
-disabled unless a dedicated Secret Manager credential is explicitly bound.
+can watch approved public EPR sources. Its owner-only briefing adapter is
+disabled by default and becomes available only when a dedicated Secret Manager
+credential, verified sender, and allowlisted owner recipient are explicitly bound.
 
 ## Public submission package
 
@@ -315,11 +316,11 @@ replay of a real code path, not an assertion that an official registry changed.
 The guarded Registry Change Watch deployment uses a private Cloud Run worker,
 Cloud Scheduler OIDC invocation, and Firestore evidence state. It operates
 only on explicitly reviewed public sources and begins with deterministic
-briefs and disabled owner delivery. The public `/demo` service remains a
-separate fixture-only reviewer surface. Do not enable owner briefing without a
-dedicated verified sender, allowlisted owner recipient, and Secret Manager
-credential; do not attach any customer, billing, support, or commercial
-outreach connector to this runtime.
+briefs and disabled-by-default owner delivery. The public `/demo` service
+remains a separate fixture-only reviewer surface. Do not enable owner briefing
+without a dedicated verified sender, allowlisted owner recipient, and Secret
+Manager credential; do not attach any customer, billing, support, or
+commercial outreach connector to this runtime.
 
 ## Guarded Cloud Run handoff
 

@@ -9,7 +9,7 @@ does not grant any new business authority.
 
 | Component | Verified state |
 | --- | --- |
-| Private worker | Cloud Run `vice-ceo-registry-worker-00022-c8w`, `us-central1`, private ingress; source metadata agrees with the enabled 08:31 / 08:36 / 08:41 UTC Scheduler jobs |
+| Private worker | Cloud Run `vice-ceo-registry-worker-00025-c6r`, `us-central1`, private ingress; source metadata agrees with the enabled 08:31 / 08:36 / 08:41 UTC Scheduler jobs |
 | Background trigger | Three enabled private OIDC Scheduler jobs: Oregon `08:31 UTC`, California `08:36 UTC`, Maryland `08:41 UTC` |
 | Sources | Reviewed official Oregon DEQ, CalRecycle SB 54, and Maryland Department of the Environment public EPR program pages |
 | Durable state | Firestore source snapshot, event claim, run receipt, and owner-review action-queue collections |
@@ -32,7 +32,7 @@ The watcher intentionally ignores volatile HTML script/style scaffolding. This
 prevents a request token or generated timestamp from becoming a false EPR alert.
 
 The private operations overview was also accessed through the authenticated
-Cloud Run proxy after revision `00022-c8w` became ready. It reported the three
+Cloud Run proxy after revision `00025-c6r` became ready. It reported the three
 approved sources, zero pending owner decisions, the
 `registry_source_prompt_injection_gate_v1` safety boundary, and `false` for
 external business actions. This verifies the live private read surface; it
@@ -57,6 +57,20 @@ credential-exfiltration content and creates a hash-linked owner-review fallback
 instead. No production source change has yet invoked that briefing path; the
 canary remains the completed provider-connectivity proof.
 
+## Controlled owner-mailbox delivery evidence
+
+On 2026-08-24, the private worker completed one explicit non-production
+owner-mailbox delivery probe through the configured Resend channel. The
+provider accepted the message and returned receipt
+`0c7e6ca1-bcfa-49dd-9cc0-28b0491a2ce7`. The application receipt records
+`state: delivered`, `provider: resend`, and `external_prospect_effect: false`;
+this is provider-acceptance evidence, not an independently observed inbox-read
+or mailbox-delivery event.
+The recipient is represented only by SHA-256 fingerprint
+`7e731e9d948874c4769c700e8b7f8f56c57f026ae7253cc221e53e36a43d6cea`.
+This proof used a labeled delivery fixture, not a registry change, customer
+record, prospect message, or commercial business action.
+
 On 2026-08-24, the explicit controlled replay command also completed the exact
 changed-source → Gemini/ADK → owner-action-candidate code path locally. It used
 two fixed non-production fixture revisions and produced
@@ -74,9 +88,10 @@ code path—not a claim that an EPR registry changed.
   EPR customer, billing, support, or compliance records.
 - The private operations overview shows source metadata, evidence hashes, queue
   counts, and authority boundaries—not raw fetched page bodies or customer data.
-- No owner briefing email has been sent. That channel needs a dedicated Resend
-  Secret Manager credential, verified internal sender, and allowlisted owner
-  recipient.
+- One controlled non-production owner briefing probe was accepted by Resend
+  through a dedicated Secret Manager credential, verified sender, and
+  allowlisted owner recipient. It does not imply a production registry-change
+  delivery, prospect outreach, or commercial messaging authority.
 - It cannot determine legal obligations or send prospect outreach.
 - The public `/demo` remains a reproducible synthetic reviewer experience and
   cannot receive Registry Change Watch events.
@@ -86,6 +101,6 @@ code path—not a claim that an EPR registry changed.
 1. Inspect [the reviewed source portfolio](../config/registry-sources.epr-portfolio.json).
 2. Inspect the strict event, source fetch, Firestore, Gemini, and delivery
    boundaries in [`app/registry_watch.py`](../app/registry_watch.py).
-3. Run the 85-test suite and open the public reviewer flow.
+3. Run the 86-test suite and open the public reviewer flow.
 4. In the video, show the Cloud Scheduler job, Cloud Run revision/log, and the
    Firestore receipts above. Keep the public and private planes distinct.

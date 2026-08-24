@@ -5,8 +5,9 @@ reviewer demo is fixture-only, while a separately verified private Registry
 Change Watch runs on Cloud Run with Cloud Scheduler OIDC, Firestore evidence
 state, a curated official EPR portfolio (Oregon, California, and Maryland),
 and a hash-only Gemini canary.
-It has no customer-data connector, no prospect messaging authority, and its
-owner-brief delivery channel remains disabled until separately configured.
+It has no customer-data connector or prospect messaging authority. Its
+owner-only briefing channel has one controlled Resend delivery receipt and
+remains unavailable for customer, prospect, or commercial messaging.
 
 ## Submission positioning
 
@@ -58,8 +59,9 @@ Firestore idempotency/snapshots, and visible-content fingerprinting that avoids
 volatile page scaffolding. A dedicated untrusted-source safety gate keeps
 instruction-like public text out of the Gemini briefing path and falls back to
 a deterministic, evidence-linked owner review. The worker currently makes no
-customer, billing, prospect, or administrative action. Owner-only briefing is
-disabled until a dedicated credential and allowlisted mailbox are configured.
+customer, billing, prospect, or administrative action. A dedicated credential,
+verified sender, and allowlisted owner mailbox produced one controlled
+non-production delivery receipt; no customer or prospect delivery is enabled.
 
 ## Why it matters
 
@@ -103,7 +105,7 @@ inspectable before an agent is permitted to progress.
    stale warrants, tampering, and changed controls are denied.
 5. **Reviewable proof bundle** — a single bundle links the walkthrough,
    evaluation report, capability ledger, and closed source-manifest hash.
-6. **Safety regression coverage** — 85 automated tests cover ingress,
+6. **Safety regression coverage** — 86 automated tests cover ingress,
    authority, evidence integrity, evaluator behavior, and visual/demo routes.
 7. **Background EPR Registry Change Watch** — a private daily Scheduler job
    fetches only approved public sources, hashes visible content, saves durable
@@ -145,7 +147,7 @@ uv run python -m app.demo_cli --recording-packet --pretty
 uv run python -m app.demo_cli --proof-verification --pretty
 ```
 
-The latest local verification run passed all **85 tests** and reported
+The latest local verification run passed all **86 tests** and reported
 `all_checks_passed: true`. These commands use closed synthetic fixtures only;
 they do not start a server, contact a provider, access customer records, or
 perform an external action.
@@ -183,7 +185,7 @@ perform an external action.
 6. **2:25–3:10 — Reviewer experience.** Open the public `/demo` and show the
    proof-carrying synthetic workflow, Action Warrant, and replay surface.
 7. **3:10–3:40 — Resilience.** Show an unregistered source rejection and the
-   automated 85-test result.
+   automated 86-test result.
 8. **3:40–4:00 — Close.** State the value proposition: quiet, accountable EPR
    intelligence that asks for a real decision only when evidence warrants it.
 
@@ -227,9 +229,11 @@ using either to overstate customer or messaging authority.
 - The private Registry Change Watch reads an approved public source and writes
   only its own Firestore evidence state; it has no customer-data connector,
   billing executor, prospect messaging tool, or legal-decision authority.
-- Owner-only briefing is intentionally disabled until a dedicated Secret
-  Manager credential, verified sender, and allowlisted recipient are supplied.
-- Gemini completed a narrow connectivity canary, but live change briefs remain
-  disabled until the controlled owner-brief activation step is completed.
+- One controlled non-production owner briefing was accepted by Resend through
+  a dedicated Secret Manager credential, verified sender, and allowlisted
+  recipient. Material registry-change delivery and all prospect outreach remain
+  separately unproven and unavailable.
+- Gemini completed a narrow connectivity canary, but no material official-source
+  change has yet produced a live Gemini registry brief.
 - The Devpost project page, final personal form fields, screenshots, and video
   remain intentionally uncreated or unfilled.
