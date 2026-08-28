@@ -28,7 +28,7 @@ let scenes = [
     Scene(
         imagePath: captures.appendingPathComponent("reviewer-evidence.png").path,
         title: "Customer service that moves",
-        subtitle: "For a straightforward request, Vice CEO prepares the approved reply, sends it through the business mailbox, and records a receipt.",
+        subtitle: "For a straightforward request, Vice CEO prepares the approved reply and can send it through the business mailbox when the business enables that authority.",
         duration: 43
     ),
     Scene(

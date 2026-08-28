@@ -681,12 +681,12 @@ class SyntheticToolTests(unittest.TestCase):
         page = render_demo_console()
 
         self.assertIn("Work handled before it becomes work.", page)
-        self.assertIn("Send reply", page)
-        self.assertIn("Run this follow-up", page)
+        self.assertIn("View reply receipt", page)
+        self.assertIn("View follow-up receipt", page)
         self.assertIn("EPR intelligence", page)
-        self.assertIn("Public demo boundary.", page)
+        self.assertIn("Delivery is your choice.", page)
         self.assertIn("idempotency protection", page)
-        self.assertIn("do not send email", page)
+        self.assertIn("never sends email", page)
         self.assertNotIn("customer-content", page)
         self.assertNotIn("https://", page)
 

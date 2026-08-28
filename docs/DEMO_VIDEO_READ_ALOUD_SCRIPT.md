@@ -1,59 +1,51 @@
-# Vice CEO — Simple Demo Voiceover
+# Vice CEO — Fast, Engaging ElevenLabs Voiceover
 
-**Target run time:** about four minutes, including the pauses while the product is on screen. This version is written for a clear, calm ElevenLabs voice such as Adam Stone. The bracketed text is direction only; do not read it aloud.
+**Voice generated:** Henry — Deep, Professional, and Soothing
+**ElevenLabs speed:** maximum, 1.2x
+**Target running time:** about 90 seconds of narration, plus brief screen pauses.
 
-## 0:00–0:25 — The problem
+Read only the spoken text below. The bracketed lines are screen directions.
 
-**[Show the work queue.]**
+## 0:00–0:15 — The promise
 
-Small business teams lose whole days to work that looks tiny on its own: answering the same customer questions, following up with leads, checking whether anything changed, and deciding what can wait.
+**[Open on the live Work queue.]**
 
-Vice CEO takes that routine work off the team’s plate. It moves simple work forward and brings people in only when judgment is actually needed.
+What if your business had a quiet operator who handled the repetitive work before it became another thing on your to-do list?
 
-## 0:25–1:05 — Customer service that moves
+Vice CEO is a behind-the-scenes business operator. It handles repetitive customer communication and follow-through, then brings a person in only when judgment is needed.
 
-**[Open the reset-password request and pause on the drafted reply.]**
+## 0:15–0:40 — A customer needs help
 
-Here, a customer has asked for help resetting a password. Vice CEO recognizes this as a routine, low-risk request. It finds the approved response, ties it to the original customer message, and prepares the reply.
+**[Open the prepared password-reset reply.]**
 
-For this kind of request, the business does not need another alert. It needs the reply handled. In the live business workspace, the reply is sent from the company mailbox and a receipt records what happened.
+Let’s give it a normal Tuesday. Alex needs help resetting a password. Instead of someone searching old emails and typing the same answer for the hundredth time, Vice CEO recognizes the request, checks the approved support policy, and prepares a clear reply tied to Alex’s original message.
 
-## 1:05–1:45 — Outreach that follows through
+The work is done. The business can review it, or turn on mailbox authority and let Vice CEO send this kind of routine reply when it chooses.
+
+## 0:40–1:05 — A lead needs follow-through
 
 **[Move to Outreach and follow-ups.]**
 
-Vice CEO also handles the work that usually falls through the cracks after the first conversation with a lead. It runs an approved follow-up, checks that the contact gave permission to hear from the business, and stops the sequence when the person replies or unsubscribes.
+Now look at follow-up. A good lead asks a question, then life gets busy and the thread goes quiet. Vice CEO keeps the next approved message ready. It checks campaign approval and consent first, and it stops the moment that person replies or unsubscribes.
 
-That means the owner is not manually reopening old emails or wondering whether a good lead was forgotten.
+No sticky note. No “I thought you were following up.” No good lead quietly disappearing.
 
-## 1:45–2:20 — The important exception
+## 1:05–1:25 — The agent knows when to stop
 
-**[Point to the refund request marked Needs you.]**
+**[Point to Refund request — Needs you.]**
 
-Not every message should be automatic. A refund request has more judgment behind it, so Vice CEO does not send a guess. It places the case in the owner’s queue with the context needed to decide.
+But Vice CEO does not pretend every task is routine. A refund needs judgment, so it is marked “Needs you.” The agent handles the repeatable work and saves people for the decisions that actually need people.
 
-The goal is not to replace judgment. The goal is to save judgment for the work that deserves it.
+## 1:25–1:45 — Proof and choice
 
-## 2:20–2:55 — Why it can be trusted
+**[Click View reply receipt.]**
 
-**[Click Send reply in the public demo and show the action receipt. Then show the evidence link.]**
+Every work item leaves a receipt: what triggered it, which policy applied, and what Vice CEO prepared. Duplicate sends are blocked.
 
-Every action has a clear boundary. A customer reply must be tied to an incoming request and an approved policy. Outreach must belong to an approved campaign and a consented contact. Repeated sends are blocked, and every completed action has a receipt.
+This public demo never emails anyone. It shows the work. In the private Westover workspace, the same agent can send through the company mailbox when the business chooses to enable that ability.
 
-This public demo uses fixed sample data, so it never sends real email. The private business workspace uses the configured company mailbox once its delivery channel is enabled.
+## 1:45–1:55 — Close
 
-## 2:55–3:25 — Westover EPR is the first example
+**[Return to the full queue.]**
 
-**[Show EPR intelligence and the registry-watch evidence.]**
-
-Westover EPR is the first business example. Its registry intelligence gives Vice CEO extra context, so the system can help with the work around compliance without making a legal conclusion or changing customer records.
-
-But the product is broader than one industry: it is a practical operations teammate for any business with recurring customer and follow-up work.
-
-## 3:25–4:00 — Close
-
-**[Return to the work queue, then show the architecture diagram.]**
-
-Vice CEO turns routine communication from a pile of tasks into a workflow that actually gets done. It responds to straightforward customers, follows up with approved leads, and surfaces the few cases where a human should decide.
-
-Less busywork. More follow-through. More time for the work only your team can do.
+Westover EPR is the first example. The bigger idea is simple: Vice CEO gives a business more follow-through, with less busywork.
