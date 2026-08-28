@@ -1,73 +1,67 @@
 # Vice CEO — Read-Aloud Demo Script
 
-**Target run time:** about four minutes, including the brief pauses between sections. Read the words aloud; use bracketed directions only as on-screen cues.
+**Target run time:** about four minutes, including pauses while you move between screens. Read the paragraphs aloud. The bracketed lines are only directions for what to show.
 
-## 0:00–0:25 — Problem
+## 0:00–0:25 — The problem
 
 **[Show the hosted reviewer home page.]**
 
-Businesses receive operational signals all day: a regulatory change, a support escalation, a supplier update, or a policy exception. The hard part is not getting another alert. It is knowing what changed, whether it matters, and whether the evidence deserves an operator’s attention.
+Businesses lose hours every week to small, repetitive jobs: checking websites, watching for updates, comparing information, and figuring out which changes actually matter. Those jobs are important, but they pull people away from the work only they can do.
 
-Vice CEO watches the business signals you approve and does the research in the background. When something needs attention, it gives you a clear, evidence-backed next step while you stay in control of any real-world action.
+Vice CEO is an AI teammate that takes those repeatable jobs off your plate.
 
-## 0:25–0:50 — Product promise
+## 0:25–0:50 — The simple promise
 
-**[Point to the recommendation, evidence rail, and reviewer decision tray.]**
+**[Point to the main recommendation and evidence panel.]**
 
-This is the hosted reviewer experience. Before a recommendation can move forward, its evidence, reasoning trail, authority limits, and replay path are available in one place.
+You tell Vice CEO what it is allowed to watch. It checks in the background, gathers the facts when something changes, and gives you a simple next step when your attention is needed.
 
-The public interface uses named synthetic fixtures, so the entire workflow can be inspected safely. The key idea is simple: the agent must earn the right to progress.
+Instead of another pile of alerts, you get a clear answer: what changed, why it matters, and what you may want to do next.
 
-## 0:50–1:35 — Live autonomy
+## 0:50–1:25 — What it does on its own
 
-**[Show the live Google Cloud card or Cloud Run and Scheduler proof.]**
+**[Show the evidence trail and five-act flow.]**
 
-This is the reusable operating pattern: a business signal becomes bounded evidence, specialists advise, a scoped warrant gates the next step, and a reviewer can replay the result. The synthetic support escalation on this screen makes that pattern safe to inspect end to end.
+This is not a chatbot that waits for you to ask a question. Vice CEO keeps working while you work. It notices a change, checks the information behind it, compares it with what it already knows, and prepares the decision for you.
 
-Westover EPR is the first live deployment example. Its Registry Change Watch monitors three approved public sources: Oregon, California, and Maryland.
+Westover EPR is the first real example. Vice CEO watches approved public compliance registries, so the team does not have to keep checking them by hand.
 
-Private Cloud Scheduler jobs use OIDC to invoke a private Cloud Run worker. That worker normalizes visible public content, fingerprints it, and saves source snapshots, event claims, run receipts, and owner-review candidates in Firestore.
+## 1:25–1:55 — What the business receives
 
-This is the deployed worker revision, serving one hundred percent of traffic. The Cloud Run endpoint, Scheduler jobs, and Firestore evidence state are part of the operating system—not a mocked background process.
+**[Show a recommendation, proof bundle, and replay view.]**
 
-When a source has not materially changed, Vice CEO stays quiet. When it does change, the system preserves the evidence needed to explain why it matters.
+When something important changes, the business does not get a vague AI summary. It gets a short, evidence-backed briefing with the source information attached. You can see what Vice CEO found, understand why it raised the issue, and look back at the decision later.
 
-## 1:35–2:00 — Authority boundary
+That makes it useful for compliance, operations, support, suppliers, and any other business process where important details can get buried in routine work.
 
-**[Show the portfolio, operations overview, or boundary card.]**
+## 1:55–2:25 — You stay in control
 
-The private operations view exposes approved sources, evidence hashes, queue counts, and authority limits. This same product pattern can support compliance, operations, support, procurement, and other high-stakes business workflows. It does not expose customer records, billing tools, prospect contacts, or commercial action buttons.
+**[Show the decision tray and Action Warrant.]**
 
-One controlled owner-mailbox verification was accepted by the configured internal provider. That proves a bounded owner-brief path, not customer or prospect outreach. Those capabilities do not exist in this runtime.
+Vice CEO can do the tedious research and preparation, but it does not quietly make important business decisions for you. It brings the right decision to the right person, with the information needed to act confidently.
 
-## 2:00–2:25 — Gemini and ADK
+In this demo, you can approve a safe simulation and see the receipt. There is no customer messaging, no billing, and no hidden action happening behind the scenes.
 
-**[Show the Gemini canary or controlled replay label.]**
+## 2:25–2:55 — The first live example
 
-Gemini 3.5 Flash and Google ADK are used in a narrow, inspectable role. After a material public-source change, they can create an internal brief from a bounded excerpt.
+**[Show the Westover EPR Registry Change Watch and Google Cloud proof.]**
 
-Before that happens, a deterministic prompt-injection gate checks the untrusted public text. If it sees instruction-like content or a credential extraction attempt, the model path stops and the system creates an evidence-linked owner-review fallback instead.
+For Westover EPR, Vice CEO checks public registry information in the background. When nothing meaningful has changed, it stays quiet. When there is a meaningful update, it saves the proof and prepares a short owner review.
 
-The canary and controlled replay demonstrate the real code path with no customer data, no Firestore write, and no external business effect.
+That is the kind of work businesses usually do through a messy mix of browser tabs, spreadsheets, reminders, and missed follow-ups.
 
-## 2:25–3:10 — Reviewer flow
+## 2:55–3:25 — Reliable by design
 
-**[Open the proof bundle, Action Warrant, and replay record.]**
+**[Show a rejected source or the safety/test result.]**
 
-Each recommendation carries a proof bundle, a one-use Action Warrant, and a replay record. Specialists can advise, but they have no direct business tools.
+Vice CEO is built to be careful. If a source is not approved, it does not use it. If information looks suspicious, it stops and asks for review. And every result can be checked later instead of disappearing into a black box.
 
-The deterministic gateway consumes a short-lived, one-use warrant before the only registered transition: a synthetic simulation. That approval produces a readable receipt and nothing beyond it—no customer contact, persistence, or external effect.
+The point is simple: less busywork does not have to mean less control.
 
-## 3:10–3:40 — Resilience
+## 3:25–4:00 — Close
 
-**[Show a rejection, fallback, or the test result.]**
+**[Return to the hosted reviewer, then show the architecture diagram briefly.]**
 
-The system is designed to fail safely. Unregistered sources are rejected. A used warrant cannot be used again. Prompt injection is stopped before the model boundary. And the release has eighty-six automated tests covering authority, evidence integrity, adversarial probes, evaluation behavior, and the reviewer routes.
+Vice CEO gives a business back time by handling the routine work that keeps piling up. It watches, checks, organizes, and prepares—then brings people in when judgment matters most.
 
-## 3:40–4:00 — Close
-
-**[Show the architecture diagram, then return to the reviewer.]**
-
-Vice CEO turns business signals into accountable executive attention. Westover EPR proves the first registry-monitoring deployment, but the product is the reusable system behind it: asynchronous work, evidence-led decisions, and clear authority boundaries.
-
-That is proof-carrying autonomy: useful enough to work in the background, and disciplined enough to be trusted when it asks for attention.
+Westover EPR is the first deployment. The larger product is a practical AI teammate that helps any business spend less time chasing information and more time making good decisions.

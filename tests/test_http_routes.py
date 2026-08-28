@@ -44,8 +44,8 @@ class HttpRouteSmokeTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("text/html", response.headers["content-type"])
-        self.assertIn("From signal", response.text)
-        self.assertIn("<em>business decision.</em>", response.text)
+        self.assertIn("Less busywork.", response.text)
+        self.assertIn("<em>decisions.</em>", response.text)
         self.assertIn("No external business tools", response.text)
         self.assertIn("Not deployed", response.text)
         self.assertIn("provider not connected", response.text)

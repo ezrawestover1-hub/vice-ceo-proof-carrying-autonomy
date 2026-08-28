@@ -21,38 +21,38 @@ let narrationURL = artifacts.appendingPathComponent("vice-ceo-demo-narration.aif
 let scenes = [
     Scene(
         imagePath: captures.appendingPathComponent("reviewer-home.png").path,
-        title: "Your business stays ahead.",
-        subtitle: "Vice CEO watches the signals you approve and does the research in the background. When something needs attention, it gives you a clear, evidence-backed next step.",
+        title: "Less busywork. Better decisions.",
+        subtitle: "Vice CEO handles the repetitive checking and research that keeps a business from moving forward.",
         duration: 32
     ),
     Scene(
         imagePath: captures.appendingPathComponent("reviewer-evidence.png").path,
-        title: "A reusable business operating pattern",
-        subtitle: "Signal → evidence → specialist advice → scoped warrant → accountable decision.",
+        title: "It works while you work",
+        subtitle: "Vice CEO watches approved signals, checks the details, and brings you in only when attention is needed.",
         duration: 43
     ),
     Scene(
         imagePath: nil,
-        title: "First live deployment: Westover EPR",
-        subtitle: "Registry Change Watch on Cloud Run • three OIDC Scheduler jobs • Firestore evidence state • one practical proof of the platform.",
+        title: "First live example: Westover EPR",
+        subtitle: "Vice CEO watches public compliance registries so the team does not have to check them by hand.",
         duration: 45
     ),
     Scene(
         imagePath: captures.appendingPathComponent("reviewer-boundaries.png").path,
-        title: "Useful across business workflows",
-        subtitle: "Compliance, operations, support, and procurement can share the same evidence, review, and authority model.",
+        title: "You get the important parts",
+        subtitle: "It turns a change into a clear, evidence-backed next step for compliance, operations, support, and more.",
         duration: 48
     ),
     Scene(
         imagePath: repository.appendingPathComponent("ARCHITECTURE.png").path,
-        title: "A disciplined agent architecture",
-        subtitle: "Gemini 3.5 Flash + Google ADK • Cloud Run • Cloud Scheduler • Firestore • evidence-linked owner review",
+        title: "You stay in control",
+        subtitle: "Vice CEO prepares the work and shows its reasoning. People make the real business decision.",
         duration: 48
     ),
     Scene(
         imagePath: captures.appendingPathComponent("reviewer-home.png").path,
-        title: "Business autonomy you can inspect",
-        subtitle: "Vice CEO acts in the background and earns attention only when the evidence warrants a decision.",
+        title: "An AI teammate for the tedious work",
+        subtitle: "Vice CEO watches, checks, organizes, and prepares—so your team can focus on decisions that matter.",
         duration: 34
     )
 ]
