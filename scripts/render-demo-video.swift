@@ -21,8 +21,8 @@ let narrationURL = artifacts.appendingPathComponent("vice-ceo-demo-narration.aif
 let scenes = [
     Scene(
         imagePath: captures.appendingPathComponent("reviewer-home.png").path,
-        title: "Vice CEO — Proof-Carrying Business Autonomy",
-        subtitle: "Turn any important business signal into evidence, a bounded decision, and a replayable trail.",
+        title: "Your business stays ahead.",
+        subtitle: "Vice CEO watches the signals you approve and does the research in the background. When something needs attention, it gives you a clear, evidence-backed next step.",
         duration: 32
     ),
     Scene(

@@ -15,9 +15,9 @@ remains unavailable for customer, prospect, or commercial messaging.
 Vice CEO: Proof-Carrying Business Autonomy
 
 **One-line summary**
-A reusable business-autonomy operating system where every decision is bound to
-inspectable evidence, a narrow one-use warrant, and a replayable decision
-trail; Westover EPR is its first live registry-monitoring deployment.
+Vice CEO watches approved business signals and does the research in the
+background. When something needs attention, it gives the owner a clear,
+evidence-backed next step; Westover EPR is its first live deployment.
 
 **Recommended category**
 Fortified Enterprise Fleet — the code is structured as a four-role Google ADK

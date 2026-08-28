@@ -8,7 +8,7 @@
 
 Businesses receive operational signals all day: a regulatory change, a support escalation, a supplier update, or a policy exception. The hard part is not getting another alert. It is knowing what changed, whether it matters, and whether the evidence deserves an operator’s attention.
 
-Vice CEO is a proof-carrying business autonomy system built for that gap. It works in the background, but it never asks a user to blindly trust its recommendation.
+Vice CEO watches the business signals you approve and does the research in the background. When something needs attention, it gives you a clear, evidence-backed next step while you stay in control of any real-world action.
 
 ## 0:25–0:50 — Product promise
 
