@@ -202,7 +202,8 @@ perform an external action.
 - [ ] Confirm the category selection in the live form
 - [x] Deploy the bounded private Registry Change Watch to Cloud Run and capture
   Scheduler → Cloud Run → Firestore evidence for the video
-- [ ] Record and host the approximately four-minute demo video
+- [x] Record the approximately four-minute narrated demo video locally
+- [ ] Host the final MP4 on YouTube or Vimeo and add its public URL to Devpost
 - [ ] Capture 3–5 clean screenshots of the running local reviewer flow
 - [ ] Decide whether to publish optional build-story/social bonus content
 
@@ -210,7 +211,8 @@ perform an external action.
 
 - **Public repository:** https://github.com/ezrawestover1-hub/vice-ceo-proof-carrying-autonomy
 - **Hosted project:** https://vice-ceo-review-demo-77u4kmu2ba-uc.a.run.app/demo
-- **Demo video:** _Not recorded yet._
+- **Demo video:** local 1920×1080 master at
+  `artifacts/demo-video/ViceCEO-AllThingsAgentic-Demo.mp4` (not hosted yet).
 - **Architecture upload:** `ARCHITECTURE.png`
 
 ## How Codex was used
