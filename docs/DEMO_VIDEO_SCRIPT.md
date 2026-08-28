@@ -1,89 +1,45 @@
 # Vice CEO — Four-Minute Judge Demo
 
-**Purpose:** a single take that proves operational utility, architecture, and
-production-minded evidence boundaries for the All Things Agentic Hackathon.
+**Story:** *The Tuesday It Already Handled*
+**Purpose:** prove that Vice CEO takes meaningful business work forward in the
+background, while keeping a business in control of sensitive decisions and
+delivery authority.
 
-**Recording rule:** show the actual hosted reviewer and actual Google Cloud
-surfaces. Never show credentials, recipient addresses, raw email content, or
-customer data. The controlled Registry Change Watch replay remains visibly
-labeled as non-production fixture evidence.
-
-For a natural human narration, use
-[the read-aloud script](DEMO_VIDEO_READ_ALOUD_SCRIPT.md).
+Use [the read-aloud script](DEMO_VIDEO_READ_ALOUD_SCRIPT.md) for narration.
+Record one clean, continuous walkthrough of the hosted reviewer and real Google
+Cloud surfaces. Do not show credentials, real recipient addresses, raw customer
+content, or any private dashboard data.
 
 ## Capture timeline
 
-| Time | Screen | Proof point |
+| Time | Screen | What the judge should understand |
 | --- | --- | --- |
-| 0:00–0:25 | Hosted `/demo` reviewer | The problem and proof-carrying promise |
-| 0:25–0:50 | Evidence rail and five-act flow | Evidence, warrant, and replay—not a chatbot |
-| 0:50–1:35 | Cloud Run and Scheduler console | The watcher runs asynchronously on Google Cloud |
-| 1:35–2:00 | Private operations overview / portfolio evidence | Approved public sources, durable state, owner review |
-| 2:00–2:25 | Gemini canary and controlled replay evidence | Gemini + ADK act on bounded public excerpts only |
-| 2:25–3:10 | Hosted reviewer decision and warrant views | A usable decision surface with no business-tool authority |
-| 3:10–3:40 | Test result and prompt-injection boundary | Resilience and reproducibility |
-| 3:40–4:00 | Architecture diagram and closing reviewer view | Clear value proposition and safe operating boundary |
+| 0:00–0:22 | Hosted `/demo` work queue | This is a background operator, not a chat box. |
+| 0:22–1:05 | Prepared password-reset reply | Vice CEO turns a routine support request into an approved, reviewable response. |
+| 1:05–1:48 | Outreach follow-up and receipt | It keeps consented, approved follow-through from falling through the cracks. |
+| 1:48–2:22 | Refund marked `Needs you` | The agent knows when a decision needs a person. |
+| 2:22–2:58 | Registry Change Watch / evidence | Westover EPR is a working public-registry example of the same background-work pattern. |
+| 2:58–3:33 | Action receipt and evidence view | Every proposed or completed action is explainable and traceable. |
+| 3:33–3:54 | Cloud Run and architecture diagram | The deployed system runs asynchronously on Google Cloud and separates public demo from private actions. |
+| 3:54–4:05 | Clean full-queue closing view | The value proposition lands in one sentence. |
 
-## Narration
+## Recording notes
 
-Every day, a business receives operational signals: regulatory updates,
-supplier changes, support escalations, and policy exceptions. For an operator,
-the hard part is not finding another alert. It is deciding what changed,
-whether it matters, and whether the evidence is strong enough to deserve
-attention. Vice CEO is a proof-carrying business autonomy system built for
-that gap.
+- Let each important screen sit long enough to be read. The narration is fast;
+  the visuals should not be.
+- The hosted public demo prepares synthetic work and creates zero-effect
+  receipts. It never sends real email.
+- Say **“can send when the business enables its mailbox authority”**, never
+  “it already sends customer or prospect messages.” Actual delivery remains a
+  private, explicitly configured business capability.
+- Westover EPR is the first concrete use case. Present it as evidence that the
+  operating pattern works with real EPR registries, not as the only business
+  Vice CEO can serve.
+- Keep the Google Cloud proof short and visual. A judge should see Cloud Run
+  and the architecture, then return to the business outcome.
 
-This is the hosted reviewer experience. It does not ask a user to trust a
-black-box recommendation. Before a proposed action is even reviewable, the
-system puts its evidence, reasoning, authority limits, and replay path in one
-place. The public interface uses named synthetic fixtures so that anyone can
-inspect the contract safely.
+## One-sentence description
 
-The five-act flow makes the reusable product pattern concrete. A bounded
-operational signal becomes evidence. ADK specialists advise but do not receive
-business tools. A short-lived, one-use Action Warrant gates the only permitted
-simulated transition. The result can be replayed and challenged, and
-adversarial tests verify that the boundary stays intact. This is not a chatbot
-that drafts a paragraph. It is a workflow where an agent must earn the right
-to progress.
-
-Westover EPR is the first live deployment example of that operating pattern.
-Its Registry Change Watch monitors three reviewed public EPR sources—Oregon,
-California, and Maryland—through private Cloud Scheduler jobs. Those jobs use
-OIDC to call a private Cloud Run worker. The worker normalizes visible public
-content, fingerprints it, and stores source snapshots, event claims, receipts,
-and owner-review candidates in Firestore. When a source has not materially
-changed, it stays quiet. When it does change, the system preserves the evidence
-required to explain why an operator should care.
-
-The private operations surface shows the approved source portfolio, source
-metadata, evidence hashes, queue counts, and authority boundaries. The same
-product pattern can support compliance, operations, support, procurement, and
-other high-stakes business workflows. It does not show raw customer records,
-billing tools, prospect contacts, or a way for a model to take a commercial
-action. A controlled owner-mailbox verification was accepted through the
-separately configured internal channel, but no customer or prospect messaging
-capability exists here.
-
-Gemini 3.5 Flash and Google ADK are used in a narrow, inspectable role. A
-material public-source change can produce an internal brief only after a
-deterministic prompt-injection gate evaluates the untrusted public excerpt. If
-the excerpt looks instruction-like or attempts credential extraction, the
-model path is stopped and the system creates an evidence-linked fallback for
-owner review. The recorded Gemini canary and controlled replay demonstrate the
-real code path with no customer data, no Firestore write, and no external
-business effect.
-
-Back in the reviewer workspace, every recommendation carries its proof bundle,
-Action Warrant, and replay record. The synthetic approval is deliberately
-bounded: it creates a readable simulation receipt and nothing beyond it. The
-same release includes a registered-source rejection, one-use warrant denial,
-and an eighty-six-test suite covering authority, evidence integrity,
-evaluation, adversarial probes, and visual routes.
-
-Vice CEO turns business signals into accountable executive attention. Westover
-EPR proves the first registry-monitoring deployment, but the product is the
-reusable system behind it: asynchronous work, evidence-led decisions, and clear
-authority boundaries. It surfaces a decision only when one is warranted while
-keeping customer data, commercial messaging, and unbounded agent authority out
-of the system by design.
+**Vice CEO is a behind-the-scenes business operator that prepares and, when a
+business enables it, delivers routine customer follow-through—then brings a
+person in only when judgment is needed.**
