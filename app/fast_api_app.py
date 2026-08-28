@@ -47,6 +47,13 @@ from .recording_packet import build_recording_packet
 from .model_configuration import MODEL_CONFIGURATION
 from .cloud_run_preflight import build_cloud_run_preflight_report
 from .human_approval import HumanApprovalError, build_human_approval_preview, resolve_human_approval
+from .business_actions import (
+    BusinessActionError,
+    BusinessActionService,
+    CustomerServiceCase,
+    OutreachContact,
+    RecordingBusinessEmailDelivery,
+)
 from .tools import build_synthetic_fixture_manifest
 from .registry_watch import (
     REGISTRY_WATCH_EVENT_SCHEMA_VERSION,
@@ -84,6 +91,14 @@ class DemoApprovalDecision(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     decision: Literal["approve_simulation", "decline_simulation"]
+
+
+class DemoBusinessActionRequest(BaseModel):
+    """One named zero-effect work item from the public Vice CEO demo."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    action: Literal["send_customer_reply", "send_outreach_follow_up"]
 
 
 class SchedulerRegistryWatchRequest(BaseModel):
@@ -302,6 +317,50 @@ def resolve_demo_human_approval(request: DemoApprovalDecision) -> dict[str, obje
         "synthetic_only": True,
         "external_actions_enabled": False,
         "identity_verification_performed": False,
+        "production_authority": False,
+    }
+
+
+@app.post("/demo/business-actions")
+def run_demo_business_action(request: DemoBusinessActionRequest) -> dict[str, object]:
+    """Complete a named work item without exposing a public delivery channel."""
+
+    delivery = RecordingBusinessEmailDelivery()
+    service = BusinessActionService(delivery, business_name="Westover EPR")
+    try:
+        if request.action == "send_customer_reply":
+            receipt = service.send_customer_reply(
+                CustomerServiceCase(
+                    case_id="demo-customer-password-reset",
+                    customer_email="customer@example.invalid",
+                    customer_name="Alex",
+                    intent="password_reset",
+                    inbound_message_id="demo-inbound-password-reset-001",
+                    source_policy="support-low-risk-v1",
+                )
+            )
+        else:
+            receipt = service.send_outreach_follow_up(
+                campaign_id="demo-epr-readiness-follow-up",
+                campaign_name="EPR readiness follow-up",
+                contact=OutreachContact(
+                    contact_id="demo-consented-lead",
+                    email="lead@example.invalid",
+                    display_name="Jordan",
+                    consent_record_id="demo-consent-001",
+                ),
+                subject="A practical EPR readiness question",
+                text=(
+                    "Hi Jordan, based on the information you asked for, would a short "
+                    "EPR readiness conversation be useful this week?\n\nBest,\nWestover EPR"
+                ),
+            )
+    except BusinessActionError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    return {
+        "business_action": receipt,
+        "synthetic_only": True,
+        "external_actions_enabled": False,
         "production_authority": False,
     }
 

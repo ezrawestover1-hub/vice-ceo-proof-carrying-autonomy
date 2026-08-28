@@ -21,38 +21,38 @@ let narrationURL = artifacts.appendingPathComponent("vice-ceo-demo-narration.aif
 let scenes = [
     Scene(
         imagePath: captures.appendingPathComponent("reviewer-home.png").path,
-        title: "Less busywork. Better decisions.",
-        subtitle: "Vice CEO handles the repetitive checking and research that keeps a business from moving forward.",
+        title: "Work handled before it becomes work.",
+        subtitle: "Vice CEO handles routine customer replies and approved follow-ups while the team focuses on the exceptions.",
         duration: 32
     ),
     Scene(
         imagePath: captures.appendingPathComponent("reviewer-evidence.png").path,
-        title: "It works while you work",
-        subtitle: "Vice CEO watches approved signals, checks the details, and brings you in only when attention is needed.",
+        title: "Customer service that moves",
+        subtitle: "For a straightforward request, Vice CEO prepares the approved reply, sends it through the business mailbox, and records a receipt.",
         duration: 43
     ),
     Scene(
         imagePath: nil,
-        title: "First live example: Westover EPR",
-        subtitle: "Vice CEO watches public compliance registries so the team does not have to check them by hand.",
+        title: "Outreach that follows through",
+        subtitle: "It follows up only from approved campaigns, only with consent, and automatically stops when someone replies or unsubscribes.",
         duration: 45
     ),
     Scene(
         imagePath: captures.appendingPathComponent("reviewer-boundaries.png").path,
-        title: "You get the important parts",
-        subtitle: "It turns a change into a clear, evidence-backed next step for compliance, operations, support, and more.",
+        title: "Only exceptions ask for attention",
+        subtitle: "Sensitive or judgment-heavy work stays with a person. Vice CEO does not send a guess.",
         duration: 48
     ),
     Scene(
         imagePath: repository.appendingPathComponent("ARCHITECTURE.png").path,
-        title: "You stay in control",
-        subtitle: "Vice CEO prepares the work and shows its reasoning. People make the real business decision.",
+        title: "Every action has a receipt",
+        subtitle: "Replies link to the original request. Outreach checks consent. Repeated sends are blocked before delivery.",
         duration: 48
     ),
     Scene(
         imagePath: captures.appendingPathComponent("reviewer-home.png").path,
-        title: "An AI teammate for the tedious work",
-        subtitle: "Vice CEO watches, checks, organizes, and prepares—so your team can focus on decisions that matter.",
+        title: "An AI teammate that follows through",
+        subtitle: "Westover EPR is the first example. Vice CEO is built for the routine communication that keeps every business moving.",
         duration: 34
     )
 ]

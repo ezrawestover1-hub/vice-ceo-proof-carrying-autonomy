@@ -7,10 +7,10 @@ It is new hackathon source. Westover EPR remains the authoritative system for
 customer, billing, outreach, support, and compliance records. This runtime
 contains no credentials or connector for Stripe, Supabase service-role access,
 refunds, billing changes, or customer-record mutation. Its public reviewer
-surface uses only synthetic fixtures. A separately configured private worker
-can watch approved public EPR sources. Its owner-only briefing adapter is
-disabled by default and becomes available only when a dedicated Secret Manager
-credential, verified sender, and allowlisted owner recipient are explicitly bound.
+surface uses only synthetic fixtures. The source includes a separate,
+zero-secret business-email adapter for tightly bounded customer replies and
+approved outreach follow-ups; it is disabled unless a private runtime binds a
+dedicated Secret Manager credential and explicit business-action setting.
 
 ## Public submission package
 
@@ -65,6 +65,11 @@ records or external prospects.
 - A release-readiness report that distinguishes local verification from commit,
   deployment, and provider evidence.
 - A polished, dependency-free visual demo console at `/demo`.
+- A business-actions layer for routine customer-service replies and approved
+  outreach follow-ups, with source references, consent/suppression checks,
+  delivery receipts, and duplicate-send protection.
+- A public `/demo/business-actions` interaction that exercises those workflows
+  using fixed synthetic recipients and a no-send recording adapter.
 - An explicit reviewer decision gate that can only approve or decline the fixed
   synthetic support simulation; it verifies no identity and grants no real-world authority.
 - In-process HTTP smoke coverage for the health, demo, evidence, readiness,
@@ -73,6 +78,17 @@ records or external prospects.
 - An opt-in, fixed-prompt Vertex canary at `/demo/provider-canary`, disabled by
   default and isolated from all customer context and tools.
 - No production data or external business effects.
+
+## Business actions
+
+The product's core loop is execution, not reporting: handle straightforward
+customer service, follow up on approved outreach, and escalate the exceptions.
+The public demo cannot send mail; it creates explicit no-effect receipts from
+closed fixtures. The private delivery path is a separate Resend adapter and
+requires an enable switch, a Secret Manager credential, a verified sender,
+source-linked customer replies, consented contacts, and idempotency protection.
+The exact boundary and deployment variables are documented in
+[Business actions](docs/BUSINESS_ACTIONS.md).
 
 ## Registry Change Watch
 

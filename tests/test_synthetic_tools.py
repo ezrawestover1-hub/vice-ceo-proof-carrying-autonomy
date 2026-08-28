@@ -680,13 +680,13 @@ class SyntheticToolTests(unittest.TestCase):
     def test_demo_console_is_a_zero_effect_visualization_of_existing_evidence(self) -> None:
         page = render_demo_console()
 
-        self.assertIn("Less busywork.", page)
-        self.assertIn("Evidence trail", page)
-        self.assertIn("No external business tools", page)
-        self.assertIn("grant production authority", page)
-        self.assertIn("Not deployed", page)
-        self.assertIn("provider not connected", page)
-        self.assertIn("100%", page)
+        self.assertIn("Work handled before it becomes work.", page)
+        self.assertIn("Send reply", page)
+        self.assertIn("Run this follow-up", page)
+        self.assertIn("EPR intelligence", page)
+        self.assertIn("Public demo boundary.", page)
+        self.assertIn("idempotency protection", page)
+        self.assertIn("do not send email", page)
         self.assertNotIn("customer-content", page)
         self.assertNotIn("https://", page)
 

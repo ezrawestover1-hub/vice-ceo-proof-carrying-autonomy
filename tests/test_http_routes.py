@@ -44,18 +44,15 @@ class HttpRouteSmokeTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn("text/html", response.headers["content-type"])
-        self.assertIn("Less busywork.", response.text)
-        self.assertIn("<em>decisions.</em>", response.text)
-        self.assertIn("No external business tools", response.text)
-        self.assertIn("Not deployed", response.text)
-        self.assertIn("provider not connected", response.text)
-        self.assertIn("Vice CEO · Business Autonomy", response.text)
-        self.assertIn("0 direct business tools", response.text)
-        self.assertIn("Approve simulation", response.text)
-        self.assertIn("Keep in review", response.text)
-        self.assertIn("does not verify identity", response.text)
-        self.assertIn("Simulation approved", response.text)
-        self.assertIn("A warrant-backed synthetic receipt was created", response.text)
+        self.assertIn("Work handled before it becomes work.", response.text)
+        self.assertIn("Send reply", response.text)
+        self.assertIn("Run this follow-up", response.text)
+        self.assertIn("Ready to send", response.text)
+        self.assertIn("Needs you", response.text)
+        self.assertIn("Stops on reply", response.text)
+        self.assertIn("Public demo boundary.", response.text)
+        self.assertIn('data-action="send_customer_reply"', response.text)
+        self.assertIn('data-action="send_outreach_follow_up"', response.text)
 
     def test_structured_demo_routes_return_only_synthetic_evidence(self) -> None:
         judge = self.client.get("/demo/judge-flow")
@@ -449,4 +446,22 @@ class HttpRouteSmokeTests(unittest.TestCase):
         self.assertIsNone(declined.json()["human_approval"]["action_warrant_id"])
 
         invalid = self.client.post("/demo/human-approval", json={"decision": "send_email"})
+        self.assertEqual(invalid.status_code, 422)
+
+    def test_business_action_demo_creates_receipts_without_sending_email(self) -> None:
+        reply = self.client.post("/demo/business-actions", json={"action": "send_customer_reply"})
+        follow_up = self.client.post(
+            "/demo/business-actions", json={"action": "send_outreach_follow_up"}
+        )
+
+        self.assertEqual(reply.status_code, 200)
+        self.assertEqual(reply.json()["business_action"]["action_kind"], "customer_service_reply")
+        self.assertEqual(reply.json()["business_action"]["state"], "simulated")
+        self.assertFalse(reply.json()["business_action"]["external_effect"])
+        self.assertFalse(reply.json()["production_authority"])
+        self.assertEqual(follow_up.status_code, 200)
+        self.assertEqual(follow_up.json()["business_action"]["action_kind"], "outreach_follow_up")
+        self.assertFalse(follow_up.json()["business_action"]["external_effect"])
+
+        invalid = self.client.post("/demo/business-actions", json={"action": "send_email"})
         self.assertEqual(invalid.status_code, 422)

@@ -1,67 +1,59 @@
-# Vice CEO — Read-Aloud Demo Script
+# Vice CEO — Simple Demo Voiceover
 
-**Target run time:** about four minutes, including pauses while you move between screens. Read the paragraphs aloud. The bracketed lines are only directions for what to show.
+**Target run time:** about four minutes, including the pauses while the product is on screen. This version is written for a clear, calm ElevenLabs voice such as Adam Stone. The bracketed text is direction only; do not read it aloud.
 
 ## 0:00–0:25 — The problem
 
-**[Show the hosted reviewer home page.]**
+**[Show the work queue.]**
 
-Businesses lose hours every week to small, repetitive jobs: checking websites, watching for updates, comparing information, and figuring out which changes actually matter. Those jobs are important, but they pull people away from the work only they can do.
+Small business teams lose whole days to work that looks tiny on its own: answering the same customer questions, following up with leads, checking whether anything changed, and deciding what can wait.
 
-Vice CEO is an AI teammate that takes those repeatable jobs off your plate.
+Vice CEO takes that routine work off the team’s plate. It moves simple work forward and brings people in only when judgment is actually needed.
 
-## 0:25–0:50 — The simple promise
+## 0:25–1:05 — Customer service that moves
 
-**[Point to the main recommendation and evidence panel.]**
+**[Open the reset-password request and pause on the drafted reply.]**
 
-You tell Vice CEO what it is allowed to watch. It checks in the background, gathers the facts when something changes, and gives you a simple next step when your attention is needed.
+Here, a customer has asked for help resetting a password. Vice CEO recognizes this as a routine, low-risk request. It finds the approved response, ties it to the original customer message, and prepares the reply.
 
-Instead of another pile of alerts, you get a clear answer: what changed, why it matters, and what you may want to do next.
+For this kind of request, the business does not need another alert. It needs the reply handled. In the live business workspace, the reply is sent from the company mailbox and a receipt records what happened.
 
-## 0:50–1:25 — What it does on its own
+## 1:05–1:45 — Outreach that follows through
 
-**[Show the evidence trail and five-act flow.]**
+**[Move to Outreach and follow-ups.]**
 
-This is not a chatbot that waits for you to ask a question. Vice CEO keeps working while you work. It notices a change, checks the information behind it, compares it with what it already knows, and prepares the decision for you.
+Vice CEO also handles the work that usually falls through the cracks after the first conversation with a lead. It runs an approved follow-up, checks that the contact gave permission to hear from the business, and stops the sequence when the person replies or unsubscribes.
 
-Westover EPR is the first real example. Vice CEO watches approved public compliance registries, so the team does not have to keep checking them by hand.
+That means the owner is not manually reopening old emails or wondering whether a good lead was forgotten.
 
-## 1:25–1:55 — What the business receives
+## 1:45–2:20 — The important exception
 
-**[Show a recommendation, proof bundle, and replay view.]**
+**[Point to the refund request marked Needs you.]**
 
-When something important changes, the business does not get a vague AI summary. It gets a short, evidence-backed briefing with the source information attached. You can see what Vice CEO found, understand why it raised the issue, and look back at the decision later.
+Not every message should be automatic. A refund request has more judgment behind it, so Vice CEO does not send a guess. It places the case in the owner’s queue with the context needed to decide.
 
-That makes it useful for compliance, operations, support, suppliers, and any other business process where important details can get buried in routine work.
+The goal is not to replace judgment. The goal is to save judgment for the work that deserves it.
 
-## 1:55–2:25 — You stay in control
+## 2:20–2:55 — Why it can be trusted
 
-**[Show the decision tray and Action Warrant.]**
+**[Click Send reply in the public demo and show the action receipt. Then show the evidence link.]**
 
-Vice CEO can do the tedious research and preparation, but it does not quietly make important business decisions for you. It brings the right decision to the right person, with the information needed to act confidently.
+Every action has a clear boundary. A customer reply must be tied to an incoming request and an approved policy. Outreach must belong to an approved campaign and a consented contact. Repeated sends are blocked, and every completed action has a receipt.
 
-In this demo, you can approve a safe simulation and see the receipt. There is no customer messaging, no billing, and no hidden action happening behind the scenes.
+This public demo uses fixed sample data, so it never sends real email. The private business workspace uses the configured company mailbox once its delivery channel is enabled.
 
-## 2:25–2:55 — The first live example
+## 2:55–3:25 — Westover EPR is the first example
 
-**[Show the Westover EPR Registry Change Watch and Google Cloud proof.]**
+**[Show EPR intelligence and the registry-watch evidence.]**
 
-For Westover EPR, Vice CEO checks public registry information in the background. When nothing meaningful has changed, it stays quiet. When there is a meaningful update, it saves the proof and prepares a short owner review.
+Westover EPR is the first business example. Its registry intelligence gives Vice CEO extra context, so the system can help with the work around compliance without making a legal conclusion or changing customer records.
 
-That is the kind of work businesses usually do through a messy mix of browser tabs, spreadsheets, reminders, and missed follow-ups.
-
-## 2:55–3:25 — Reliable by design
-
-**[Show a rejected source or the safety/test result.]**
-
-Vice CEO is built to be careful. If a source is not approved, it does not use it. If information looks suspicious, it stops and asks for review. And every result can be checked later instead of disappearing into a black box.
-
-The point is simple: less busywork does not have to mean less control.
+But the product is broader than one industry: it is a practical operations teammate for any business with recurring customer and follow-up work.
 
 ## 3:25–4:00 — Close
 
-**[Return to the hosted reviewer, then show the architecture diagram briefly.]**
+**[Return to the work queue, then show the architecture diagram.]**
 
-Vice CEO gives a business back time by handling the routine work that keeps piling up. It watches, checks, organizes, and prepares—then brings people in when judgment matters most.
+Vice CEO turns routine communication from a pile of tasks into a workflow that actually gets done. It responds to straightforward customers, follows up with approved leads, and surfaces the few cases where a human should decide.
 
-Westover EPR is the first deployment. The larger product is a practical AI teammate that helps any business spend less time chasing information and more time making good decisions.
+Less busywork. More follow-through. More time for the work only your team can do.
