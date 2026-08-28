@@ -8,6 +8,9 @@ surfaces. Never show credentials, recipient addresses, raw email content, or
 customer data. The controlled Registry Change Watch replay remains visibly
 labeled as non-production fixture evidence.
 
+For a natural human narration, use
+[the read-aloud script](DEMO_VIDEO_READ_ALOUD_SCRIPT.md).
+
 ## Capture timeline
 
 | Time | Screen | Proof point |
