@@ -53,6 +53,7 @@ from .business_actions import (
     CustomerServiceCase,
     OutreachContact,
     RecordingBusinessEmailDelivery,
+    create_business_action_service_from_environment,
 )
 from .tools import build_synthetic_fixture_manifest
 from .registry_watch import (
@@ -99,6 +100,35 @@ class DemoBusinessActionRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     action: Literal["send_customer_reply", "send_outreach_follow_up"]
+
+
+class PrivateCustomerReplyRequest(BaseModel):
+    """A source-linked low-risk support reply for the IAM-protected worker."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    case_id: str
+    customer_email: str
+    customer_name: str
+    intent: Literal["password_reset", "shipping_update", "business_hours"]
+    inbound_message_id: str
+    source_policy: str
+
+
+class PrivateOutreachFollowUpRequest(BaseModel):
+    """An approved, consented follow-up for the IAM-protected worker."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    campaign_id: str
+    campaign_name: str
+    contact_id: str
+    contact_email: str
+    contact_name: str
+    consent_record_id: str
+    subject: str
+    text: str
+    unsubscribed: bool = False
 
 
 class SchedulerRegistryWatchRequest(BaseModel):
@@ -363,6 +393,62 @@ def run_demo_business_action(request: DemoBusinessActionRequest) -> dict[str, ob
         "external_actions_enabled": False,
         "production_authority": False,
     }
+
+
+def _private_business_actions() -> BusinessActionService:
+    """Return the live executor only behind a private Cloud Run front door."""
+
+    if _public_demo_only():
+        raise HTTPException(status_code=404, detail="business_actions_not_available_on_public_demo")
+    try:
+        return create_business_action_service_from_environment()
+    except BusinessActionError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+
+
+@app.post("/internal/business-actions/customer-replies")
+def send_private_customer_reply(request: PrivateCustomerReplyRequest) -> dict[str, object]:
+    """Perform one eligible customer reply from the private worker only."""
+
+    service = _private_business_actions()
+    try:
+        receipt = service.send_customer_reply(
+            CustomerServiceCase(
+                case_id=request.case_id,
+                customer_email=request.customer_email,
+                customer_name=request.customer_name,
+                intent=request.intent,
+                inbound_message_id=request.inbound_message_id,
+                source_policy=request.source_policy,
+            )
+        )
+    except BusinessActionError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    return {"business_action": asdict(receipt), "production_authority": receipt.external_effect}
+
+
+@app.post("/internal/business-actions/outreach-follow-ups")
+def send_private_outreach_follow_up(request: PrivateOutreachFollowUpRequest) -> dict[str, object]:
+    """Perform one approved, consented outreach follow-up from the private worker."""
+
+    service = _private_business_actions()
+    try:
+        receipt = service.send_outreach_follow_up(
+            campaign_id=request.campaign_id,
+            campaign_name=request.campaign_name,
+            contact=OutreachContact(
+                contact_id=request.contact_id,
+                email=request.contact_email,
+                display_name=request.contact_name,
+                consent_record_id=request.consent_record_id,
+                unsubscribed=request.unsubscribed,
+            ),
+            subject=request.subject,
+            text=request.text,
+        )
+    except BusinessActionError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    return {"business_action": asdict(receipt), "production_authority": receipt.external_effect}
 
 
 @app.get("/demo/provider-canary")

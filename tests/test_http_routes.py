@@ -465,3 +465,18 @@ class HttpRouteSmokeTests(unittest.TestCase):
 
         invalid = self.client.post("/demo/business-actions", json={"action": "send_email"})
         self.assertEqual(invalid.status_code, 422)
+
+    def test_private_business_actions_are_absent_from_the_public_demo(self) -> None:
+        payload = {
+            "case_id": "case-1",
+            "customer_email": "customer@example.com",
+            "customer_name": "Customer",
+            "intent": "password_reset",
+            "inbound_message_id": "inbound-1",
+            "source_policy": "support-low-risk-v1",
+        }
+        with patch.dict(os.environ, {"VICE_CEO_PUBLIC_DEMO_ONLY": "true"}):
+            response = self.client.post("/internal/business-actions/customer-replies", json=payload)
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json()["detail"], "business_actions_not_available_on_public_demo")

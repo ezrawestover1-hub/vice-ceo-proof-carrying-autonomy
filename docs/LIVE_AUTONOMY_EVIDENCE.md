@@ -14,7 +14,7 @@ does not grant any new business authority.
 | Sources | Reviewed official Oregon DEQ, CalRecycle SB 54, and Maryland Department of the Environment public EPR program pages |
 | Durable state | Firestore source snapshot, event claim, run receipt, and owner-review action-queue collections |
 | Owner review | Private Cloud Run operations overview, inbox, and JSON action queue live behind service authentication; no public-demo exposure |
-| Public reviewer | Separate fixture-only Cloud Run `vice-ceo-review-demo-00015-tv9` at [`/demo`](https://vice-ceo-review-demo-77u4kmu2ba-uc.a.run.app/demo); its synthetic approval returns a readable receipt and warrant with zero external effect |
+| Public reviewer | Separate fixture-only Cloud Run `vice-ceo-review-demo-00016-5h8` at [`/demo`](https://vice-ceo-review-demo-77u4kmu2ba-uc.a.run.app/demo); it demonstrates a customer reply and approved follow-up as zero-effect, receipt-producing work items |
 
 ## Observed scheduler receipts
 

@@ -18,3 +18,15 @@ The private worker may enable the Resend delivery adapter only when all of the f
 - `VICE_CEO_BUSINESS_NAME=Westover EPR`
 
 The separate registry-watch delivery setting remains owner-briefing-only. It does not grant customer-service or prospect-outreach authority. Before enabling the business lane, connect the real inbound inbox/contact source, record approved response policies and campaigns, and send a controlled owner-address verification through the private worker.
+
+When the private Cloud Run worker is deployed with those variables, its
+IAM-protected execution endpoints are:
+
+- `POST /internal/business-actions/customer-replies`
+- `POST /internal/business-actions/outreach-follow-ups`
+
+They are deliberately unavailable on the public reviewer deployment. An inbox
+or CRM integration calls the private endpoint with a source-linked support case
+or an approved, consented campaign contact; Vice CEO then dispatches through
+Resend and returns a provider receipt. No browser visitor can supply a real
+recipient to the public demo.
