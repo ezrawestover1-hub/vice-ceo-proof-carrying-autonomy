@@ -22,25 +22,25 @@ let scenes = [
     Scene(
         imagePath: captures.appendingPathComponent("reviewer-home.png").path,
         title: "Vice CEO — Proof-Carrying Business Autonomy",
-        subtitle: "A bounded recommendation is reviewable only with evidence, authority limits, and a replay path.",
+        subtitle: "Turn any important business signal into evidence, a bounded decision, and a replayable trail.",
         duration: 32
     ),
     Scene(
         imagePath: captures.appendingPathComponent("reviewer-evidence.png").path,
-        title: "Evidence, warrant, replay",
-        subtitle: "The reviewer can inspect the proof bundle before a recommendation is allowed to progress.",
+        title: "A reusable business operating pattern",
+        subtitle: "Signal → evidence → specialist advice → scoped warrant → accountable decision.",
         duration: 43
     ),
     Scene(
         imagePath: nil,
-        title: "Live Google Cloud Registry Change Watch",
-        subtitle: "Cloud Run: vice-ceo-registry-worker-00025-c6r • 100% traffic • vice-ceo-registry-worker-986104805144.us-central1.run.app • three OIDC Scheduler jobs • Firestore evidence state",
+        title: "First live deployment: Westover EPR",
+        subtitle: "Registry Change Watch on Cloud Run • three OIDC Scheduler jobs • Firestore evidence state • one practical proof of the platform.",
         duration: 45
     ),
     Scene(
         imagePath: captures.appendingPathComponent("reviewer-boundaries.png").path,
-        title: "Operational utility without unbounded authority",
-        subtitle: "Approved public EPR sources, a prompt-injection gate, owner review, and no customer or prospect messaging tools.",
+        title: "Useful across business workflows",
+        subtitle: "Compliance, operations, support, and procurement can share the same evidence, review, and authority model.",
         duration: 48
     ),
     Scene(
@@ -51,8 +51,8 @@ let scenes = [
     ),
     Scene(
         imagePath: captures.appendingPathComponent("reviewer-home.png").path,
-        title: "Quiet monitoring. Accountable executive attention.",
-        subtitle: "Vice CEO surfaces a real decision only when the evidence warrants it.",
+        title: "Business autonomy you can inspect",
+        subtitle: "Vice CEO acts in the background and earns attention only when the evidence warrants a decision.",
         duration: 34
     )
 ]

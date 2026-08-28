@@ -15,9 +15,9 @@ remains unavailable for customer, prospect, or commercial messaging.
 Vice CEO: Proof-Carrying Business Autonomy
 
 **One-line summary**
-An enterprise-style agentic workflow where every simulated business decision is
-bound to inspectable evidence, a narrow one-use warrant, and a replayable
-decision trail.
+A reusable business-autonomy operating system where every decision is bound to
+inspectable evidence, a narrow one-use warrant, and a replayable decision
+trail; Westover EPR is its first live registry-monitoring deployment.
 
 **Recommended category**
 Fortified Enterprise Fleet — the code is structured as a four-role Google ADK
@@ -34,9 +34,12 @@ authority boundaries plainly visible.
 
 Most business agents make a recommendation and leave people to trust a black
 box. Vice CEO treats the proof of a decision as part of the decision itself.
-Its first real background workflow watches an approved official EPR source,
-preserves a normalized evidence hash, and creates an internal operational
-brief only when the source materially changes.
+It is a reusable operating pattern for high-stakes workflows: a bounded signal
+becomes evidence, specialists advise without broad tool authority, a scoped
+warrant gates the next step, and the result remains replayable. Westover EPR is
+the first real background deployment: it watches an approved official EPR
+source, preserves a normalized evidence hash, and creates an internal
+operational brief only when the source materially changes.
 
 The project routes a named synthetic support case through a small Google ADK
 specialist fleet. Support Intake can read the bounded fixture; Policy Guard,

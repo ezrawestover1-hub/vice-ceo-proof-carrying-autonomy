@@ -26,11 +26,12 @@ For a natural human narration, use
 
 ## Narration
 
-Every day, EPR programs and producer-responsibility requirements change in
-public registries. For an operator, the hard part is not finding another alert.
-It is deciding what changed, whether it matters, and whether the evidence is
-strong enough to deserve attention. Vice CEO is a proof-carrying business
-autonomy system built for that gap.
+Every day, a business receives operational signals: regulatory updates,
+supplier changes, support escalations, and policy exceptions. For an operator,
+the hard part is not finding another alert. It is deciding what changed,
+whether it matters, and whether the evidence is strong enough to deserve
+attention. Vice CEO is a proof-carrying business autonomy system built for
+that gap.
 
 This is the hosted reviewer experience. It does not ask a user to trust a
 black-box recommendation. Before a proposed action is even reviewable, the
@@ -38,28 +39,31 @@ system puts its evidence, reasoning, authority limits, and replay path in one
 place. The public interface uses named synthetic fixtures so that anyone can
 inspect the contract safely.
 
-The five-act flow makes the design concrete. A bounded operational signal
-becomes evidence. ADK specialists advise but do not receive business tools. A
-short-lived, one-use Action Warrant gates the only permitted simulated
-transition. The result can be replayed and challenged, and adversarial tests
-verify that the boundary stays intact. This is not a chatbot that drafts a
-paragraph. It is a workflow where an agent must earn the right to progress.
+The five-act flow makes the reusable product pattern concrete. A bounded
+operational signal becomes evidence. ADK specialists advise but do not receive
+business tools. A short-lived, one-use Action Warrant gates the only permitted
+simulated transition. The result can be replayed and challenged, and
+adversarial tests verify that the boundary stays intact. This is not a chatbot
+that drafts a paragraph. It is a workflow where an agent must earn the right
+to progress.
 
-Behind that reviewer surface is the deployed Registry Change Watch. Three
-reviewed public EPR sources—Oregon, California, and Maryland—are invoked by
-private Cloud Scheduler jobs. Those jobs use OIDC to call a private Cloud Run
-worker. The worker normalizes visible public content, fingerprints it, and
-stores source snapshots, event claims, receipts, and owner-review candidates in
-Firestore. When a source has not materially changed, it stays quiet. When it
-does change, the system preserves the evidence required to explain why an
-operator should care.
+Westover EPR is the first live deployment example of that operating pattern.
+Its Registry Change Watch monitors three reviewed public EPR sources—Oregon,
+California, and Maryland—through private Cloud Scheduler jobs. Those jobs use
+OIDC to call a private Cloud Run worker. The worker normalizes visible public
+content, fingerprints it, and stores source snapshots, event claims, receipts,
+and owner-review candidates in Firestore. When a source has not materially
+changed, it stays quiet. When it does change, the system preserves the evidence
+required to explain why an operator should care.
 
 The private operations surface shows the approved source portfolio, source
-metadata, evidence hashes, queue counts, and authority boundaries. It does not
-show raw customer records, billing tools, prospect contacts, or a way for a
-model to take a commercial action. A controlled owner-mailbox verification was
-accepted through the separately configured internal channel, but no customer
-or prospect messaging capability exists here.
+metadata, evidence hashes, queue counts, and authority boundaries. The same
+product pattern can support compliance, operations, support, procurement, and
+other high-stakes business workflows. It does not show raw customer records,
+billing tools, prospect contacts, or a way for a model to take a commercial
+action. A controlled owner-mailbox verification was accepted through the
+separately configured internal channel, but no customer or prospect messaging
+capability exists here.
 
 Gemini 3.5 Flash and Google ADK are used in a narrow, inspectable role. A
 material public-source change can produce an internal brief only after a
@@ -77,7 +81,9 @@ same release includes a registered-source rejection, one-use warrant denial,
 and an eighty-six-test suite covering authority, evidence integrity,
 evaluation, adversarial probes, and visual routes.
 
-Vice CEO turns quiet registry monitoring into accountable executive attention.
-It runs in the background, explains changes with evidence, and surfaces a
-decision only when one is warranted—while keeping customer data, commercial
-messaging, and unbounded agent authority out of the system by design.
+Vice CEO turns business signals into accountable executive attention. Westover
+EPR proves the first registry-monitoring deployment, but the product is the
+reusable system behind it: asynchronous work, evidence-led decisions, and clear
+authority boundaries. It surfaces a decision only when one is warranted while
+keeping customer data, commercial messaging, and unbounded agent authority out
+of the system by design.
