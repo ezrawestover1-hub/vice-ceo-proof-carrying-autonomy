@@ -133,7 +133,7 @@ final class InteractiveShowcase: NSObject, WKNavigationDelegate {
             selector = ".intro"
             scroll = 0
             receipt = "hide"
-            scene = ("VICE CEO", "Less chasing.\nMore running\nthe business.", "A behind-the-scenes business operator for the repeatable work that never stops.", ["Customer service", "Follow-through", "Proof"], true)
+            scene = ("LIVE ON GOOGLE CLOUD RUN", "Less chasing.\nMore running\nthe business.", "Review the live product at vice-ceo-review-demo-77u4kmu2ba-uc.a.run.app/demo", ["Google ADK", "Cloud Run", "Firestore"], true)
         }
 
         let resultScript: String
