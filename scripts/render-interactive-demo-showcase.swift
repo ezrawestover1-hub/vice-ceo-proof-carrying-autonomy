@@ -11,6 +11,7 @@ final class InteractiveShowcase: NSObject, WKNavigationDelegate {
     private let outputURL: URL
     private let silentURL: URL
     private let narrationURL: URL
+    private let narrationEnabled: Bool
     private let canvas = CGSize(width: 1920, height: 1080)
     private let outputFPS: Int32 = 30
     private let captureFPS = 6
@@ -26,9 +27,11 @@ final class InteractiveShowcase: NSObject, WKNavigationDelegate {
 
     override init() {
         artifacts = repository.appendingPathComponent("artifacts/demo-video")
-        outputURL = artifacts.appendingPathComponent("ViceCEO-AllThingsAgentic-Demo.mp4")
-        silentURL = artifacts.appendingPathComponent("ViceCEO-AllThingsAgentic-silent.mp4")
+        let outputName = ProcessInfo.processInfo.environment["VICE_CEO_OUTPUT_NAME"] ?? "ViceCEO-AllThingsAgentic-Demo.mp4"
+        outputURL = artifacts.appendingPathComponent(outputName)
+        silentURL = artifacts.appendingPathComponent((outputName as NSString).deletingPathExtension + "-silent.mp4")
         narrationURL = URL(fileURLWithPath: ProcessInfo.processInfo.environment["VICE_CEO_NARRATION_PATH"] ?? artifacts.appendingPathComponent("vice-ceo-demo-narration.mp3").path)
+        narrationEnabled = ProcessInfo.processInfo.environment["VICE_CEO_NO_NARRATION"] != "1"
         let narration = AVURLAsset(url: narrationURL)
         let narrationDuration = CMTimeGetSeconds(narration.duration)
         duration = narrationDuration.isFinite && narrationDuration > 0 ? narrationDuration + 0.5 : 173
@@ -79,7 +82,6 @@ final class InteractiveShowcase: NSObject, WKNavigationDelegate {
     private func stateScript(at time: Double) -> String {
         let selector: String
         let scroll: Int
-        let cursor: CGPoint
         let receipt: String
         let scene: (kicker: String, title: String, detail: String, chips: [String], visible: Bool)
 
@@ -87,57 +89,46 @@ final class InteractiveShowcase: NSObject, WKNavigationDelegate {
         case ..<10:
             selector = ".intro"
             scroll = 0
-            cursor = CGPoint(x: 530 + time * 22, y: 330 + time * 9)
             receipt = "hide"
             scene = ("PROOF-CARRYING BUSINESS AUTONOMY", "Your business\nshould not run\non sticky notes.", "Vice CEO turns routine communication and follow-through into work that is already moving.", ["Observe", "Decide", "Prepare"], true)
         case ..<30:
             selector = "[data-action=send_customer_reply]"
             scroll = 0
-            let phase = min(max((time - 10) / 8, 0), 1)
-            cursor = CGPoint(x: 520 + phase * 650, y: 540 + phase * 300)
             receipt = time >= 21 ? "reply" : "hide"
             scene = ("CUSTOMER SUPPORT", "Routine help.\nAlready handled.", "Vice CEO matches approved policy, prepares the response, and keeps the original customer context attached.", ["Policy matched", "Reply prepared", "Receipt created"], time >= 10 && time < 14)
         case ..<48:
             selector = "[data-action=send_outreach_follow_up]"
             scroll = 0
-            let phase = min(max((time - 30) / 8, 0), 1)
-            cursor = CGPoint(x: 1090 + phase * 480, y: 610 + phase * 220)
             receipt = time >= 41 ? "followup" : "hide"
             scene = ("APPROVED OUTREACH", "The next step\nnever gets lost.", "Consent-aware follow-through stays ready, stops on reply or unsubscribe, and never repeats itself.", ["Approved campaign", "Consent-aware", "Duplicate-safe"], time >= 30 && time < 34)
         case ..<66:
             selector = "#activity"
             scroll = 430
-            cursor = CGPoint(x: 835, y: 550)
             receipt = "hide"
             scene = ("THE HUMAN MOMENT", "Escalate judgment.\nNot workload.", "When the work needs empathy or a real business decision, Vice CEO gathers the facts and brings in the right person.", ["Knows the difference", "Focused decision", "No messy thread"], time >= 48 && time < 53)
         case ..<86:
             selector = ".work-item.selected"
             scroll = 190
-            cursor = CGPoint(x: 350, y: 470)
             receipt = time >= 78 ? "reply" : "hide"
             scene = ("WORK YOU CAN TRUST", "No black box.\nJust receipts.", "Every action carries its source, policy, decision, and delivery state—so the owner can understand what happened.", ["Source", "Policy", "Decision", "Outcome"], time >= 66 && time < 71)
         case ..<106:
             selector = ".activity-item:nth-child(3)"
             scroll = 520
-            cursor = CGPoint(x: 1030, y: 500)
             receipt = "hide"
             scene = ("AUTHORITY IS EARNED", "You choose\nhow much it can do.", "Start with preparation. Enable delivery only for the work and systems your business approves.", ["Prepare", "Review", "Enable"], time >= 86 && time < 91)
         case ..<132:
             selector = ".campaign"
             scroll = 190
-            cursor = CGPoint(x: 1510, y: 530)
             receipt = time >= 121 ? "followup" : "hide"
             scene = ("WESTOVER EPR", "A real business\noperator pattern.", "Registry signals, customer service, and approved outreach all become organized follow-through instead of another inbox.", ["Registry signals", "Customer work", "Follow-through"], time >= 106 && time < 111)
         case ..<155:
             selector = ".live-note"
             scroll = 575
-            cursor = CGPoint(x: 880, y: 675)
             receipt = "hide"
             scene = ("BUILT FOR REAL WORK", "Useful before\nit is impressive.", "Vice CEO works quietly in the background and surfaces only the decisions that deserve a person’s attention.", ["Background work", "Clear handoffs", "Business control"], time >= 132 && time < 137)
         default:
             selector = ".intro"
             scroll = 0
-            cursor = CGPoint(x: -60, y: -60)
             receipt = "hide"
             scene = ("VICE CEO", "Less chasing.\nMore running\nthe business.", "A behind-the-scenes business operator for the repeatable work that never stops.", ["Customer service", "Follow-through", "Proof"], true)
         }
@@ -150,6 +141,37 @@ final class InteractiveShowcase: NSObject, WKNavigationDelegate {
             resultScript = "showResult('success', 'Follow-up prepared', 'Vice CEO prepared the next touch for a consented lead. It stops automatically on reply or unsubscribe.', 'business_receipt_demo_follow_up · duplicate protection enabled');"
         default:
             resultScript = "result.className = 'result';"
+        }
+
+        let caption: String
+        switch time {
+        case ..<5: caption = "This is Vice CEO."
+        case ..<10: caption = "Your business should not run on sticky notes."
+        case ..<15: caption = "It is a behind-the-scenes business operator."
+        case ..<20: caption = "It turns repetitive communication into work already moving."
+        case ..<25: caption = "A customer asks for help."
+        case ..<30: caption = "Vice CEO finds the approved policy and prepares the reply."
+        case ..<36: caption = "The original customer context stays attached."
+        case ..<42: caption = "With mailbox authority enabled, routine replies can be sent."
+        case ..<48: caption = "Without it, the work stays ready for review."
+        case ..<54: caption = "The same is true for outreach."
+        case ..<60: caption = "Every next step stays ready."
+        case ..<66: caption = "Only consented contacts. It stops on reply or unsubscribe."
+        case ..<72: caption = "No spreadsheet tab. No missed follow-up."
+        case ..<78: caption = "But good autonomy does not do everything."
+        case ..<86: caption = "Refunds and exceptions come back to a person—focused and ready."
+        case ..<93: caption = "Every action leaves a receipt."
+        case ..<100: caption = "Source. Policy. Decision. Delivery state."
+        case ..<106: caption = "You never have to blindly trust the system."
+        case ..<112: caption = "Your business chooses how much authority Vice CEO gets."
+        case ..<120: caption = "Start with preparation. Enable delivery only where you approve it."
+        case ..<128: caption = "Westover EPR is the first real-world example."
+        case ..<134: caption = "It watches public registry signals and prepares follow-through."
+        case ..<141: caption = "But the pattern is bigger: support, outreach, and operations."
+        case ..<148: caption = "The background work gets handled before it becomes another inbox job."
+        case ..<155: caption = "People take the decisions that need people."
+        case ..<162: caption = "Vice CEO is built for real business work."
+        default: caption = "Less chasing. More running the business."
         }
 
         let slideMarkup: String
@@ -181,9 +203,9 @@ final class InteractiveShowcase: NSObject, WKNavigationDelegate {
             style.id = styleId;
             style.textContent = `
               .tour-focus { box-shadow:0 0 0 4px rgba(18,79,59,.22),0 18px 34px rgba(18,79,59,.15)!important; position:relative; z-index:3; }
-              #vice-ceo-tour-cursor { position:fixed; width:27px; height:27px; margin:-13px 0 0 -13px; border:3px solid #124f3b; border-radius:50%; background:rgba(255,255,255,.92); box-shadow:0 3px 12px rgba(18,79,59,.25); z-index:9999; pointer-events:none; transition:none; }
-              #vice-ceo-tour-cursor::after { content:''; display:block; width:7px; height:7px; margin:7px; border-radius:50%; background:#6cc8a7; }
               #vice-ceo-showcase-scene { position:fixed; inset:0; z-index:9998; pointer-events:none; }
+              #vice-ceo-subtitle { position:fixed; z-index:10000; left:50%; bottom:138px; transform:translateX(-50%); width:min(920px,calc(100vw - 96px)); padding:17px 26px 19px; border:1px solid rgba(218,244,226,.27); border-radius:17px; background:rgba(5,28,21,.90); box-shadow:0 16px 34px rgba(0,0,0,.22); color:#fbf8f0; font:650 26px/1.23 ui-sans-serif,system-ui,-apple-system,sans-serif; letter-spacing:-.025em; text-align:center; }
+              #vice-ceo-subtitle::before { content:''; display:block; width:28px; height:3px; margin:0 auto 10px; border-radius:99px; background:#88ddaa; }
               .vice-ceo-slide { position:absolute; inset:0; overflow:hidden; color:#f6f1e7; background:linear-gradient(132deg,#08241d 0%,#0d3d30 54%,#1c7259 130%); font-family:ui-sans-serif,system-ui,-apple-system,sans-serif; }
               .vice-ceo-slide::after { content:''; position:absolute; inset:0; background:radial-gradient(circle at 76% 28%,rgba(173,236,201,.18),transparent 27%),radial-gradient(circle at 25% 85%,rgba(255,255,255,.08),transparent 31%); }
               .vice-ceo-slide-grid { position:absolute; inset:-1px; opacity:.26; background-image:linear-gradient(rgba(226,247,233,.19) 1px,transparent 1px),linear-gradient(90deg,rgba(226,247,233,.19) 1px,transparent 1px); background-size:56px 56px; mask-image:linear-gradient(90deg,#000,transparent 73%); }
@@ -202,14 +224,14 @@ final class InteractiveShowcase: NSObject, WKNavigationDelegate {
               .vice-ceo-slide-signature em { color:#a9d7b9; font-size:9px; font-style:normal; font-weight:750; letter-spacing:.13em; }
             `;
             document.head.appendChild(style);
-            const cursor = document.createElement('div'); cursor.id = 'vice-ceo-tour-cursor'; document.body.appendChild(cursor);
             const scene = document.createElement('div'); scene.id = 'vice-ceo-showcase-scene'; document.body.appendChild(scene);
+            const subtitle = document.createElement('div'); subtitle.id = 'vice-ceo-subtitle'; document.body.appendChild(subtitle);
           }
           document.querySelectorAll('.tour-focus').forEach((node) => node.classList.remove('tour-focus'));
           const target = document.querySelector('\(selector)'); if (target) target.classList.add('tour-focus');
           window.scrollTo(0, \(scroll));
-          const cursor = document.getElementById('vice-ceo-tour-cursor'); cursor.style.left = '\(Int(cursor.x))px'; cursor.style.top = '\(Int(cursor.y))px';
           document.getElementById('vice-ceo-showcase-scene').innerHTML = `\(slideMarkup)`;
+          document.getElementById('vice-ceo-subtitle').textContent = '\(caption)';
           \(resultScript)
         })();
         """
@@ -280,7 +302,7 @@ final class InteractiveShowcase: NSObject, WKNavigationDelegate {
     }
 
     private func addNarration() throws {
-        guard FileManager.default.fileExists(atPath: narrationURL.path) else { try FileManager.default.copyItem(at: silentURL, to: outputURL); return }
+        guard narrationEnabled, FileManager.default.fileExists(atPath: narrationURL.path) else { try FileManager.default.copyItem(at: silentURL, to: outputURL); return }
         let video = AVURLAsset(url: silentURL)
         let audio = AVURLAsset(url: narrationURL)
         let mix = AVMutableComposition()
