@@ -88,6 +88,7 @@ The 2:07, 1920×1080 showcase demonstrates the product flow, customer-work and o
 ## Submission Readiness Notes
 
 - [x] Registered for All Things Agentic Hackathon.
+- [x] Devpost project draft: <https://devpost.com/software/vice-ceo-proof-carrying-business-autonomy>
 - [x] Draft positioning: **Fortified Enterprise Fleet**.
 - [x] Public repository link and MIT license.
 - [x] Reproducible README/testing instructions.
@@ -96,7 +97,7 @@ The 2:07, 1920×1080 showcase demonstrates the product flow, customer-work and o
 - [x] Final narrated 1080p demo-video file prepared locally.
 - [x] Public YouTube video: <https://youtu.be/Kws0sHcKSAM>
 - [ ] Capture and upload 3–5 screenshots from the working reviewer experience.
-- [ ] Create the Devpost project and paste this description.
+- [x] Created the Devpost project and added the finalized title, description, repository, live demo, and public YouTube video.
 - [ ] Complete the personal and project-start fields below truthfully.
 - [ ] Open the repo, hosted demo, and video in a logged-out browser before submitting.
 
