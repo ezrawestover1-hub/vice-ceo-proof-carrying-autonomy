@@ -146,36 +146,6 @@ final class InteractiveShowcase: NSObject, WKNavigationDelegate {
             resultScript = "result.className = 'result';"
         }
 
-        let caption: String
-        switch time {
-        case ..<4: caption = "Meet Vice CEO: a behind-the-scenes business operator."
-        case ..<7: caption = "Your business should not run on sticky notes, inbox chasing, and forgotten follow-ups."
-        case ..<12: caption = "It watches for routine work and moves it forward before it becomes another problem."
-        case ..<17: caption = "Not another chatbot. An operator that prepares the next useful action."
-        case ..<20: caption = "A customer asks for help resetting a password."
-        case ..<24: caption = "Vice CEO reads the request, finds the approved policy, and prepares a clear reply."
-        case ..<28: caption = "The customer context, support policy, and proposed response stay connected and easy to inspect."
-        case ..<33: caption = "When the business enables mailbox authority, it can send approved routine replies through the company mailbox."
-        case ..<40: caption = "Until then, the same work waits, prepared and transparent, for review."
-        case ..<44: caption = "Outreach gets the same disciplined follow-through."
-        case ..<48: caption = "A good lead does not disappear because a busy team missed the next touch."
-        case ..<53: caption = "Vice CEO works from approved campaigns and consented contacts, then stops on reply or unsubscribe."
-        case ..<56: caption = "No duplicate outreach. No forgotten spreadsheet tab. No good lead quietly going cold."
-        case ..<61: caption = "And strong autonomy also knows when not to act."
-        case ..<66: caption = "A refund or exception needs context, empathy, and a business decision, so it comes back to the owner."
-        case ..<72: caption = "The owner sees a focused decision, not another messy thread."
-        case ..<77: caption = "Every action has a receipt: its source, policy, decision, and delivery state."
-        case ..<82: caption = "The business can understand the work instead of blindly trusting the AI."
-        case ..<88: caption = "The business decides exactly how much authority Vice CEO receives."
-        case ..<94: caption = "Start with preparation. Enable delivery only for approved tasks and systems."
-        case ..<100: caption = "Westover EPR is the first real-world example of the operator pattern."
-        case ..<105: caption = "It watches approved public registry signals, preserves evidence, and prepares the next follow-through."
-        case ..<110: caption = "The pattern reaches farther: customer service, outreach, compliance signals, and operations."
-        case ..<116: caption = "The repeatable work moves quietly in the background, before it becomes another inbox job."
-        case ..<122: caption = "People are brought in only for the decisions that actually need people."
-        default: caption = "Vice CEO is built for useful, controlled, real business work. Less chasing. More running the business."
-        }
-
         let slideMarkup: String
         if scene.visible {
             let chips = scene.chips.map { "<span>\($0)</span>" }.joined()
@@ -206,8 +176,6 @@ final class InteractiveShowcase: NSObject, WKNavigationDelegate {
             style.textContent = `
               .tour-focus { box-shadow:0 0 0 4px rgba(18,79,59,.22),0 18px 34px rgba(18,79,59,.15)!important; position:relative; z-index:3; }
               #vice-ceo-showcase-scene { position:fixed; inset:0; z-index:9998; pointer-events:none; }
-              #vice-ceo-subtitle { position:fixed; z-index:10000; left:50%; bottom:138px; transform:translateX(-50%); width:min(920px,calc(100vw - 96px)); padding:17px 26px 19px; border:1px solid rgba(218,244,226,.27); border-radius:17px; background:rgba(5,28,21,.90); box-shadow:0 16px 34px rgba(0,0,0,.22); color:#fbf8f0; font:650 26px/1.23 ui-sans-serif,system-ui,-apple-system,sans-serif; letter-spacing:-.025em; text-align:center; }
-              #vice-ceo-subtitle::before { content:''; display:block; width:28px; height:3px; margin:0 auto 10px; border-radius:99px; background:#88ddaa; }
               .vice-ceo-slide { position:absolute; inset:0; overflow:hidden; color:#f6f1e7; background:linear-gradient(132deg,#08241d 0%,#0d3d30 54%,#1c7259 130%); font-family:ui-sans-serif,system-ui,-apple-system,sans-serif; }
               .vice-ceo-slide::after { content:''; position:absolute; inset:0; background:radial-gradient(circle at 76% 28%,rgba(173,236,201,.18),transparent 27%),radial-gradient(circle at 25% 85%,rgba(255,255,255,.08),transparent 31%); }
               .vice-ceo-slide-grid { position:absolute; inset:-1px; opacity:.26; background-image:linear-gradient(rgba(226,247,233,.19) 1px,transparent 1px),linear-gradient(90deg,rgba(226,247,233,.19) 1px,transparent 1px); background-size:56px 56px; mask-image:linear-gradient(90deg,#000,transparent 73%); }
@@ -227,13 +195,11 @@ final class InteractiveShowcase: NSObject, WKNavigationDelegate {
             `;
             document.head.appendChild(style);
             const scene = document.createElement('div'); scene.id = 'vice-ceo-showcase-scene'; document.body.appendChild(scene);
-            const subtitle = document.createElement('div'); subtitle.id = 'vice-ceo-subtitle'; document.body.appendChild(subtitle);
           }
           document.querySelectorAll('.tour-focus').forEach((node) => node.classList.remove('tour-focus'));
           const target = document.querySelector('\(selector)'); if (target) target.classList.add('tour-focus');
           window.scrollTo(0, \(scroll));
           document.getElementById('vice-ceo-showcase-scene').innerHTML = `\(slideMarkup)`;
-          document.getElementById('vice-ceo-subtitle').textContent = '\(caption)';
           \(resultScript)
         })();
         """
