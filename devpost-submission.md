@@ -80,11 +80,10 @@ The 2:07, 1920×1080 showcase demonstrates the product flow, customer-work and o
 
 ## Screenshot Shot List
 
-1. **Work queue:** prepared password-reset response alongside source policy and customer context.
-2. **Outreach:** consent-aware follow-up with stop-on-reply/unsubscribe logic and a prepared receipt.
-3. **Exception handoff:** refund request marked for human decision rather than automated handling.
-4. **Proof:** action receipt/evidence view showing source, policy, decision, and delivery boundary.
-5. **Google Cloud proof:** the public `.run.app` URL or Cloud Run dashboard alongside the running reviewer experience.
+1. **Work queue:** [`01-product-work-queue.png`](artifacts/submission-screenshots/01-product-work-queue.png) — prepared password-reset response alongside source policy and customer context.
+2. **Outreach:** [`02-consent-aware-outreach.png`](artifacts/submission-screenshots/02-consent-aware-outreach.png) — consent-aware follow-up with stop-on-reply/unsubscribe logic and a prepared receipt.
+3. **Exception handoff:** [`03-human-escalation.png`](artifacts/submission-screenshots/03-human-escalation.png) — refund request marked for human decision rather than automated handling.
+4. **Google Cloud proof:** [`04-google-cloud-run.png`](artifacts/submission-screenshots/04-google-cloud-run.png) — the public `.run.app` URL and Google Cloud services used by the live reviewer deployment.
 
 ## Submission Readiness Notes
 
@@ -128,4 +127,3 @@ Use these answers only where they are personally and factually accurate:
 | Google AI models | **Gemini 3.5 Flash**. |
 | Video | Paste the public YouTube/Vimeo URL after upload. |
 | Optional bonus content/social | Leave blank unless a qualifying public build story or social post exists. |
-
