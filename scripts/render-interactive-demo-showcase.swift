@@ -34,7 +34,10 @@ final class InteractiveShowcase: NSObject, WKNavigationDelegate {
         narrationEnabled = ProcessInfo.processInfo.environment["VICE_CEO_NO_NARRATION"] != "1"
         let narration = AVURLAsset(url: narrationURL)
         let narrationDuration = CMTimeGetSeconds(narration.duration)
-        duration = narrationDuration.isFinite && narrationDuration > 0 ? narrationDuration + 0.5 : 173
+        let requestedDuration = Double(ProcessInfo.processInfo.environment["VICE_CEO_DURATION_SECONDS"] ?? "")
+        duration = requestedDuration?.isFinite == true && requestedDuration! > 0
+            ? requestedDuration!
+            : narrationDuration.isFinite && narrationDuration > 0 ? narrationDuration + 0.5 : 173
 
         let webFrame = NSRect(x: 0, y: 0, width: 1728, height: 940)
         window = NSWindow(contentRect: webFrame, styleMask: [.titled], backing: .buffered, defer: false)
@@ -86,46 +89,46 @@ final class InteractiveShowcase: NSObject, WKNavigationDelegate {
         let scene: (kicker: String, title: String, detail: String, chips: [String], visible: Bool)
 
         switch time {
-        case ..<10:
+        case ..<7:
             selector = ".intro"
             scroll = 0
             receipt = "hide"
             scene = ("PROOF-CARRYING BUSINESS AUTONOMY", "Your business\nshould not run\non sticky notes.", "Vice CEO turns routine communication and follow-through into work that is already moving.", ["Observe", "Decide", "Prepare"], true)
-        case ..<30:
+        case ..<24:
             selector = "[data-action=send_customer_reply]"
             scroll = 0
-            receipt = time >= 21 ? "reply" : "hide"
-            scene = ("CUSTOMER SUPPORT", "Routine help.\nAlready handled.", "Vice CEO matches approved policy, prepares the response, and keeps the original customer context attached.", ["Policy matched", "Reply prepared", "Receipt created"], time >= 10 && time < 14)
-        case ..<48:
+            receipt = time >= 17 ? "reply" : "hide"
+            scene = ("CUSTOMER SUPPORT", "Routine help.\nAlready handled.", "Vice CEO matches approved policy, prepares the response, and keeps the original customer context attached.", ["Policy matched", "Reply prepared", "Receipt created"], time >= 7 && time < 10)
+        case ..<40:
             selector = "[data-action=send_outreach_follow_up]"
             scroll = 0
-            receipt = time >= 41 ? "followup" : "hide"
-            scene = ("APPROVED OUTREACH", "The next step\nnever gets lost.", "Consent-aware follow-through stays ready, stops on reply or unsubscribe, and never repeats itself.", ["Approved campaign", "Consent-aware", "Duplicate-safe"], time >= 30 && time < 34)
-        case ..<66:
+            receipt = time >= 33 ? "followup" : "hide"
+            scene = ("APPROVED OUTREACH", "The next step\nnever gets lost.", "Consent-aware follow-through stays ready, stops on reply or unsubscribe, and never repeats itself.", ["Approved campaign", "Consent-aware", "Duplicate-safe"], time >= 24 && time < 27)
+        case ..<56:
             selector = "#activity"
             scroll = 430
             receipt = "hide"
-            scene = ("THE HUMAN MOMENT", "Escalate judgment.\nNot workload.", "When the work needs empathy or a real business decision, Vice CEO gathers the facts and brings in the right person.", ["Knows the difference", "Focused decision", "No messy thread"], time >= 48 && time < 53)
-        case ..<86:
+            scene = ("THE HUMAN MOMENT", "Escalate judgment.\nNot workload.", "When the work needs empathy or a real business decision, Vice CEO gathers the facts and brings in the right person.", ["Knows the difference", "Focused decision", "No messy thread"], time >= 40 && time < 43)
+        case ..<72:
             selector = ".work-item.selected"
             scroll = 190
-            receipt = time >= 78 ? "reply" : "hide"
-            scene = ("WORK YOU CAN TRUST", "No black box.\nJust receipts.", "Every action carries its source, policy, decision, and delivery state—so the owner can understand what happened.", ["Source", "Policy", "Decision", "Outcome"], time >= 66 && time < 71)
-        case ..<106:
+            receipt = time >= 65 ? "reply" : "hide"
+            scene = ("WORK YOU CAN TRUST", "No black box.\nJust receipts.", "Every action carries its source, policy, decision, and delivery state—so the owner can understand what happened.", ["Source", "Policy", "Decision", "Outcome"], time >= 56 && time < 59)
+        case ..<88:
             selector = ".activity-item:nth-child(3)"
             scroll = 520
             receipt = "hide"
-            scene = ("AUTHORITY IS EARNED", "You choose\nhow much it can do.", "Start with preparation. Enable delivery only for the work and systems your business approves.", ["Prepare", "Review", "Enable"], time >= 86 && time < 91)
-        case ..<132:
+            scene = ("AUTHORITY IS EARNED", "You choose\nhow much it can do.", "Start with preparation. Enable delivery only for the work and systems your business approves.", ["Prepare", "Review", "Enable"], time >= 72 && time < 75)
+        case ..<108:
             selector = ".campaign"
             scroll = 190
-            receipt = time >= 121 ? "followup" : "hide"
-            scene = ("WESTOVER EPR", "A real business\noperator pattern.", "Registry signals, customer service, and approved outreach all become organized follow-through instead of another inbox.", ["Registry signals", "Customer work", "Follow-through"], time >= 106 && time < 111)
-        case ..<155:
+            receipt = time >= 99 ? "followup" : "hide"
+            scene = ("WESTOVER EPR", "A real business\noperator pattern.", "Registry signals, customer service, and approved outreach all become organized follow-through instead of another inbox.", ["Registry signals", "Customer work", "Follow-through"], time >= 88 && time < 91)
+        case ..<119:
             selector = ".live-note"
             scroll = 575
             receipt = "hide"
-            scene = ("BUILT FOR REAL WORK", "Useful before\nit is impressive.", "Vice CEO works quietly in the background and surfaces only the decisions that deserve a person’s attention.", ["Background work", "Clear handoffs", "Business control"], time >= 132 && time < 137)
+            scene = ("BUILT FOR REAL WORK", "Useful before\nit is impressive.", "Vice CEO works quietly in the background and surfaces only the decisions that deserve a person’s attention.", ["Background work", "Clear handoffs", "Business control"], time >= 108 && time < 111)
         default:
             selector = ".intro"
             scroll = 0
@@ -145,33 +148,32 @@ final class InteractiveShowcase: NSObject, WKNavigationDelegate {
 
         let caption: String
         switch time {
-        case ..<5: caption = "This is Vice CEO."
-        case ..<10: caption = "Your business should not run on sticky notes."
-        case ..<15: caption = "It is a behind-the-scenes business operator."
-        case ..<20: caption = "It turns repetitive communication into work already moving."
-        case ..<25: caption = "A customer asks for help."
-        case ..<30: caption = "Vice CEO finds the approved policy and prepares the reply."
-        case ..<36: caption = "The original customer context stays attached."
-        case ..<42: caption = "With mailbox authority enabled, routine replies can be sent."
-        case ..<48: caption = "Without it, the work stays ready for review."
-        case ..<54: caption = "The same is true for outreach."
-        case ..<60: caption = "Every next step stays ready."
-        case ..<66: caption = "Only consented contacts. It stops on reply or unsubscribe."
-        case ..<72: caption = "No spreadsheet tab. No missed follow-up."
-        case ..<78: caption = "But good autonomy does not do everything."
-        case ..<86: caption = "Refunds and exceptions come back to a person—focused and ready."
-        case ..<93: caption = "Every action leaves a receipt."
-        case ..<100: caption = "Source. Policy. Decision. Delivery state."
-        case ..<106: caption = "You never have to blindly trust the system."
-        case ..<112: caption = "Your business chooses how much authority Vice CEO gets."
-        case ..<120: caption = "Start with preparation. Enable delivery only where you approve it."
-        case ..<128: caption = "Westover EPR is the first real-world example."
-        case ..<134: caption = "It watches public registry signals and prepares follow-through."
-        case ..<141: caption = "But the pattern is bigger: support, outreach, and operations."
-        case ..<148: caption = "The background work gets handled before it becomes another inbox job."
-        case ..<155: caption = "People take the decisions that need people."
-        case ..<162: caption = "Vice CEO is built for real business work."
-        default: caption = "Less chasing. More running the business."
+        case ..<4: caption = "Meet Vice CEO: a behind-the-scenes business operator."
+        case ..<7: caption = "Your business should not run on sticky notes, inbox chasing, and forgotten follow-ups."
+        case ..<12: caption = "It watches for routine work and moves it forward before it becomes another problem."
+        case ..<17: caption = "Not another chatbot. An operator that prepares the next useful action."
+        case ..<20: caption = "A customer asks for help resetting a password."
+        case ..<24: caption = "Vice CEO reads the request, finds the approved policy, and prepares a clear reply."
+        case ..<28: caption = "The customer context, support policy, and proposed response stay connected and easy to inspect."
+        case ..<33: caption = "When the business enables mailbox authority, it can send approved routine replies through the company mailbox."
+        case ..<40: caption = "Until then, the same work waits, prepared and transparent, for review."
+        case ..<44: caption = "Outreach gets the same disciplined follow-through."
+        case ..<48: caption = "A good lead does not disappear because a busy team missed the next touch."
+        case ..<53: caption = "Vice CEO works from approved campaigns and consented contacts, then stops on reply or unsubscribe."
+        case ..<56: caption = "No duplicate outreach. No forgotten spreadsheet tab. No good lead quietly going cold."
+        case ..<61: caption = "And strong autonomy also knows when not to act."
+        case ..<66: caption = "A refund or exception needs context, empathy, and a business decision, so it comes back to the owner."
+        case ..<72: caption = "The owner sees a focused decision, not another messy thread."
+        case ..<77: caption = "Every action has a receipt: its source, policy, decision, and delivery state."
+        case ..<82: caption = "The business can understand the work instead of blindly trusting the AI."
+        case ..<88: caption = "The business decides exactly how much authority Vice CEO receives."
+        case ..<94: caption = "Start with preparation. Enable delivery only for approved tasks and systems."
+        case ..<100: caption = "Westover EPR is the first real-world example of the operator pattern."
+        case ..<105: caption = "It watches approved public registry signals, preserves evidence, and prepares the next follow-through."
+        case ..<110: caption = "The pattern reaches farther: customer service, outreach, compliance signals, and operations."
+        case ..<116: caption = "The repeatable work moves quietly in the background, before it becomes another inbox job."
+        case ..<122: caption = "People are brought in only for the decisions that actually need people."
+        default: caption = "Vice CEO is built for useful, controlled, real business work. Less chasing. More running the business."
         }
 
         let slideMarkup: String
