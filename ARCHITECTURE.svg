@@ -1,91 +1,133 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
-  <title id="title">Vice CEO evidence-backed EPR autonomy architecture</title>
-  <desc id="desc">A private Cloud Scheduler job invokes a source-locked registry worker, which persists evidence in Firestore, prepares a bounded Gemini briefing, and creates a Cloud Run IAM-protected owner-review action. A separate public synthetic reviewer layer demonstrates proof-carrying governance without operational authority.</desc>
-  <style>
-    .canvas { fill: #ffffff; }
-    .title { fill: #172426; font-family: Inter, Arial, sans-serif; font-size: 47px; font-weight: 600; letter-spacing: -1.6px; }
-    .subtitle { fill: #697578; font-family: Inter, Arial, sans-serif; font-size: 25px; }
-    .node { fill: #ffffff; stroke: #cfd8d5; stroke-width: 2; }
-    .node-accent { fill: #f0f7f4; stroke: #0e5149; stroke-width: 2.5; }
-    .node-title { fill: #172426; font-family: Inter, Arial, sans-serif; font-size: 23px; font-weight: 600; }
-    .node-copy { fill: #697578; font-family: Inter, Arial, sans-serif; font-size: 18px; }
-    .node-copy-accent { fill: #0e5149; font-family: Inter, Arial, sans-serif; font-size: 18px; font-weight: 600; }
-    .step { fill: #0e5149; font-family: Inter, Arial, sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1.5px; }
-    .line { fill: none; stroke: #6f807b; stroke-width: 3; marker-end: url(#arrow); }
-    .block { fill: none; stroke: #0e5149; stroke-width: 3; stroke-dasharray: 10 10; marker-end: url(#arrow); }
-    .block-label { fill: #0e5149; font-family: Inter, Arial, sans-serif; font-size: 17px; font-weight: 600; }
-    .footer { fill: #697578; font-family: Inter, Arial, sans-serif; font-size: 20px; }
-  </style>
+  <title id="title">Vice CEO architecture for Westover EPR</title>
+  <desc id="desc">A proof-carrying business autonomy architecture. A private Westover EPR operating layer monitors approved EPR sources through Cloud Scheduler, Cloud Run, Firestore, Google ADK, Gemini 3.5 Flash and an owner review queue. A separate public synthetic reviewer proves the workflow without customer data or public delivery authority.</desc>
   <defs>
-    <marker id="arrow" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto"><path d="M0,0 L11,5.5 L0,11 z" fill="#6f807b"/></marker>
-    <marker id="arrow-forest" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto"><path d="M0,0 L11,5.5 L0,11 z" fill="#0e5149"/></marker>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbfaf5"/><stop offset="1" stop-color="#edf6f1"/></linearGradient>
+    <linearGradient id="private" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#073d31"/><stop offset="1" stop-color="#0d664e"/></linearGradient>
+    <linearGradient id="warrant" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0c5d48"/><stop offset="1" stop-color="#13785b"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-30%" width="140%" height="170%"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#062d24" flood-opacity=".13"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6L0 12Z" fill="#79a295"/></marker>
+    <marker id="arrowDark" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0 0L12 6L0 12Z" fill="#f1fff8"/></marker>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#0d664e" opacity=".10"/></pattern>
+    <style>
+      .eyebrow { font-family: Inter, Arial, sans-serif; font-size: 15px; font-weight: 800; letter-spacing: 2.5px; }
+      .title { font-family: Georgia, 'Times New Roman', serif; font-size: 46px; font-weight: 700; letter-spacing: -1px; fill:#073d31; }
+      .sub { font-family: Inter, Arial, sans-serif; font-size: 20px; font-weight: 500; fill:#537068; }
+      .lane { font-family: Inter, Arial, sans-serif; font-size: 14px; font-weight: 800; letter-spacing: 2px; }
+      .card-title { font-family: Inter, Arial, sans-serif; font-size: 20px; font-weight: 750; fill:#103c32; }
+      .card-copy { font-family: Inter, Arial, sans-serif; font-size: 15.5px; font-weight: 500; fill:#5e756e; }
+      .card-detail { font-family: Inter, Arial, sans-serif; font-size: 14px; font-weight: 700; fill:#0f7959; }
+      .num { font-family: Inter, Arial, sans-serif; font-size: 13px; font-weight: 800; fill:#0e674e; letter-spacing:1px; }
+      .private-copy { font-family: Inter, Arial, sans-serif; font-size: 15px; font-weight: 500; fill:#cce7dc; }
+      .private-detail { font-family: Inter, Arial, sans-serif; font-size: 13px; font-weight: 800; fill:#8ee4b8; letter-spacing:.6px; }
+      .footer { font-family: Inter, Arial, sans-serif; font-size: 15px; font-weight: 600; fill:#54736a; }
+      .warrant { font-family: Inter, Arial, sans-serif; font-size: 15px; font-weight: 800; fill:#f5fff9; letter-spacing:.5px; }
+    </style>
   </defs>
-  <rect class="canvas" width="1600" height="900"/>
-  <text class="title" x="110" y="112">Vice CEO: evidence-backed EPR autonomy</text>
-  <text class="subtitle" x="110" y="154">A private registry watcher, owner decision queue, and public proof layer stay isolated by design.</text>
 
-  <path class="line" d="M313 413 H384"/>
-  <path class="line" d="M593 413 H664"/>
-  <path class="line" d="M873 413 H944"/>
-  <path class="line" d="M1153 413 H1224"/>
-  <path class="line" d="M1340 527 V611 H1065"/>
-  <path class="block" d="M820 698 V553" style="marker-end:url(#arrow-forest)"/>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <rect width="1600" height="900" fill="url(#dots)"/>
 
-  <g transform="translate(110 322)">
-    <rect class="node" width="203" height="182" rx="12"/>
-    <text class="step" x="26" y="38">01</text>
-    <text class="node-title" x="26" y="78">Scheduled event</text>
-    <text class="node-copy" x="26" y="112">Cloud Scheduler OIDC</text>
-    <text class="node-copy" x="26" y="138">private daily trigger</text>
+  <g transform="translate(70 55)">
+    <rect width="182" height="34" rx="17" fill="#dff5e9"/>
+    <circle cx="19" cy="17" r="6" fill="#11a16c"/>
+    <text class="eyebrow" x="37" y="22" fill="#0c6049">VICE CEO</text>
+    <text class="title" x="0" y="94">Proof-carrying business autonomy</text>
+    <text class="sub" x="0" y="130">Westover EPR is the real-world operating context. The public demo proves the workflow without exposing customer data.</text>
   </g>
-  <g transform="translate(384 322)">
-    <rect class="node" width="209" height="182" rx="12"/>
-    <text class="step" x="26" y="38">02</text>
-    <text class="node-title" x="26" y="78">Private worker</text>
-    <text class="node-copy" x="26" y="112">Schema, source lock,</text>
-    <text class="node-copy" x="26" y="138">and fail-closed checks</text>
+
+  <g transform="translate(55 205)">
+    <rect width="1490" height="300" rx="28" fill="url(#private)" filter="url(#shadow)"/>
+    <rect x="28" y="25" width="352" height="36" rx="18" fill="#d8f5e6" opacity=".16"/>
+    <text class="lane" x="48" y="49" fill="#d8f5e6">PRIVATE WESTOVER EPR OPERATING LAYER</text>
+    <text class="private-copy" x="48" y="84">Approved public registry signals become evidence-linked owner work—not unsupervised customer or prospect action.</text>
+
+    <path d="M226 183H274" fill="none" stroke="#9dcdc0" stroke-width="3" marker-end="url(#arrowDark)"/>
+    <path d="M474 183H522" fill="none" stroke="#9dcdc0" stroke-width="3" marker-end="url(#arrowDark)"/>
+    <path d="M722 183H770" fill="none" stroke="#9dcdc0" stroke-width="3" marker-end="url(#arrowDark)"/>
+    <path d="M970 183H1018" fill="none" stroke="#9dcdc0" stroke-width="3" marker-end="url(#arrowDark)"/>
+    <path d="M1218 183H1266" fill="none" stroke="#9dcdc0" stroke-width="3" marker-end="url(#arrowDark)"/>
+
+    <g transform="translate(28 112)">
+      <rect width="198" height="140" rx="18" fill="#f8fcf9"/>
+      <circle cx="29" cy="29" r="15" fill="#dff5e9"/><text class="num" x="23" y="34">01</text>
+      <text class="card-title" x="23" y="70">Approved EPR</text><text class="card-title" x="23" y="94">source portfolio</text>
+      <text class="card-copy" x="23" y="120">Oregon · California · Maryland</text>
+    </g>
+    <g transform="translate(276 112)">
+      <rect width="198" height="140" rx="18" fill="#f8fcf9"/>
+      <circle cx="29" cy="29" r="15" fill="#dff5e9"/><text class="num" x="23" y="34">02</text>
+      <text class="card-title" x="23" y="70">Cloud Scheduler</text><text class="card-copy" x="23" y="96">OIDC-only daily trigger</text>
+      <text class="card-detail" x="23" y="122">NO PUBLIC WEBHOOK</text>
+    </g>
+    <g transform="translate(524 112)">
+      <rect width="198" height="140" rx="18" fill="#f8fcf9"/>
+      <circle cx="29" cy="29" r="15" fill="#dff5e9"/><text class="num" x="23" y="34">03</text>
+      <text class="card-title" x="23" y="70">Registry Watch</text><text class="card-copy" x="23" y="96">Cloud Run worker</text>
+      <text class="card-detail" x="23" y="122">SOURCE LOCK + SAFETY GATE</text>
+    </g>
+    <g transform="translate(772 112)">
+      <rect width="198" height="140" rx="18" fill="#ddf6e9" stroke="#8ee4b8" stroke-width="2"/>
+      <circle cx="29" cy="29" r="15" fill="#0d7155"/><text class="num" x="23" y="34" fill="#f7fffa">04</text>
+      <text class="card-title" x="23" y="70">Evidence memory</text><text class="card-copy" x="23" y="96">Firestore snapshots</text>
+      <text class="card-detail" x="23" y="122">HASHED + IDEMPOTENT</text>
+    </g>
+    <g transform="translate(1020 112)">
+      <rect width="198" height="140" rx="18" fill="#f8fcf9"/>
+      <circle cx="29" cy="29" r="15" fill="#dff5e9"/><text class="num" x="23" y="34">05</text>
+      <text class="card-title" x="23" y="70">Google ADK fleet</text><text class="card-copy" x="23" y="96">Gemini 3.5 Flash brief</text>
+      <text class="card-detail" x="23" y="122">BOUNDED CHANGE ONLY</text>
+    </g>
+    <g transform="translate(1268 112)">
+      <rect width="194" height="140" rx="18" fill="#f8fcf9"/>
+      <circle cx="29" cy="29" r="15" fill="#dff5e9"/><text class="num" x="23" y="34">06</text>
+      <text class="card-title" x="23" y="70">Owner review</text><text class="card-copy" x="23" y="96">Private decision queue</text>
+      <text class="card-detail" x="23" y="122">HUMAN CHOOSES ACTION</text>
+    </g>
   </g>
-  <g transform="translate(664 322)">
-    <rect class="node" width="209" height="182" rx="12"/>
-    <text class="step" x="26" y="38">03</text>
-    <text class="node-title" x="26" y="78">Registry Watch</text>
-    <text class="node-copy" x="26" y="112">Approved public EPR</text>
-    <text class="node-copy" x="26" y="138">source only</text>
+
+  <g transform="translate(285 480)">
+    <rect width="1030" height="54" rx="27" fill="url(#warrant)" filter="url(#shadow)"/>
+    <circle cx="34" cy="27" r="12" fill="#a8f0c9"/><path d="M29 27l4 4 7-9" fill="none" stroke="#0a5e46" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text class="warrant" x="61" y="33">POLICY + ACTION WARRANT GATE</text>
+    <text class="warrant" x="402" y="33" opacity=".82">Explicit enablement · consent checks · duplicate protection · delivery receipt</text>
   </g>
-  <g transform="translate(944 322)">
-    <rect class="node-accent" width="209" height="182" rx="12"/>
-    <text class="step" x="26" y="38">04</text>
-    <text class="node-title" x="26" y="78">Firestore evidence</text>
-    <text class="node-copy-accent" x="26" y="112">Hash snapshots and</text>
-    <text class="node-copy-accent" x="26" y="138">idempotent runs</text>
+
+  <g transform="translate(55 570)">
+    <rect width="1490" height="236" rx="28" fill="#ffffff" stroke="#cde3d8" stroke-width="2" filter="url(#shadow)"/>
+    <rect x="28" y="23" width="338" height="34" rx="17" fill="#e5f6ed"/>
+    <text class="lane" x="48" y="46" fill="#0d634b">PUBLIC JUDGE / REVIEW LAYER — SYNTHETIC ONLY</text>
+    <text class="footer" x="48" y="80">A separate Cloud Run reviewer demonstrates the architecture with fixed cases and zero external business effect.</text>
+
+    <path d="M342 152H404" fill="none" stroke="#8fb5a8" stroke-width="3" marker-end="url(#arrow)"/>
+    <path d="M676 152H738" fill="none" stroke="#8fb5a8" stroke-width="3" marker-end="url(#arrow)"/>
+    <path d="M1010 152H1072" fill="none" stroke="#8fb5a8" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <g transform="translate(28 104)">
+      <rect width="314" height="100" rx="16" fill="#f5faf7" stroke="#d5e8df" stroke-width="1.5"/>
+      <text class="num" x="22" y="28">A</text><text class="card-title" x="52" y="31">Public reviewer demo</text>
+      <text class="card-copy" x="22" y="60">Cloud Run · fixed synthetic work</text><text class="card-detail" x="22" y="84">NO CUSTOMER DATA</text>
+    </g>
+    <g transform="translate(404 104)">
+      <rect width="272" height="100" rx="16" fill="#f5faf7" stroke="#d5e8df" stroke-width="1.5"/>
+      <text class="num" x="22" y="28">B</text><text class="card-title" x="52" y="31">Role-limited ADK</text>
+      <text class="card-copy" x="22" y="60">Policy + escalation specialists</text><text class="card-detail" x="22" y="84">NO DIRECT TOOLS</text>
+    </g>
+    <g transform="translate(738 104)">
+      <rect width="272" height="100" rx="16" fill="#f5faf7" stroke="#d5e8df" stroke-width="1.5"/>
+      <text class="num" x="22" y="28">C</text><text class="card-title" x="52" y="31">Proof receipt</text>
+      <text class="card-copy" x="22" y="60">Source · policy · decision</text><text class="card-detail" x="22" y="84">ONE-USE WARRANT</text>
+    </g>
+    <g transform="translate(1072 104)">
+      <rect width="390" height="100" rx="16" fill="#e4f6ec" stroke="#8edeb3" stroke-width="1.5"/>
+      <text class="num" x="22" y="28">D</text><text class="card-title" x="52" y="31">Replayable proof bundle</text>
+      <text class="card-copy" x="22" y="60">Evidence replay + safety evaluations</text><text class="card-detail" x="22" y="84">ZERO EXTERNAL EFFECT</text>
+    </g>
   </g>
-  <g transform="translate(1224 322)">
-    <rect class="node" width="206" height="182" rx="12"/>
-    <text class="step" x="26" y="38">05</text>
-    <text class="node-title" x="26" y="78">Bounded Gemini brief</text>
-    <text class="node-copy" x="26" y="112">Changed public text only;</text>
-    <text class="node-copy" x="26" y="138">delivery separately gated</text>
+
+  <g transform="translate(70 848)">
+    <circle cx="8" cy="0" r="6" fill="#0d7155"/><text class="footer" x="24" y="5">Private layer: approved public EPR sources, Firestore state, owner review.</text>
+    <circle cx="578" cy="0" r="6" fill="#8edeb3"/><text class="footer" x="594" y="5">Public layer: reproducible proof, never customer or prospect delivery.</text>
+    <text class="footer" x="1150" y="5" fill="#0d634b">Vice CEO · Westover EPR</text>
   </g>
-  <g transform="translate(808 611)">
-    <rect class="node" width="257" height="160" rx="12"/>
-    <text class="step" x="26" y="38">06</text>
-    <text class="node-title" x="26" y="78">Private owner review</text>
-    <text class="node-copy" x="26" y="112">IAM-protected queue;</text>
-    <text class="node-copy" x="26" y="138">acknowledge or archive</text>
-  </g>
-  <g transform="translate(426 611)">
-    <rect class="node" width="266" height="160" rx="12"/>
-    <text class="step" x="26" y="38">07</text>
-    <text class="node-title" x="26" y="78">Public reviewer</text>
-    <text class="node-copy" x="26" y="112">Synthetic proof and</text>
-    <text class="node-copy" x="26" y="138">governance tests</text>
-  </g>
-  <path class="line" d="M808 691 H692"/>
-  <g transform="translate(736 744)">
-    <rect fill="#f0f7f4" stroke="#0e5149" stroke-width="2" width="168" height="82" rx="41"/>
-    <text class="block-label" x="84" y="35" text-anchor="middle">NO CUSTOMER DATA</text>
-    <text class="block-label" x="84" y="59" text-anchor="middle">NO PROSPECT OUTREACH</text>
-  </g>
-  <text class="footer" x="110" y="864">Bounded by design: the public demo is synthetic; the private watcher records evidence and owner review.</text>
-  <text class="footer" x="110" y="890">It never receives customer data or prospect-outreach authority.</text>
 </svg>
