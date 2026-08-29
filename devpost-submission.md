@@ -74,9 +74,9 @@ The repository is public and includes an MIT license, spin-up instructions, the 
 
 ## Demo Video
 
-**Final file ready to upload:** `artifacts/demo-video/ViceCEO-AllThingsAgentic-SubmissionCut-Final.mp4`
+**Public YouTube demo:** https://youtu.be/Kws0sHcKSAM
 
-The 2:07, 1920×1080 showcase demonstrates the product flow, customer-work and outreach preparation, owner escalation, evidence receipts, authority boundaries, and the public Cloud Run URL. Upload it as a **public** YouTube or Vimeo video, then paste the resulting URL here and into Devpost.
+The 2:07, 1920×1080 showcase demonstrates the product flow, customer-work and outreach preparation, owner escalation, evidence receipts, authority boundaries, and the public Cloud Run URL. Its local source master is `artifacts/demo-video/ViceCEO-AllThingsAgentic-SubmissionCut-Final.mp4`.
 
 ## Screenshot Shot List
 
@@ -94,7 +94,7 @@ The 2:07, 1920×1080 showcase demonstrates the product flow, customer-work and o
 - [x] Architecture diagram ready for direct upload.
 - [x] Hosted Cloud Run reviewer URL.
 - [x] Final narrated 1080p demo-video file prepared locally.
-- [ ] Host the final video publicly on YouTube or Vimeo and paste the URL.
+- [x] Public YouTube video: <https://youtu.be/Kws0sHcKSAM>
 - [ ] Capture and upload 3–5 screenshots from the working reviewer experience.
 - [ ] Create the Devpost project and paste this description.
 - [ ] Complete the personal and project-start fields below truthfully.
